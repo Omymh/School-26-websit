@@ -3,328 +3,169 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>تقرير المدرسة</title>
-
-  <!-- أسلوب نظيف ومهني بدون مكتبات خارجية -->
+  <title>تقرير برنامج — الثانوية السادسة والعشرون</title>
   <style>
     :root{
-      --bg:#f7f7fb;
-      --card:#ffffff;
       --ink:#0f172a;
-      --muted:#6b7280;
-      --brand:#0ea5e9;
-      --brand-2:#22c55e;
-      --line:#e5e7eb;
+      --muted:#5f6b7a;
+      --bg:#f8fafc;
+      --card:#ffffff;
+      --line:#cfe8d3;
+      --brand:#10b981;  /* أخضر */
+      --brand-2:#0ea5e9;/* تركواز خفيف */
       --radius:18px;
-      --shadow: 0 8px 30px rgba(2,6,23,.06);
-      --w: 1100px;
+      --shadow:0 10px 30px rgba(2,6,23,.06);
+      --maxw:1100px;
     }
-
-    html,body{height:100%;}
+    *{box-sizing:border-box}
     body{
-      margin:0;
-      background:linear-gradient(180deg,#f9fafb 0%, var(--bg) 100%);
-      color:var(--ink);
-      font:16px/1.8 "Tajawal", "Noto Naskh Arabic", system-ui, -apple-system, Segoe UI, Arial, sans-serif;
-      -webkit-font-smoothing:antialiased;
-      text-rendering:optimizeLegibility;
+      margin:0; background:var(--bg); color:var(--ink);
+      font:16px/1.9 "Tajawal","Noto Naskh Arabic",system-ui,-apple-system,Segoe UI,Arial,sans-serif;
+      -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+    }
+    .wrap{max-width:var(--maxw); margin:0 auto; padding:20px}
+    /* شريط الديباجة (صورة 26.png) */
+    .banner{
+      background:#e6f5fd; border:1px solid #d7ecff; border-radius:20px;
+      box-shadow:var(--shadow); overflow:hidden;
+    }
+    .banner img{display:block; width:100%; height:auto}
+
+    /* عنوان المدرسة */
+    .school{
+      margin:16px auto 10px; text-align:center;
+      background:#0b3a50; color:#fff;
+      padding:12px 16px; border-radius:14px; font-weight:700; letter-spacing:.2px;
     }
 
-    .container{max-width:var(--w); margin:0 auto; padding:24px;}
-    .header{
-      position:sticky; top:0; z-index:10;
-      backdrop-filter:saturate(180%) blur(10px);
-      background:rgba(255,255,255,.75);
-      border-bottom:1px solid var(--line);
+    /* شريط اسم البرنامج */
+    .prog{
+      background:#134e4a; color:#fff; text-align:center; font-weight:800;
+      padding:12px 18px; border-radius:14px; margin:8px 0 16px;
+      box-shadow:0 4px 18px rgba(0,0,0,.06);
     }
-    .header .inner{display:flex; align-items:center; gap:16px; padding:14px 24px; max-width:var(--w); margin:0 auto;}
-    .logo{
-      width:46px;height:46px;border-radius:12px;
-      background: conic-gradient(from 0deg, var(--brand), var(--brand-2), var(--brand));
-      box-shadow:inset 0 0 0 6px #fff, var(--shadow);
-      flex:0 0 auto;
-    }
-    .title{
-      display:flex; flex-direction:column; gap:2px;
-    }
-    .title h1{margin:0; font-size:22px; letter-spacing:.2px}
-    .title small{color:var(--muted);}
 
-    .hero{
-      padding:28px 0 10px;
-    }
-    .hero .deebaja{
-      background:var(--card);
-      border:1px solid var(--line);
-      border-radius:var(--radius);
-      box-shadow:var(--shadow);
-      padding:24px;
-    }
-    .deebaja h2{
-      margin:0 0 10px 0; font-size:18px; color:#111827;
-    }
-    .deebaja p{margin:0; color:#374151}
-
+    /* شبكة المعلومات */
     .grid{
-      display:grid;
-      grid-template-columns: 1.1fr .9fr;
-      gap:20px;
-      margin-top:20px;
+      display:grid; gap:18px; grid-template-columns: 1fr 1fr;
     }
-    @media (max-width: 900px){
-      .grid{grid-template-columns: 1fr;}
-    }
+    @media (max-width:900px){ .grid{grid-template-columns:1fr} }
 
     .card{
-      background:var(--card);
-      border:1px solid var(--line);
-      border-radius:var(--radius);
-      box-shadow:var(--shadow);
-      padding:20px;
+      background:var(--card); border:2px solid var(--line);
+      border-radius:var(--radius); padding:16px 18px; box-shadow:var(--shadow);
     }
-    .card h3{margin:0 0 14px 0; font-size:18px}
-    .meta{
-      display:grid; gap:10px;
-      grid-template-columns: repeat(2, minmax(0,1fr));
+    .card h3{
+      margin:0 0 10px; font-size:18px; font-weight:800; color:#0b8359;
+      border-right:6px solid var(--brand); padding-right:10px;
     }
-    .row{display:flex; flex-direction:column; gap:4px;}
-    .row label{font-size:12px; color:var(--muted)}
-    .row div{font-weight:600}
+    .pill{
+      background:#f0fff7; border:2px solid var(--line);
+      padding:10px 12px; border-radius:12px; font-weight:700;
+    }
 
-    .table{
-      width:100%; border-collapse:collapse; border:1px solid var(--line); overflow:hidden; border-radius:12px;
+    /* الأهداف */
+    .goals{min-height:230px}
+    .goals ul{
+      margin:0; padding:0 18px; list-style:decimal;
     }
-    .table th, .table td{
-      padding:12px 14px; border-bottom:1px solid var(--line); text-align:right;
-    }
-    .table thead th{
-      background:#f3f4f6; font-weight:700; font-size:14px;
-    }
-    .table tbody tr:hover{background:#fafafa}
+    .goals li{margin:4px 0}
 
+    /* الشواهد */
     .gallery{
-      display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap:10px;
+      display:grid; grid-template-columns:1fr 1fr; gap:14px;
     }
-    .gallery img{
-      width:100%; height:150px; object-fit:cover; border-radius:12px; border:1px solid var(--line); cursor:pointer;
-      transition:transform .2s ease;
+    .shot{
+      border:2px solid var(--line); border-radius:16px; overflow:hidden; background:#fff;
     }
-    .gallery img:hover{transform:scale(1.02)}
+    .shot img{display:block; width:100%; height:220px; object-fit:cover}
 
-    .actions{
-      display:flex; gap:10px; flex-wrap:wrap; margin-top:16px;
+    /* ترويسة قسم */
+    .section-title{
+      margin:22px 0 10px; text-align:center; font-weight:900; color:#107e5f;
+      letter-spacing:.25px; font-size:20px; position:relative;
     }
-    .btn{
-      appearance:none; border:1px solid var(--line); background:#fff; color:#111827;
-      border-radius:12px; padding:10px 14px; cursor:pointer; font-weight:600; box-shadow:var(--shadow);
+    .section-title:after{
+      content:""; height:3px; width:90px; background:linear-gradient(90deg,var(--brand),var(--brand-2));
+      position:absolute; left:50%; transform:translateX(-50%); bottom:-6px; border-radius:2px;
     }
-    .btn.primary{background:var(--brand); color:#fff; border-color:transparent}
-    .btn.outline{background:#fff; color:var(--brand); border-color: var(--brand)}
-    .btn:active{transform:translateY(1px)}
 
-    .footer{
-      margin:28px 0 12px; padding-top:12px;
-      border-top:1px dashed var(--line); color:#374151; font-weight:600; text-align:center;
+    /* تذييل */
+    footer{
+      margin:20px 0 6px; padding:14px 10px; border-top:2px solid var(--line);
+      text-align:center; color:#334155; font-weight:700;
+      background:#f9fffb; border-radius:14px;
     }
-    .footer small{display:block; color:var(--muted); font-weight:500; margin-top:6px}
+    footer small{display:block; color:#64748b; font-weight:600; margin-top:6px}
 
-    /* نافذة عرض الصور */
-    .lightbox{
-      position:fixed; inset:0; display:none; place-items:center; background:rgba(15,23,42,.7);
-      padding:24px; z-index:50;
-    }
-    .lightbox img{max-width:min(100%,1000px); max-height:85vh; border-radius:16px}
-    .lightbox.active{display:grid}
-
-    /* طباعة نظيفة */
+    /* طباعة */
     @media print{
-      .header, .actions{display:none !important;}
-      body{background:#fff;}
-      .card, .deebaja{box-shadow:none; border-color:#999}
-      .container{padding:0}
-      .footer{border-top:1px solid #999; margin-top:16px}
+      body{background:#fff}
+      .wrap{padding:0}
+      .banner, .card, footer{box-shadow:none}
     }
   </style>
 </head>
 <body>
+  <div class="wrap">
 
-  <!-- رأس الصفحة -->
-  <div class="header">
-    <div class="inner">
-      <div class="logo" aria-hidden="true"></div>
-      <div class="title">
-        <h1>تقارير الثانوية السادسة والعشرون</h1>
-        <small>بوابة عرض التقارير الإلكترونية</small>
-      </div>
+    <!-- الديباجة (الصورة 26.png محفوظة بالمستودع) -->
+    <div class="banner">
+      <img src="26.png" alt="ديباجة المدرسة" />
     </div>
-  </div>
 
-  <main class="container">
-    <!-- الديباجة أعلى الصفحة -->
-    <section class="hero">
-      <article class="deebaja">
-        <h2>ديباجة المدرسة</h2>
-        <p>
-          <!-- ضع نص الديباجة هنا -->
-          انطلاقًا من رسالة المدرسة في بناء جيلٍ واعٍ ومتمكن، نُعزّز قيم الانضباط والجودة والإبداع،
-          ونوفّر بيئة تعليمية رقمية تُسهِّل عرض التقارير والإنجازات بصورة مهنية ومنظمة.
-        </p>
-      </article>
-    </section>
+    <!-- اسم المدرسة (عدّل النص إن أردت) -->
+    <div class="school">مدرسة أسامة بن زيد</div>
 
-    <!-- المحتوى الرئيسي: عمودان -->
-    <section class="grid">
-      <!-- العمود الأيسر (واسع) -->
-      <div class="col">
-        <!-- بيانات التقرير -->
-        <section class="card">
-          <h3>بيانات التقرير</h3>
-          <div class="meta">
-            <div class="row">
-              <label>اسم الطالبة</label>
-              <div>— اكتب الاسم هنا —</div>
-            </div>
-            <div class="row">
-              <label>الصف/القسم</label>
-              <div>— اكتب الصف هنا —</div>
-            </div>
-            <div class="row">
-              <label>اسم المعلمة</label>
-              <div>— اكتب الاسم هنا —</div>
-            </div>
-            <div class="row">
-              <label>المادة</label>
-              <div>— اكتب المادة هنا —</div>
-            </div>
-            <div class="row">
-              <label>عنوان التقرير</label>
-              <div>— عنوان موجز وواضح —</div>
-            </div>
-            <div class="row">
-              <label>تاريخ التقديم</label>
-              <div>— يوم/شهر/سنة —</div>
-            </div>
-          </div>
-          <div class="actions">
-            <button class="btn primary" onclick="window.print()">طباعة التقرير</button>
-            <button class="btn outline" onclick="scrollToSection('attachments')">انتقال إلى المرفقات</button>
-          </div>
-        </section>
+    <!-- اسم البرنامج -->
+    <div class="prog">اسم البرنامج</div>
 
-        <!-- ملخص التقرير -->
-        <section class="card">
-          <h3>ملخص التقرير</h3>
-          <p style="margin:0">
-            اكتب هنا ملخصًا موجزًا يوضح فكرة التقرير، أهدافه، منهجيته، وأبرز النتائج أو المخرجات
-            في فقرة إلى فقرتين، بأسلوب واضح ومنظّم.
-          </p>
-        </section>
-
-        <!-- جدول النتائج/التقييم (اختياري) -->
-        <section class="card">
-          <h3>تفاصيل التقييم</h3>
-          <div style="overflow:auto">
-            <table class="table" aria-label="جدول التقييم">
-              <thead>
-                <tr>
-                  <th>المعيار</th>
-                  <th>الوصف</th>
-                  <th>الدرجة</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>المحتوى العلمي</td>
-                  <td>سلامة المعلومات ودقتها</td>
-                  <td>—/10</td>
-                </tr>
-                <tr>
-                  <td>العرض والتنظيم</td>
-                  <td>ترتيب الأفكار والتنسيق</td>
-                  <td>—/10</td>
-                </tr>
-                <tr>
-                  <td>اللغة والأسلوب</td>
-                  <td>سلامة اللغة والإملاء</td>
-                  <td>—/10</td>
-                </tr>
-                <tr>
-                  <td>الإبداع والابتكار</td>
-                  <td>أصالة الفكرة وطريقة العرض</td>
-                  <td>—/10</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
+    <!-- شبكة: التاريخ / مقر التنفيذ / المنفذة -->
+    <section class="grid" aria-label="بيانات البرنامج">
+      <div class="card">
+        <h3>التاريخ</h3>
+        <div class="pill">— 12/12/1446 هـ —</div>
       </div>
 
-      <!-- العمود الأيمن -->
-      <aside class="col">
-        <!-- ملاحظات عامة -->
-        <section class="card">
-          <h3>ملاحظات</h3>
-          <p style="margin:0">
-            مساحة لملاحظات المعلمة أو الطالبة حول التقرير، عناصر التحسين، أو ملحوظات المتابعة.
-          </p>
-        </section>
+      <div class="card">
+        <h3>مقر التنفيذ</h3>
+        <div class="pill">— الفصول الدراسية —</div>
+      </div>
 
-        <!-- معرض الصور/المرفقات -->
-        <section id="attachments" class="card">
-          <h3>المرفقات (صور)</h3>
-          <div class="gallery">
-            <!-- ضع صورك داخل مجلد images بهذه الأسماء أو غيّر المسارات -->
-            <!-- مثال: images/photo-01.jpg / images/photo-02.jpg / images/photo-03.jpg -->
-            <img src="images/photo-01.jpg" alt="مرفق 1" onclick="showImg(this.src)" />
-            <img src="images/photo-02.jpg" alt="مرفق 2" onclick="showImg(this.src)" />
-            <img src="images/photo-03.jpg" alt="مرفق 3" onclick="showImg(this.src)" />
-          </div>
-          <div class="actions">
-            <button class="btn" onclick="showHint()">إرشاد رفع الصور</button>
-          </div>
-        </section>
-      </aside>
+      <div class="card">
+        <h3>المنفذة</h3>
+        <div class="pill">— المعلمة/ ……………………… —</div>
+      </div>
+
+      <!-- «الأهداف» صندوق واسع؛ خليه يمتد عمودين على الشاشات العريضة -->
+      <div class="card goals" style="grid-column:1 / -1">
+        <h3>الأهداف</h3>
+        <ul>
+          <li>الهدف الأول.</li>
+          <li>الهدف الثاني.</li>
+          <li>الهدف الثالث.</li>
+          <li>الهدف الرابع.</li>
+          <li>الهدف الخامس.</li>
+        </ul>
+      </div>
     </section>
 
-    <!-- التذييل المطلوب حرفيًا -->
-    <footer class="footer">
+    <!-- الشواهد -->
+    <h2 class="section-title">الشواهد</h2>
+    <section class="gallery" aria-label="الشواهد (صور)">
+      <!-- ضع صورك داخل images/ بالأسماء التالية أو غيّر المسارات -->
+      <figure class="shot"><img src="images/shot-01.jpg" alt="شاهد 1"></figure>
+      <figure class="shot"><img src="images/shot-02.jpg" alt="شاهد 2"></figure>
+      <figure class="shot"><img src="images/shot-03.jpg" alt="شاهد 3"></figure>
+      <figure class="shot"><img src="images/shot-04.jpg" alt="شاهد 4"></figure>
+    </section>
+
+    <!-- التذييل المطلوب سابقًا -->
+    <footer>
       مديرة المدرسة: أماني آل عبشان
       <small>تصميم : أ ريم نافل</small>
     </footer>
-  </main>
 
-  <!-- Lightbox لعرض الصور بالحجم الكبير -->
-  <div class="lightbox" id="lightbox" onclick="closeImg()">
-    <img id="lightboxImg" src="" alt="صورة مرفقة" />
   </div>
-
-  <script>
-    function scrollToSection(id){
-      const el = document.getElementById(id);
-      if(el){ el.scrollIntoView({behavior:'smooth', block:'start'}); }
-    }
-
-    function showImg(src){
-      const lb = document.getElementById('lightbox');
-      const im = document.getElementById('lightboxImg');
-      im.src = src;
-      lb.classList.add('active');
-    }
-    function closeImg(){
-      document.getElementById('lightbox').classList.remove('active');
-    }
-
-    function showHint(){
-      alert(
-`كيف تُضيف/تستبدل الصور على GitHub Pages:
-1) أنشئ مجلدًا باسم images داخل المستودع (إن لم يكن موجودًا).
-2) ارفع ملفاتك مثل: photo-01.jpg, photo-02.jpg, photo-03.jpg.
-3) لو غيّرت الأسماء، عدّل مسارات الصور في القسم "المرفقات".
-4) لحذف صورة قديمة: احذف الملف من المجلد ثم Commit & Push.
-5) حدّث الصفحة (قد تحتاج دقيقة حتى تُحدّث Pages).`
-      );
-    }
-  </script>
 </body>
 </html>
-
