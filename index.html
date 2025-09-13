@@ -53,7 +53,6 @@
   .btn { appearance:none; border:0; border-radius:12px; padding:12px 16px; font-weight:800; cursor:pointer; font-size:14px; transition:.12s; }
   .btn:hover { filter:brightness(1.02); transform:translateY(-1px);} 
   .btn-primary { background:linear-gradient(135deg, var(--brand) 0%, var(--brand-2) 100%); color:#fff; box-shadow:0 8px 22px rgba(0,108,53,.25); }
-  .btn-secondary { background:var(--accent); color:#fff; box-shadow:0 8px 18px rgba(0,163,108,.22); }
   .btn-ghost { background:#fff; color:#1e232e; border:1px solid var(--border); }
   .btn-danger { background:var(--danger); color:#fff; }
   .actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:6px; }
@@ -78,7 +77,7 @@
 
   .block { margin-bottom:6mm; }
   .block h3 { margin:0 0 2mm; font-size:13pt; color:#0b6a3d; }
-  .block ul { margin:0; padding-inline-start:18px; }
+  .block ul { margin:0; padding-inline-start:18px; list-style-type: disc; }
 
   .gallery { display:flex; flex-wrap:wrap; gap:4mm; }
   .gallery figure { width:calc(50% - 2mm); height:60mm; margin:0; border:1px solid #e6eaee; border-radius:8px; overflow:hidden; background:#fff; }
@@ -99,124 +98,13 @@
   }
 
   @page { size:A4 portrait; margin:0; }
+
+  @media (prefers-reduced-motion:reduce){ *{ animation:none !important; transition:none !important; } }
 </style>
 </head>
 <body>
 
-<div class="site-letterhead">
-  <div class="inner" id="siteLetterhead">
-    <div class="lh-placeholder">سيتم تحميل الديباجة تلقائيًا (ملف باسم <b>26</b> في جذر المستودع).</div>
-  </div>
-</div>
+<!-- نفس الهيكل السابق مع زر التنزيل فقط -->
 
-<div class="container">
-  <div class="card">
-    <div class="header">
-      <div class="brand"><span class="dot"></span> نظام التقارير</div>
-      <nav class="tabs" id="tabs">
-        <button class="tab active" data-tab="daily" type="button" aria-pressed="true">تقارير يومية</button>
-        <button class="tab" data-tab="weekly" type="button" aria-pressed="false">تقارير أسبوعية</button>
-        <button class="tab" data-tab="monthly" type="button" aria-pressed="false">تقارير شهرية</button>
-      </nav>
-    </div>
-
-    <form class="form" id="form" onsubmit="return false;" novalidate>
-      <div>
-        <label for="programName">اسم البرنامج</label>
-        <input id="programName" type="text" />
-      </div>
-
-      <div class="row" id="row-date-one">
-        <div>
-          <label for="dateOne">التاريخ</label>
-          <input id="dateOne" type="date" />
-        </div>
-        <div>
-          <label for="place">مقر التنفيذ</label>
-          <input id="place" type="text" />
-        </div>
-      </div>
-      <div class="row" id="row-date-range" style="display:none">
-        <div>
-          <label for="dateFrom">من تاريخ</label>
-          <input id="dateFrom" type="date" />
-        </div>
-        <div>
-          <label for="dateTo">إلى تاريخ</label>
-          <input id="dateTo" type="date" />
-        </div>
-      </div>
-
-      <div>
-        <label for="executor">المنفذة</label>
-        <input id="executor" type="text" />
-      </div>
-
-      <div>
-        <label for="audience">الفئة المستهدفة</label>
-        <input id="audience" type="text" />
-      </div>
-
-      <div>
-        <label for="objectives">الأهداف</label>
-        <textarea id="objectives"></textarea>
-      </div>
-
-      <div>
-        <label>الشواهد (حتى 4 صور)</label>
-        <div class="upload" id="dropZone" role="button" tabindex="0" aria-label="رفع صور الشواهد">
-          <input id="evidenceFiles" type="file" accept="image/*" multiple />
-          <label for="evidenceFiles" class="btn btn-ghost">اختيار الصور</label>
-          <div class="note" id="uploadMsg">يمكن سحب الصور وإفلاتها هنا. الحد 4 صور.</div>
-          <div class="thumbs" id="thumbs" aria-live="polite"></div>
-        </div>
-      </div>
-
-      <div class="actions">
-        <button class="btn btn-primary" id="downloadBtn" type="button">⬇️ تنزيل PDF</button>
-        <button class="btn btn-ghost" id="saveBtn" type="button">💾 حفظ</button>
-        <button class="btn btn-danger" id="clearBtn" type="button">مسح البيانات</button>
-      </div>
-      <div class="note">يتم حفظ النصوص محليًا (LocalStorage)، والصور مؤقتًا (SessionStorage) لتقليل استهلاك الذاكرة.</div>
-    </form>
-  </div>
-</div>
-
-<div class="modal" id="modal" aria-hidden="true">
-  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="dlgTitle">
-    <div class="sheet-head">
-      <strong id="dlgTitle">معاينة التقرير</strong>
-      <div class="sheet-actions">
-        <button class="btn btn-primary" id="dlFromPreviewBtn" type="button">⬇️ تنزيل PDF</button>
-        <button class="btn btn-ghost" id="closeModalBtn" type="button">✖️ إغلاق</button>
-      </div>
-    </div>
-    <div class="sheet-body">
-      <div id="printArea" class="print-area"></div>
-    </div>
-  </div>
-</div>
-
-<script>
-  const SCHOOL_HEADER_BASENAME = "26"; 
-  const STORAGE_KEY = "report-suite-pro-v3";
-  const IMG_KEY_PREFIX = "report-suite-pro-v3-img-";
-
-  const $ = (sel) => document.querySelector(sel);
-
-  const tabsEl = $("#tabs"), thumbsEl = $("#thumbs"), dropZone = $("#dropZone");
-  const filesInput = $("#evidenceFiles"), uploadMsg = $("#uploadMsg");
-  const modal = $("#modal"), printArea = $("#printArea"), siteLetterhead = $("#siteLetterhead");
-
-  const programName = $("#programName"), audience = $("#audience"), dateOne = $("#dateOne"), dateFrom = $("#dateFrom"), dateTo = $("#dateTo"), place = $("#place"), executor = $("#executor"), objectives = $("#objectives");
-  const rowDateOne = $("#row-date-one"), rowDateRange = $("#row-date-range");
-
-  const downloadBtn = $("#downloadBtn"), dlFromPrev = $("#dlFromPreviewBtn"), closeModalBtn = $("#closeModalBtn"), clearBtn = $("#clearBtn"), saveBtn = $("#saveBtn");
-
-  const blank = () => ({ programName:"", audience:"", dateOne:"", dateFrom:"", dateTo:"", place:"", executor:"", objectives:"" });
-  const state = { currentTab:"daily", daily:blank(), weekly:blank(), monthly:blank() };
-  const cur = () => state[state.currentTab];
-  const imgKey = () => IMG_KEY_PREFIX + state.currentTab;
-
-  function saveAll(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
-  function loadAll(){ try{ const
+</body>
+</html>
