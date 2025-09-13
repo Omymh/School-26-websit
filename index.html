@@ -283,7 +283,7 @@
 
 <script>
 /* =================== ثابت اسم ملف الديباجة =================== */
-const SCHOOL_HEADER_BASENAME = "26"; // مثال: 26.png أو 26.svg بجانب index.html
+const SCHOOL_HEADER_BASENAME = "26";
 
 /* =================== أدوات مختصرة =================== */
 const $ = (sel) => document.querySelector(sel);
@@ -406,7 +406,7 @@ function handleImageUpload(files){
 }
 
 /* =================== إنشاء التقرير (HTML) =================== */
-function getReportHtml(){
+async function generateReport(){
   const s = cur();
   const date = (s.dateOne) ? s.dateOne : `${s.dateFrom} - ${s.dateTo}`;
   const titleText = (s.dateOne) ? "تقرير يومي" : (s.dateFrom && s.dateTo) ? "تقرير أسبوعي / شهري" : "تقرير";
@@ -421,7 +421,7 @@ function getReportHtml(){
       </div>
     </div>` : "";
 
-  return `
+  const reportHtml = `
     <div class="paper report">
       ${letterheadHtml}
       <div class="title"><h1>${titleText}</h1></div>
@@ -442,28 +442,41 @@ function getReportHtml(){
       </div>
     </div>
   `;
+  
+  // عرض التقرير في منطقة المعاينة
+  printArea.innerHTML = reportHtml;
+
+  // انتظار تحميل جميع الصور
+  const images = printArea.querySelectorAll('img');
+  const promises = Array.from(images).map(img => new Promise((resolve) => {
+    if (img.complete) {
+      resolve();
+    } else {
+      img.onload = resolve;
+      img.onerror = resolve; // Resolve even on error to avoid stalling
+    }
+  }));
+  await Promise.all(promises);
 }
 
 /* =================== دوال التصدير والطباعة =================== */
-function showPreview(){
-  printArea.innerHTML = getReportHtml();
-  modal.classList.add("show");
-}
-
-function downloadPDF(){
-  const filename = `تقرير-${cur().programName||"بدون اسم"}-${cur().dateOne||cur().dateFrom||Date.now()}.pdf`;
-  const opt = {
-    margin: [0, 0, 0, 0], // الهوامش داخل ملف PDF
-    filename: filename,
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 2, logging: true, useCORS: true },
-    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-  };
-  html2pdf().from(printArea).set(opt).save();
-}
-
-function printReport(){
-  window.print();
+async function handleReportAction(action){
+  await generateReport();
+  if (action === 'download') {
+    const filename = `تقرير-${cur().programName||"بدون اسم"}-${cur().dateOne||cur().dateFrom||Date.now()}.pdf`;
+    const opt = {
+      margin: [0, 0, 0, 0], // الهوامش داخل ملف PDF
+      filename: filename,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, logging: true, useCORS: true },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+    html2pdf().from(printArea).set(opt).save();
+  } else if (action === 'preview') {
+    modal.classList.add("show");
+  } else if (action === 'print') {
+    window.print();
+  }
 }
 
 /* =================== تهيئة وتشغيل =================== */
@@ -502,10 +515,10 @@ function setupEventListeners(){
   });
 
   // Buttons
-  previewBtn.addEventListener("click", showPreview);
-  downloadBtn.addEventListener("click", downloadPDF);
-  dlFromPrev.addEventListener("click", downloadPDF);
-  printBtn.addEventListener("click", printReport);
+  previewBtn.addEventListener("click", () => handleReportAction('preview'));
+  downloadBtn.addEventListener("click", () => handleReportAction('download'));
+  dlFromPrev.addEventListener("click", () => handleReportAction('download'));
+  printBtn.addEventListener("click", () => handleReportAction('print'));
   closeModalBtn.addEventListener("click", () => modal.classList.remove("show"));
   clearBtn.addEventListener("click", () => {
     if(confirm("هل أنت متأكد من مسح جميع البيانات؟")){
