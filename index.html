@@ -2,239 +2,323 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>منصة التقارير — يومية / أسبوعية / شهرية</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>تقرير برنامج مدرسي</title>
   <style>
     :root{
-      --ink:#0f172a; --muted:#64748b; --bg:#f6faf8; --card:#ffffff; --line:#cfe8d3;
-      --brand:#10b981; --brand2:#0ea5e9; --dark:#0b3a50; --teal:#134e4a;
-      --radius:18px; --shadow:0 10px 30px rgba(2,6,23,.06); --maxw:1100px;
+      --green-600:#0ea47a;
+      --green-700:#0a8e68;
+      --mint-50:#f4fbf8;
+      --card:#ffffff;
+      --ink:#1f2937;
+      --muted:#6b7280;
+      --border:#e5e7eb;
+      --shadow:0 6px 20px rgba(2,28,23,.08);
+      --radius:14px;
     }
+
     *{box-sizing:border-box}
-    body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.9 "Tajawal","Noto Naskh Arabic",system-ui,-apple-system,Segoe UI,Arial,sans-serif}
-    .wrap{max-width:var(--maxw);margin:0 auto;padding:18px}
+    body{
+      margin:0;
+      font-family: ui-arabic, system-ui, -apple-system, Segoe UI, Roboto, "Noto Kufi Arabic", "Noto Sans Arabic", Tahoma, Arial, sans-serif;
+      color:var(--ink);
+      background:linear-gradient(180deg,#e9f7f1, #f9fdfc 260px);
+    }
 
-    /* ديباجة أعلى الصفحة (26.png محفوظة في الجذر) */
-    .banner{border-radius:20px;overflow:hidden;border:1px solid #d7ecff;box-shadow:var(--shadow);background:#e6f5fd}
-    .banner img{display:block;width:100%;height:auto}
+    .page{
+      max-width:1000px;
+      margin:32px auto 48px;
+      padding:0 16px;
+    }
 
-    /* تبويبات يومي/أسبوعي/شهري */
-    .tabs{display:flex;gap:8px;margin:14px 0 10px}
-    .tab{flex:1 1 0; text-align:center; padding:10px 12px; border-radius:12px; font-weight:900; cursor:pointer; user-select:none;
-      border:2px solid #cfe8d3; background:#fff; color:#0b3a50; box-shadow:var(--shadow)}
-    .tab.active{background:linear-gradient(135deg,var(--brand),#34d399); color:#fff; border-color:transparent}
+    /* Masthead (ديباجة المدرسة) */
+    .masthead{
+      display:block;
+      width:100%;
+      max-height:220px;
+      object-fit:cover;
+      border-radius:16px;
+      box-shadow:var(--shadow);
+      border:1px solid var(--border);
+      background:#fff;
+    }
 
-    /* التقرير */
-    .prog{background:var(--teal);color:#fff;text-align:center;font-weight:900;padding:12px 16px;border-radius:14px;margin:10px 0 16px;box-shadow:0 4px 18px rgba(0,0,0,.06)}
+    /* Top ribbon */
+    .ribbon{
+      margin-top:18px;
+      background:linear-gradient(90deg,var(--green-700),var(--green-600));
+      color:#fff;
+      padding:18px 22px;
+      border-radius:14px;
+      box-shadow:var(--shadow);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:12px;
+      text-align:center;
+    }
+    .ribbon h1{
+      margin:0;
+      font-size:22px;
+      letter-spacing:.3px;
+      font-weight:800;
+    }
 
-    .grid{display:grid;gap:18px;grid-template-columns:1fr 1fr}
-    @media (max-width:900px){.grid{grid-template-columns:1fr}}
+    /* Cards grid */
+    .grid{
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap:16px;
+      margin-top:18px;
+    }
+    @media (max-width: 840px){
+      .grid{grid-template-columns:1fr}
+    }
+    .card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:18px;
+    }
 
-    .card{background:var(--card);border:2px solid var(--line);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow)}
-    .card h3{margin:0 0 10px;font-size:18px;font-weight:900;color:#0b8359;border-right:6px solid var(--brand);padding-right:10px}
-    .pill{background:#f0fff7;border:2px solid var(--line);padding:10px 12px;border-radius:12px;font-weight:800}
+    .card h3{
+      margin:0 0 10px;
+      font-size:18px;
+      color:var(--green-700);
+    }
 
-    .goals ul{margin:0;padding:0 20px;list-style:decimal}
-    .goals li{margin:5px 0}
+    .field{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      margin:8px 0;
+    }
+    .label{
+      min-width:110px;
+      color:var(--muted);
+      font-weight:700;
+    }
+    .value[contenteditable="true"]{
+      outline:none;
+      border:1px dashed transparent;
+      padding:4px 6px;
+      border-radius:8px;
+      min-height:28px;
+      flex:1;
+    }
+    .value[contenteditable="true"]:hover{border-color:#d1d5db;background:#fafafa}
 
-    .section-title{margin:8px 0 10px;text-align:center;font-weight:900;color:#107e5f;letter-spacing:.25px;font-size:20px;position:relative}
-    .section-title:after{content:"";height:3px;width:90px;background:linear-gradient(90deg,var(--brand),var(--brand2));position:absolute;left:50%;transform:translateX(-50%);bottom:-6px;border-radius:2px}
+    /* أهداف */
+    ol.goals{
+      margin:8px 0 0;
+      padding:0 20px 0 0;
+    }
+    ol.goals li{
+      margin:8px 0;
+      padding:6px 8px;
+      background:var(--mint-50);
+      border:1px solid var(--border);
+      border-radius:10px;
+    }
+    ol.goals li[contenteditable="true"]{
+      outline:none;
+    }
 
-    .gallery{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-    .shot{border:2px solid var(--line);border-radius:16px;overflow:hidden;background:#fff}
-    .shot img{display:block;width:100%;height:220px;object-fit:cover}
+    /* شواهد (رفع ومعاينة) */
+    .uploader{
+      border:2px dashed #bfe3d6;
+      border-radius:14px;
+      background:#f7fcfa;
+      padding:14px;
+    }
+    .uploader .row{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .uploader input[type="file"]{
+      display:none;
+    }
+    .btn{
+      background:var(--green-700);
+      color:#fff;
+      border:0;
+      padding:10px 14px;
+      border-radius:10px;
+      cursor:pointer;
+      font-weight:700;
+      box-shadow:0 3px 10px rgba(10,142,104,.18);
+    }
+    .hint{color:var(--muted);font-size:13px}
 
-    .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0 14px}
-    .btn{appearance:none;border:1px solid #cbd5e1;background:#fff;border-radius:12px;padding:10px 14px;font-weight:900;cursor:pointer;box-shadow:var(--shadow)}
-    .btn.primary{background:var(--brand);color:#fff;border-color:transparent}
+    .preview{
+      margin-top:12px;
+      display:grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap:10px;
+    }
+    @media (max-width: 840px){
+      .preview{grid-template-columns: repeat(2, 1fr);}
+    }
+    .thumb{
+      position:relative;
+      aspect-ratio: 4 / 3;
+      background:#fff;
+      border:1px solid var(--border);
+      border-radius:12px;
+      overflow:hidden;
+      box-shadow:var(--shadow);
+    }
+    .thumb img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+    .thumb .del{
+      position:absolute;
+      top:6px; inset-inline-end:6px;
+      background:rgba(0,0,0,.55);
+      color:#fff;
+      border:0; border-radius:8px;
+      padding:4px 8px; cursor:pointer;
+      font-size:12px;
+    }
 
-    .panel{display:none}
-    .panel.active{display:block}
+    /* Footer credits */
+    footer{
+      margin-top:18px;
+      background:#0a8e68;
+      color:#fff;
+      border-radius:14px;
+      padding:12px 16px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      flex-wrap:wrap;
+      gap:10px;
+      box-shadow:var(--shadow);
+    }
+    footer .credit{font-weight:700}
+    footer .designer{opacity:.95}
 
-    footer{margin:20px 0 6px;padding:14px 10px;border-top:2px solid var(--line);text-align:center;color:#334155;font-weight:800;background:#f9fffb;border-radius:14px}
-    footer small{display:block;color:#64748b;font-weight:700;margin-top:6px}
-
-    @media print{body{background:#fff}.wrap{padding:0}.banner,.card,footer,.tabs,.toolbar{box-shadow:none}.tabs,.toolbar,details{display:none!important}}
-
-    /* قيم قابلة للتحرير */
-    [contenteditable="true"]{outline:none}
-    [contenteditable="true"]:focus{box-shadow:0 0 0 3px rgba(16,185,129,.25); border-radius:8px}
+    /* الطباعة */
+    @media print{
+      .btn, .uploader .row label{display:none}
+      body{background:#fff}
+      .page{margin:0}
+    }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <!-- ديباجة المدرسة -->
-    <div class="banner"><img src="26.png" alt="ديباجة المدرسة"></div>
+  <main class="page">
+    <!-- ضع ملف الصورة 26.jpg/26.png في نفس المجلد -->
+    <img class="masthead" src="26.jpg" alt="ديباجة المدرسة" />
 
-    <!-- تبويبات التقارير -->
-    <div class="tabs" role="tablist">
-      <div class="tab active" role="tab" aria-selected="true" data-cat="daily">تقارير يومية</div>
-      <div class="tab" role="tab" aria-selected="false" data-cat="weekly">تقارير أسبوعية</div>
-      <div class="tab" role="tab" aria-selected="false" data-cat="monthly">تقارير شهرية</div>
+    <div class="ribbon">
+      <h1>نموذج تقرير برنامج مدرسي</h1>
     </div>
 
-    <!-- لوحة أدوات عامة -->
-    <div class="toolbar">
-      <button class="btn primary" onclick="window.print()">طباعة</button>
-      <button class="btn" onclick="exportHTML()">تصدير كملف HTML</button>
-      <button class="btn" onclick="resetCurrent()">استعادة القيم الافتراضية</button>
-    </div>
+    <section class="grid">
+      <!-- العمود الأيمن/الأيسر بحسب RTL -->
+      <div class="card">
+        <h3>بيانات البرنامج</h3>
 
-    <!-- ======= لوحة: يومية ======= -->
-    <section class="panel active" data-cat="daily">
-      <div class="prog"><span data-field="program" contenteditable="true">اسم البرنامج</span></div>
+        <div class="field">
+          <div class="label">اسم البرنامج</div>
+          <div class="value" contenteditable="true" data-placeholder="اكتب اسم البرنامج هنا">اسم البرنامج</div>
+        </div>
 
-      <section class="grid" aria-label="بيانات البرنامج اليومية">
-        <div class="card"><h3>التاريخ</h3><div class="pill"><span data-field="date" contenteditable="true">12/12/1446 هـ</span></div></div>
-        <div class="card"><h3>مقر التنفيذ</h3><div class="pill"><span data-field="place" contenteditable="true">الفصول الدراسية</span></div></div>
-        <div class="card"><h3>المنفذة</h3><div class="pill"><span data-field="owner" contenteditable="true">المعلمة/ ………………………</span></div></div>
-        <div class="card goals" style="grid-column:1/-1"><h3>الأهداف</h3><ul data-field="goals" contenteditable="true"><li>الهدف الأول.</li><li>الهدف الثاني.</li><li>الهدف الثالث.</li><li>الهدف الرابع.</li><li>الهدف الخامس.</li></ul></div>
-      </section>
+        <div class="field">
+          <div class="label">التاريخ</div>
+          <div class="value" contenteditable="true" data-placeholder="YYYY/MM/DD">1446/12/12</div>
+        </div>
 
-      <h2 class="section-title">الشواهد</h2>
-      <div class="toolbar">
-        <input id="shots-daily" type="file" accept="image/*" multiple style="display:none" />
-        <button class="btn" onclick="document.getElementById('shots-daily').click()">رفع الشواهد (صور)</button>
+        <div class="field">
+          <div class="label">مقر التنفيذ</div>
+          <div class="value" contenteditable="true">الفصول الدراسية</div>
+        </div>
+
+        <div class="field">
+          <div class="label">المنفِّذة</div>
+          <div class="value" contenteditable="true">المعلمة: …</div>
+        </div>
+
+        <div class="field" style="align-items:stretch">
+          <div style="width:100%">
+            <h3 style="margin-top:6px">الأهداف</h3>
+            <ol class="goals">
+              <li contenteditable="true">الهدف الأول</li>
+              <li contenteditable="true">الهدف الثاني</li>
+              <li contenteditable="true">الهدف الثالث</li>
+              <li contenteditable="true">الهدف الرابع</li>
+              <li contenteditable="true">الهدف الخامس</li>
+            </ol>
+          </div>
+        </div>
       </div>
-      <section class="gallery" id="gallery-daily" aria-label="الشواهد اليومية"></section>
+
+      <div class="card">
+        <h3>الشواهد</h3>
+        <div class="uploader" id="uploader">
+          <div class="row">
+            <label for="files" class="btn">اختيار صور</label>
+            <input id="files" type="file" accept="image/*" multiple />
+            <span class="hint">ارفع عدة صور وسيتم عرضها مباشرة هنا (PNG/JPG/WebP/GIF)</span>
+          </div>
+          <div class="preview" id="preview" aria-live="polite"></div>
+        </div>
+      </div>
     </section>
 
-    <!-- ======= لوحة: أسبوعية ======= -->
-    <section class="panel" data-cat="weekly">
-      <div class="prog"><span data-field="program" contenteditable="true">اسم البرنامج</span></div>
-
-      <section class="grid" aria-label="بيانات البرنامج الأسبوعية">
-        <div class="card"><h3>التاريخ</h3><div class="pill"><span data-field="date" contenteditable="true">—</span></div></div>
-        <div class="card"><h3>مقر التنفيذ</h3><div class="pill"><span data-field="place" contenteditable="true">—</span></div></div>
-        <div class="card"><h3>المنفذة</h3><div class="pill"><span data-field="owner" contenteditable="true">—</span></div></div>
-        <div class="card goals" style="grid-column:1/-1"><h3>الأهداف</h3><ul data-field="goals" contenteditable="true"><li>—</li></ul></div>
-      </section>
-
-      <h2 class="section-title">الشواهد</h2>
-      <div class="toolbar">
-        <input id="shots-weekly" type="file" accept="image/*" multiple style="display:none" />
-        <button class="btn" onclick="document.getElementById('shots-weekly').click()">رفع الشواهد (صور)</button>
-      </div>
-      <section class="gallery" id="gallery-weekly" aria-label="الشواهد الأسبوعية"></section>
-    </section>
-
-    <!-- ======= لوحة: شهرية ======= -->
-    <section class="panel" data-cat="monthly">
-      <div class="prog"><span data-field="program" contenteditable="true">اسم البرنامج</span></div>
-
-      <section class="grid" aria-label="بيانات البرنامج الشهرية">
-        <div class="card"><h3>التاريخ</h3><div class="pill"><span data-field="date" contenteditable="true">—</span></div></div>
-        <div class="card"><h3>مقر التنفيذ</h3><div class="pill"><span data-field="place" contenteditable="true">—</span></div></div>
-        <div class="card"><h3>المنفذة</h3><div class="pill"><span data-field="owner" contenteditable="true">—</span></div></div>
-        <div class="card goals" style="grid-column:1/-1"><h3>الأهداف</h3><ul data-field="goals" contenteditable="true"><li>—</li></ul></div>
-      </section>
-
-      <h2 class="section-title">الشواهد</h2>
-      <div class="toolbar">
-        <input id="shots-monthly" type="file" accept="image/*" multiple style="display:none" />
-        <button class="btn" onclick="document.getElementById('shots-monthly').click()">رفع الشواهد (صور)</button>
-      </div>
-      <section class="gallery" id="gallery-monthly" aria-label="الشواهد الشهرية"></section>
-    </section>
-
-    <!-- التذييل المطلوب -->
     <footer>
-      مديرة المدرسة: أماني آل عبشان
-      <small>تصميم : أ ريم نافل</small>
+      <div class="credit">مديرة المدرسة: أماني آل عبشان</div>
+      <div class="designer">تصميم: أ ريم نافل</div>
     </footer>
-  </div>
+  </main>
 
   <script>
-    // مفاتيح الحفظ لكل تبويب
-    const KEY = (cat)=>`moeReport:${cat}`;
+    // معاينة الصور باستخدام FileReader.readAsDataURL
+    const input = document.getElementById('files');
+    const preview = document.getElementById('preview');
 
-    // التبويب
-    document.querySelectorAll('.tab').forEach(tab=>{
-      tab.addEventListener('click',()=>{
-        const cat = tab.dataset.cat;
-        document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t===tab));
-        document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active', p.dataset.cat===cat));
+    function addThumb(src, name){
+      const box = document.createElement('div');
+      box.className = 'thumb';
+      const img = document.createElement('img');
+      img.src = src;
+      img.alt = name || 'evidence';
+      const del = document.createElement('button');
+      del.type = 'button';
+      del.className = 'del';
+      del.textContent = 'حذف';
+      del.addEventListener('click', () => box.remove());
+      box.appendChild(img);
+      box.appendChild(del);
+      preview.appendChild(box);
+    }
+
+    input.addEventListener('change', (ev) => {
+      const files = Array.from(ev.target.files || []);
+      files.forEach(file => {
+        if (!file.type.startsWith('image/')) return;
+        const reader = new FileReader();
+        reader.onload = (e) => addThumb(e.target.result, file.name);
+        reader.readAsDataURL(file);
       });
+      // يسمح بإعادة اختيار نفس الملفات لاحقًا
+      ev.target.value = '';
     });
 
-    // ربط الحقول القابلة للتحرير والحفظ التلقائي
-    ['daily','weekly','monthly'].forEach(initPanel);
-
-    function initPanel(cat){
-      const panel = document.querySelector(`.panel[data-cat="${cat}"]`);
-      const state = load(cat);
-
-      // ملء القيم عند التحميل
-      panel.querySelectorAll('[data-field]').forEach(el=>{
-        const field = el.dataset.field;
-        if(field==='goals'){
-          if(Array.isArray(state.goals) && state.goals.length){
-            el.innerHTML = state.goals.map(g=>`<li>${escapeHtml(g)}</li>`).join('');
-          }
-        }else{
-          if(state[field]) el.textContent = state[field];
-        }
-
-        // استماع للتغييرات
-        el.addEventListener('input',()=>{
-          const s = load(cat);
-          if(field==='goals'){
-            s.goals = Array.from(el.querySelectorAll('li')).map(li=>li.textContent.trim()).filter(Boolean);
-          }else{
-            s[field] = el.textContent.trim();
-          }
-          save(cat,s);
-        });
-      });
-
-      // عرض الصور المخزنة
-      const gal = document.getElementById(`gallery-${cat}`);
-      renderShots(gal, state.shots||[]);
-
-      // رفع صور جديدة
-      const input = document.getElementById(`shots-${cat}`);
-      input.addEventListener('change', async (e)=>{
-        const files = Array.from(e.target.files).slice(0,4); // 4 صور كحد أقصى
-        const dataUrls = [];
-        for (const f of files){ dataUrls.push(await fileToDataURL(f)); }
-        const s = load(cat); s.shots = dataUrls; save(cat,s); renderShots(gal, dataUrls);
-        input.value = '';
-      });
-    }
-
-    function renderShots(gal, urls){
-      gal.innerHTML = '';
-      urls.forEach(u=>{
-        const fig = document.createElement('figure'); fig.className='shot';
-        const img = document.createElement('img'); img.src=u; fig.appendChild(img); gal.appendChild(fig);
-      });
-    }
-
-    function load(cat){
-      try{ return JSON.parse(localStorage.getItem(KEY(cat)))||{} }catch{ return {} }
-    }
-    function save(cat,data){ localStorage.setItem(KEY(cat), JSON.stringify(data)); }
-
-    function resetCurrent(){
-      const active = document.querySelector('.panel.active').dataset.cat;
-      localStorage.removeItem(KEY(active)); location.reload();
-    }
-
-    function fileToDataURL(file){
-      return new Promise((res, rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsDataURL(file); });
-    }
-
-    // تصدير كـ HTML (يحتفظ بالصور Base64 المخزنة محليًا)
-    function exportHTML(){
-      const css = document.querySelector('style').innerHTML;
-      const html = document.querySelector('.wrap').outerHTML;
-      const doc = `<!doctype html><html lang=\"ar\" dir=\"rtl\"><head><meta charset=\"utf-8\"/><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"/><title>تقرير — نسخة للتشارك</title><style>${css}</style></head><body>${html}</body></html>`;
-      const blob = new Blob([doc], {type:'text/html'});
-      const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='reports.html'; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),3000);
-    }
-
-    function escapeHtml(s){ return s.replace(/[&<>\"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c])); }
+    // عناصر قابلة للتحرير: نص بديل placeholder بسيط
+    document.querySelectorAll('[contenteditable][data-placeholder]').forEach(el=>{
+      const ph = el.getAttribute('data-placeholder');
+      if(!el.textContent.trim()) el.textContent = ph;
+      el.addEventListener('focus', ()=>{ if(el.textContent.trim()===ph) el.textContent=''; });
+      el.addEventListener('blur', ()=>{ if(!el.textContent.trim()) el.textContent=ph; });
+    });
   </script>
 </body>
 </html>
-
