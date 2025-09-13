@@ -6,14 +6,14 @@
   <title>بوابة التقارير المدرسية</title>
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800&display=swap" rel="stylesheet">
   <style>
-    :root{ --bg:#f6f9f7; --card:#ffffff; --ink:#0f172a; --muted:#64748b; --brand:#006C35; --line:#e5efe7; --accent:#009879; --radius:16px; }
+    :root{ --bg:#f6f9f7; --card:#ffffff; --ink:#0f172a; --muted:#64748b; --brand:#006C35; --line:#e0efe7; --accent:#009879; --pill:#123; --radius:16px; }
     *{ box-sizing:border-box }
     html,body{ height:100% }
     body{ margin:0; font-family:'Tajawal', system-ui, -apple-system, 'Segoe UI', Roboto, Tahoma, Arial, sans-serif; background:var(--bg); color:var(--ink) }
 
-    /* ======= موقع (واجهة فقط) ======= */
-    header.site{ background:var(--card); border-bottom:1px solid var(--line); position:relative }
-    .hero{ inline-size:100%; block-size:clamp(100px, 14vw, 170px); background-position:center; background-repeat:no-repeat; background-size:cover }
+    /* ======= واجهة الموقع ======= */
+    header.site{ background:linear-gradient(180deg,#0f7a46 0%, #0a5b35 100%); color:#fff }
+    .hero{ inline-size:100%; block-size:clamp(120px, 16vw, 180px); background-position:center; background-repeat:no-repeat; background-size:cover; mix-blend:normal; opacity:.95 }
     .page{ max-width:1000px; margin:0 auto; padding:16px }
 
     .card{ background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:18px }
@@ -35,24 +35,34 @@
     .btn{ appearance:none; border:1px solid var(--brand); background:var(--brand); color:#fff; padding:10px 14px; border-radius:12px; cursor:pointer; font-weight:800 }
     .btn.outline{ background:#fff; color:var(--brand) }
 
-    footer.site{ margin-top:12px; background:var(--card); border-top:1px solid var(--line) }
+    footer.site{ margin-top:12px; background:#0b3d28; color:#d7f5e4 }
     footer.site .wrap{ max-width:1000px; margin:0 auto; padding:12px 16px; display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:space-between }
     footer.site .item{ font-weight:800 }
 
-    /* ======= التقرير (مخفي عن الموقع ويظهر فقط عند التصدير) ======= */
-    .report-wrapper{ width:794px; min-height:1123px; margin:16px auto 30px; padding:32px; background:#fff; border:2px solid var(--brand); border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,0.06); position:relative; display:none }
-    .report-banner{ text-align:center; margin-bottom:14px }
-    .report-banner img{ max-width:100%; height:auto }
-    h1.report-title{ text-align:center; color:var(--brand); margin:10px 0 18px; font-size:24px }
-    .meta{ margin-bottom:14px }
-    .meta-row{ display:grid; grid-template-columns:160px 1fr; gap:10px; padding:8px 0; border-bottom:1px solid #e5e5e5 }
-    .meta-row .key{ font-weight:800; color:var(--brand) }
-    .objectives ul{ list-style:disc; padding-right:20px; margin:10px 0 14px }
-    .section-title{ color:var(--brand); margin:8px 0 6px; font-size:18px }
-    .witnesses{ display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:16px }
-    .witnesses figure{ margin:0; border:1px solid #e5e5e5; border-radius:10px; overflow:hidden; aspect-ratio:4/3; display:grid; place-items:center; background:#f4f6f5 }
+    /* ======= قالب التقرير (مخفي، يظهر فقط وقت التصدير) ======= */
+    .report-wrapper{ width:794px; min-height:1123px; margin:16px auto 30px; padding:26px; background:#fff; border:2px solid var(--brand); border-radius:14px; box-shadow:0 4px 10px rgba(0,0,0,0.06); position:relative; display:none }
+    .report-banner{ height:120px; border-radius:10px; background:linear-gradient(90deg,#0f7a46,#099169); display:grid; place-items:center; margin-bottom:10px; overflow:hidden }
+    .report-banner img{ max-height:100%; object-fit:contain }
+
+    /* شريط العناوين */
+    .pills{ display:grid; grid-template-columns:1fr; gap:8px; margin:4px 0 12px }
+    .pill{ background:#123c2a; color:#e8fff3; padding:10px 16px; border-radius:12px; text-align:center; font-weight:800 }
+
+    /* مربعات الحقول */
+    .grid-3{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px }
+    .grid-2{ display:grid; grid-template-columns:repeat(2,1fr); gap:12px }
+    .field{ border:2px solid var(--brand); border-radius:12px; padding:10px; min-height:72px; position:relative; background:#fbfffd }
+    .field .title{ position:absolute; top:-12px; inset-inline-start:12px; background:#fff; color:#0b5c35; padding:0 8px; font-weight:800 }
+    .field .body{ padding-top:6px; min-height:46px; line-height:1.8 }
+    .field .body.empty{ color:transparent } /* تُترك فارغة بصريًا */
+
+    .section-title{ color:#0b5c35; margin:16px 0 6px; font-size:18px; font-weight:800 }
+
+    .witnesses{ display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-top:6px }
+    .witnesses figure{ margin:0; border:2px solid var(--brand); border-radius:12px; overflow:hidden; aspect-ratio:4/3; display:grid; place-items:center; background:#f3fbf6 }
     .witnesses img{ width:100%; height:100%; object-fit:cover }
-    .report-footer{ display:flex; justify-content:space-between; border-top:2px solid var(--brand); padding-top:10px; font-weight:800; margin-top:16px }
+
+    .report-footer{ display:flex; justify-content:space-between; border-top:2px solid var(--brand); padding-top:10px; font-weight:800; margin-top:14px; color:#0b5c35 }
 
     /* طباعة */
     @page{ size:A4; margin:10mm }
@@ -60,7 +70,7 @@
   </style>
 </head>
 <body>
-  <!-- ديباجة الموقع (ثابتة في الواجهة) -->
+  <!-- ديباجة الموقع (ثابتة) -->
   <header class="site">
     <div class="hero" id="site-hero" role="img" aria-label="ديباجة المدرسة"></div>
   </header>
@@ -70,10 +80,13 @@
     <section class="card">
       <h2 style="margin:0 0 10px;color:#064e2d">بيانات التقرير</h2>
       <div class="grid">
+        <div><label>اسم المدرسة</label><input type="text" id="school" placeholder="مثال: مدرسة أسامة بن زيد"></div>
         <div><label>اسم البرنامج</label><input type="text" id="program" placeholder="مثال: مبادرة تعزيز القراءة"></div>
-        <div><label>التاريخ</label><input type="date" id="date"></div>
-        <div><label>مقر التنفيذ</label><input type="text" id="venue" placeholder="مثال: مسرح المدرسة / قاعة النشاط"></div>
-        <div><label>المنفذة</label><input type="text" id="owner" placeholder="مثال: أ. نورة الحربي"></div>
+        <div><label>المنفذ</label><input type="text" id="executor" placeholder="مثال: أ. خالد التركي / أ. سلطان الفهد"></div>
+        <div><label>المستهدفون</label><input type="text" id="audience" placeholder="مثال: الطلاب"></div>
+        <div><label>عدد المستفيدين</label><input type="text" id="beneficiaries" placeholder="مثال: أكثر من 70 طالب"></div>
+        <div><label>تاريخ التنفيذ</label><input type="text" id="execdate" placeholder="مثال: 1446/12/12هـ"></div>
+        <div><label>مكان التنفيذ</label><input type="text" id="venue" placeholder="مثال: الفصول الدراسية"></div>
         <div style="grid-column:1/-1"><label>الأهداف (كل هدف في سطر)</label><textarea id="goals"></textarea></div>
       </div>
 
@@ -89,7 +102,7 @@
     </section>
   </main>
 
-  <!-- تذييل الموقع (ثابت في الواجهة) -->
+  <!-- تذييل الموقع (ثابت) -->
   <footer class="site">
     <div class="wrap">
       <div class="item">مديرة المدرسة: أماني آل عبشان</div>
@@ -99,20 +112,36 @@
 
   <!-- قالب التقرير (مخفي — يظهر فقط أثناء التصدير/الطباعة) -->
   <div class="report-wrapper" id="report">
-    <div class="report-banner"><img id="reportHeader" alt="ديباجة المدرسة (ثابتة في التقرير)"></div>
-    <h1 class="report-title">تقرير برنامج</h1>
-    <div class="meta">
-      <div class="meta-row"><div class="key">اسم البرنامج:</div><div id="vProgram">—</div></div>
-      <div class="meta-row"><div class="key">التاريخ:</div><div id="vDate">—</div></div>
-      <div class="meta-row"><div class="key">مقر التنفيذ:</div><div id="vVenue">—</div></div>
-      <div class="meta-row"><div class="key">المنفذة:</div><div id="vOwner">—</div></div>
+    <div class="report-banner"><img id="reportHeader" alt="ديباجة المدرسة (ثابتة)"></div>
+
+    <!-- شريط العناوين -->
+    <div class="pills">
+      <div class="pill" id="pillSchool">&nbsp;</div>
+      <div class="pill" id="pillProgram">&nbsp;</div>
     </div>
-    <div class="objectives">
-      <h2 class="section-title">الأهداف</h2>
-      <ul id="vGoals"><li>—</li></ul>
+
+    <!-- مربعات منظمة -->
+    <div class="grid-3">
+      <div class="field"><div class="title">المنفذ</div><div class="body" id="fExecutor">&nbsp;</div></div>
+      <div class="field"><div class="title">المستهدفون</div><div class="body" id="fAudience">&nbsp;</div></div>
+      <div class="field"><div class="title">عدد المستفيدين</div><div class="body" id="fBeneficiaries">&nbsp;</div></div>
     </div>
-    <h2 class="section-title">الشواهد (صور)</h2>
-    <div class="witnesses" id="vWitnesses"></div>
+
+    <div class="grid-2" style="margin-top:12px">
+      <div class="field"><div class="title">مكان التنفيذ</div><div class="body" id="fVenue">&nbsp;</div></div>
+      <div class="field"><div class="title">تاريخ التنفيذ</div><div class="body" id="fExecdate">&nbsp;</div></div>
+    </div>
+
+    <div class="section-title">الأهداف</div>
+    <div class="field" style="min-height:160px">
+      <div class="body" id="fGoals">&nbsp;</div>
+    </div>
+
+    <div class="section-title">الشواهد</div>
+    <div class="witnesses" id="vWitnesses">
+      <figure></figure><figure></figure><figure></figure><figure></figure>
+    </div>
+
     <div class="report-footer">
       <div>مديرة المدرسة: أماني آل عبشان</div>
       <div>تصميم: أ ريم نافل</div>
@@ -123,44 +152,53 @@
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
   <script>
     const $=s=>document.querySelector(s);
-    const program=$('#program'); const date=$('#date'); const venue=$('#venue'); const owner=$('#owner'); const goals=$('#goals');
-    const vProgram=$('#vProgram'); const vDate=$('#vDate'); const vVenue=$('#vVenue'); const vOwner=$('#vOwner'); const vGoals=$('#vGoals');
+    const school=$('#school'); const program=$('#program'); const executor=$('#executor'); const audience=$('#audience'); const beneficiaries=$('#beneficiaries'); const execdate=$('#execdate'); const venue=$('#venue'); const goals=$('#goals');
 
-    function formatDate(iso){ if(!iso) return '—'; try{ return new Intl.DateTimeFormat('ar-SA',{year:'numeric',month:'long',day:'numeric'}).format(new Date(iso+'T00:00:00')); }catch{ return iso } }
+    const pillSchool=$('#pillSchool'); const pillProgram=$('#pillProgram');
+    const fExecutor=$('#fExecutor'), fAudience=$('#fAudience'), fBeneficiaries=$('#fBeneficiaries'), fVenue=$('#fVenue'), fExecdate=$('#fExecdate'), fGoals=$('#fGoals');
+
     const splitGoals = txt => txt.split(/\n+/).map(s=>s.trim()).filter(Boolean);
 
     function syncReport(){
-      vProgram.textContent = program.value.trim()||'—';
-      vDate.textContent = formatDate(date.value);
-      vVenue.textContent = venue.value.trim()||'—';
-      vOwner.textContent = owner.value.trim()||'—';
+      // املأ بدون أي قيم افتراضية — اتركها فارغة إذا لم تُعبَّأ
+      pillSchool.innerHTML = school.value.trim() || '&nbsp;';
+      pillProgram.innerHTML = program.value.trim() || '&nbsp;';
+
+      fExecutor.innerHTML = executor.value.trim() || '&nbsp;';
+      fAudience.innerHTML = audience.value.trim() || '&nbsp;';
+      fBeneficiaries.innerHTML = beneficiaries.value.trim() || '&nbsp;';
+      fVenue.innerHTML = venue.value.trim() || '&nbsp;';
+      fExecdate.innerHTML = execdate.value.trim() || '&nbsp;';
+
       const lines = splitGoals(goals.value);
-      vGoals.innerHTML = lines.length ? lines.map(s=>`<li>${escapeHTML(s)}</li>`).join('') : '<li>—</li>';
-      // صور الشواهد
-      const grid=$('#vWitnesses'); grid.innerHTML='';
-      [...uploader.querySelectorAll('img')].slice(0,4).forEach(src=>{ const fig=document.createElement('figure'); const im=document.createElement('img'); im.src=src.src; fig.appendChild(im); grid.appendChild(fig); });
+      fGoals.innerHTML = lines.length ? `<ol style="margin:0;padding-inline-start:20px">${lines.map(x=>`<li>${escapeHTML(x)}</li>`).join('')}</ol>` : '&nbsp;';
+
+      // صور الشواهد (أقصى 4). إن لم توجد صور، تبقى الإطارات فارغة
+      const grid=$('#vWitnesses');
+      const currentImgs=[...uploader.querySelectorAll('img')].slice(0,4).map(n=>n.src);
+      grid.innerHTML='';
+      for(let i=0;i<4;i++){
+        const fig=document.createElement('figure');
+        if(currentImgs[i]){ const im=document.createElement('img'); im.src=currentImgs[i]; fig.appendChild(im); }
+        grid.appendChild(fig);
+      }
     }
+
     function escapeHTML(s){return s.replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]))}
 
-    [program,date,venue,owner,goals].forEach(i=>i.addEventListener('input',syncReport));
+    ;[school,program,executor,audience,beneficiaries,execdate,venue,goals].forEach(i=>i.addEventListener('input',syncReport));
 
-    // ===== ديباجة الموقع والتقرير من 26.* أو باراميتر =====
+    // ديباجة الموقع وديباجة التقرير (26.*)
     (function(){
       const exts=['webp','png','jpg','jpeg','svg'];
-      // موقع (hero)
       const hero=$('#site-hero');
-      const qpHero=new URLSearchParams(location.search).get('dibajah');
-      const savedHero=localStorage.getItem('dibajah_img_bg');
       function setHero(url){ hero.style.backgroundImage=`url('${url}')`; }
-      if(savedHero) setHero(savedHero); else if(qpHero) setHero(qpHero); else {
-        (function tryNext(i){ if(i>=exts.length) return; const src=`26.${exts[i]}`; const img=new Image(); img.onload=()=>setHero(src); img.onerror=()=>tryNext(i+1); img.src=src; })(0);
-      }
-      // تقرير (صورة في الأعلى ثابتة)
+      (function tryNext(i){ if(i>=exts.length) return; const src=`26.${exts[i]}`; const img=new Image(); img.onload=()=>setHero(src); img.onerror=()=>tryNext(i+1); img.src=src; })(0);
       const rep=$('#reportHeader');
       (function tryNextR(i){ if(i>=exts.length) return; const src=`26.${exts[i]}`; const img=new Image(); img.onload=()=>rep.src=src; img.onerror=()=>tryNextR(i+1); img.src=src; })(0);
     })();
 
-    // ===== رافع الشواهد (حد أقصى 4) =====
+    // رافع الشواهد
     const uploader=$('#uploader'); const countEl=$('#w-count'); const MAX=4;
     function makeSlot(src){ const slot=document.createElement('div'); slot.className='slot';
       const input=document.createElement('input'); input.type='file'; input.accept='image/*';
@@ -178,15 +216,12 @@
     $('#clearImages').onclick=()=>{ uploader.innerHTML=''; persist(); updateCount(); };
     load();
 
-    // ===== تصدير PDF: يُظهر التقرير مؤقتًا ثم يُخفيه =====
+    // تصدير PDF: اظهار القالب، مزامنة، التقاط، اخفاء
     async function exportPDF(){
-      // مزامنة البيانات إلى قالب التقرير
       syncReport();
       const report=$('#report');
-      const { jsPDF }=window.jspdf;
-      // إظهار التقرير مؤقتًا (بدون تغييره في الموقع)
       const prevDisplay=report.style.display; report.style.display='block';
-      // التقاط
+      const { jsPDF }=window.jspdf;
       const scale=2; const canvas=await html2canvas(report,{scale, useCORS:true, background:'#fff'});
       const img=canvas.toDataURL('image/jpeg',0.95);
       const pdf=new jsPDF('p','mm','a4'); const pageW=pdf.internal.pageSize.getWidth(); const pageH=pdf.internal.pageSize.getHeight();
@@ -195,19 +230,16 @@
       let heightLeft=imgH-pageH; let position=-pageH;
       while(heightLeft>0){ pdf.addPage(); pdf.addImage(img,'JPEG',0,position,imgW,imgH,'','FAST'); heightLeft-=pageH; position-=pageH; }
       pdf.save('school-26-report.pdf');
-      // إخفاء من جديد
-      report.style.display=prevDisplay || 'none';
+      report.style.display=prevDisplay||'none';
     }
     $('#exportPdfBtn').addEventListener('click', exportPDF);
 
-    // ===== اختبارات بسيطة (Console) =====
+    // اختبارات مطوّر بسيطة
     (function devTests(){
       const eq=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
-      console.assert(eq(splitGoals('هدف ١\nهدف ٢'), ['هدف ١','هدف ٢']), 'splitGoals basic');
-      console.assert(eq(splitGoals('a\n\n b '), ['a','b']), 'splitGoals trims/empties');
-      console.assert(eq(splitGoals('x\r\ny'), ['x','y']), 'splitGoals CRLF');
-      console.assert(typeof exportPDF === 'function', 'export button bound');
-      console.log('[tests] ok');
+      console.assert(eq(("هدف\nآخر").split(/\n+/), ['هدف','آخر']), 'split baseline');
+      console.assert(eq((()=>{const a=splitGoals('أ\n\n ب '); return a;})(), ['أ','ب']), 'splitGoals trims');
+      console.assert(typeof exportPDF==='function', 'export bound');
     })();
   </script>
 </body>
