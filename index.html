@@ -5,161 +5,336 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>نظام التقارير | يومية • أسبوعية • شهرية</title>
 
-<!-- خط عربي متوازن -->
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700;800&display=swap" rel="stylesheet">
 
-<!-- html2pdf -->
 <script defer src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js"></script>
 
 <style>
-  :root{
+  :root {
     --brand:#006C35; --brand-2:#0A8A4F; --accent:#00A36C; --brand-weak:#E8F4EC;
     --ink:#101315; --muted:#69707D; --bg:#F6F8F7; --card:#FFFFFF; --border:#E3E7EA; --danger:#DA3C3C;
     --radius:14px; --line:1.85; --page-w:920px;
     --a4-w:210mm; --a4-h:297mm; --paper-pad:12mm;
   }
-
-  html,body{
+  html, body {
     margin:0; background:var(--bg); color:var(--ink);
     font-family:"Cairo",system-ui,-apple-system,"Segoe UI","Noto Kufi Arabic",Arial,sans-serif;
     line-height:var(--line);
   }
 
-  .site-letterhead{
-    position:sticky; top:0; z-index:1000; background:#fff;
-    border-bottom:1px solid var(--border); box-shadow:0 8px 24px rgba(0,0,0,.05);
+  /* -- ديباجة ثابتة -- */
+  .site-letterhead {
+    position: sticky; top: 0; z-index: 1000; background: #fff;
+    border-bottom: 1px solid var(--border);
+    box-shadow: 0 8px 24px rgba(0,0,0,.05);
   }
-  .site-letterhead .inner{ max-width:var(--page-w); margin:0 auto; padding:8px 16px; }
-  .site-letterhead img{ display:block; margin:0 auto; max-width:100%; height:auto; max-height:140px; }
-  .lh-placeholder{ text-align:center; color:var(--muted); padding:16px 0; font-weight:700; }
-
-  .container{ max-width:var(--page-w); margin:22px auto 44px; padding:0 16px; }
-  .card{
-    background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
-    box-shadow:0 14px 40px rgba(0,0,0,.05); overflow:hidden;
+  .site-letterhead .inner {
+    max-width: var(--page-w);
+    margin: 0 auto;
+    padding: 8px 16px;
   }
-
-  .header{
-    padding:16px 18px; display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:space-between;
-    background:linear-gradient(180deg, var(--brand-weak), #fff); border-bottom:1px solid var(--border);
+  .site-letterhead img {
+    display: block; margin: 0 auto; max-width: 100%; height: auto; max-height: 140px;
   }
-  .brand{ display:flex; align-items:center; gap:10px; font-weight:800; color:var(--brand-2); }
-  .brand .dot{ width:12px; height:12px; border-radius:50%; background:var(--brand); box-shadow:0 0 0 6px rgba(0,108,53,.12); }
-  .tabs{ display:flex; gap:8px; flex-wrap:wrap; }
-  .tab{
-    border:1px solid var(--border); background:#fff; color:#1f242b; padding:8px 14px; border-radius:10px; cursor:pointer; font-weight:800;
-    transition:transform .2s ease, background .2s ease, color .2s ease, box-shadow .2s ease;
-  }
-  .tab:hover{ transform:translateY(-1px); box-shadow:0 6px 16px rgba(0,0,0,.08); }
-  .tab.active{ background:var(--brand); border-color:var(--brand); color:#fff; box-shadow:0 6px 16px rgba(0,108,53,.25); }
-
-  .form{ padding:20px; display:grid; gap:16px; }
-  .row{ display:grid; gap:12px; grid-template-columns:1fr 1fr; }
-  @media (max-width:680px){ .row{ grid-template-columns:1fr; } }
-  label{ display:block; font-weight:700; font-size:15px; margin-bottom:6px; color:#273036; }
-  input[type="text"], input[type="date"], textarea{
-    width:100%; padding:12px 14px; border:1px solid var(--border); border-radius:12px; background:#fff; color:var(--ink); font-size:15px;
-    outline:none; transition:border .2s, box-shadow .2s, transform .08s ease;
-  }
-  input:focus, textarea:focus{ border-color:var(--brand); box-shadow:0 0 0 3px var(--brand-weak); }
-  input:active, textarea:active{ transform:scale(0.998); }
-  textarea{ min-height:140px; resize:vertical; }
-  ::placeholder{ color:transparent; }
-
-  .upload{ border:1.5px dashed var(--border); border-radius:12px; padding:16px; background:#FBFEFC; text-align:center; transition:background .2s, border-color .2s; }
-  .upload input{ display:none; }
-  .thumbs{ display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
-  .thumb{ width:84px; height:64px; border-radius:10px; overflow:hidden; border:1px solid var(--border); background:#f2f6f4; }
-  .thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
-
-  .btn{
-    appearance:none; border:0; border-radius:12px; padding:12px 16px; font-weight:800; cursor:pointer; font-size:14px;
-    transition:transform .12s ease, filter .2s ease, box-shadow .2s ease;
-  }
-  .btn:hover{ filter:brightness(1.02); transform:translateY(-1px); }
-  .btn:active{ transform:translateY(0); }
-  .btn-primary{ background:linear-gradient(135deg, var(--brand) 0%, var(--brand-2) 100%); color:#fff; box-shadow:0 8px 22px rgba(0,108,53,.25); }
-  .btn-secondary{ background:var(--accent); color:#fff; box-shadow:0 8px 18px rgba(0,163,108,.22); }
-  .btn-ghost{ background:#fff; color:#1e232e; border:1px solid var(--border); }
-  .btn-danger{ background:var(--danger); color:#fff; }
-  .actions{ display:flex; gap:10px; flex-wrap:wrap; margin-top:6px; }
-  .note{ color:var(--muted); font-size:12.5px; }
-
-  /* نافذة المعاينة + ورقة A4 */
-  .modal{
-    position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(6,16,11,.55);
-    z-index:9999; padding:20px;
-  }
-  .modal.show{ display:flex; }
-  .sheet{
-    width:100%; max-width:920px; max-height:90vh; overflow:auto; background:#fff; border-radius:16px; border:1px solid var(--border);
-    box-shadow:0 22px 70px rgba(0,0,0,.35); transform-origin:center; opacity:0; transform:translateY(14px) scale(.98);
-    transition:opacity .25s ease, transform .25s ease;
-  }
-  .modal.show .sheet{ opacity:1; transform:translateY(0) scale(1); }
-  .sheet-head{
-    padding:10px 14px; border-bottom:1px solid var(--border); display:flex; gap:8px; justify-content:space-between; align-items:center;
-    position:sticky; top:0; background:#fff; z-index:2;
-  }
-  .sheet-actions{ display:flex; gap:8px; flex-wrap:wrap; }
-  .sheet-body{ padding:18px 20px 24px; }
-
-  /* ورقة A4 دقيقة */
-  .paper{
-    width:var(--a4-w);
-    min-height:var(--a4-h);
-    padding:var(--paper-pad);
-    box-sizing:border-box;
-    margin:0 auto;
-    background:#fff; color:#000;
-    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  .lh-placeholder {
+    text-align:center; color: var(--muted); padding: 16px 0; font-weight: 700;
   }
 
-  .report{ font-size:14.5px; }
-  .letterhead{ margin-bottom:10mm; text-align:center; }
-  .letterhead img{ max-width:100%; height:auto; display:block; margin:0 auto; max-height:28mm; }
-  .title{ text-align:center; margin:0 0 6mm; }
-  .title h1{ font-size:22px; margin:0; font-weight:800; color:#0b3f25; letter-spacing:.1px; }
-
-  .meta{ display:grid; gap:6mm; grid-template-columns:1fr 1fr; margin:0 0 6mm; }
-  .meta .field{ border:1px solid var(--border); border-radius:10px; padding:4mm; }
-  .meta .label{ color:#6c7280; font-size:12.5px; margin-bottom:1.5mm; }
-  .meta .value{ font-weight:800; word-break:break-word; }
-
-  .block{ margin:0 0 6mm; }
-  .block h3{ margin:0 0 3mm; font-size:18px; border-right:4px solid var(--brand); padding-right:3mm; color:#0b3f25; }
-
-  .objectives ul{ margin:0; padding:0 6mm; }
-  .objectives li{ margin:2mm 0; }
-
-  .gallery{ display:grid; gap:4mm; grid-template-columns:1fr 1fr; }
-  .gallery figure{
-    margin:0; border:1px solid var(--border); border-radius:10px; overflow:hidden;
-    aspect-ratio:4/3; background:#fafafa; display:flex; align-items:center; justify-content:center;
+  /* -- حاوية المحتوى -- */
+  .container {
+    max-width: var(--page-w);
+    margin: 22px auto 44px;
+    padding: 0 16px;
   }
-  .gallery img{ width:100%; height:100%; object-fit:cover; display:block; }
-
-  .footer{
-    margin-top:8mm; border-top:1px solid var(--border); padding-top:4mm;
-    display:flex; justify-content:space-between; gap:8px; font-weight:800;
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: 0 14px 40px rgba(0,0,0,.05);
+    overflow: hidden;
   }
 
-  /* منع انكسارات سيئة */
-  .meta, .block, .gallery, .footer { break-inside: avoid; page-break-inside: avoid;  }
+  /* -- رأس وتبويبات -- */
+  .header {
+    padding: 16px 18px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(180deg, var(--brand-weak), #fff);
+    border-bottom: 1px solid var(--border);
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 800;
+    color: var(--brand-2);
+  }
+  .brand .dot {
+    width: 12px; height: 12px; border-radius: 50%;
+    background: var(--brand);
+    box-shadow: 0 0 0 6px rgba(0,108,53,.12);
+  }
+  .tabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .tab {
+    border: 1px solid var(--border);
+    background: #fff;
+    color: #1f242b;
+    padding: 8px 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 800;
+    transition: transform .2s ease, background .2s ease, color .2s ease, box-shadow .2s ease;
+  }
+  .tab:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(0,0,0,.08);
+  }
+  .tab.active {
+    background: var(--brand);
+    border-color: var(--brand);
+    color: #fff;
+    box-shadow: 0 6px 16px rgba(0,108,53,.25);
+  }
 
-  /* طباعة */
-  @media print{
-    body > *:not(.print-area){ display:none !important; }
-    .modal{ display:block !important; background:transparent !important; padding:0 !important; }
-    .sheet{ box-shadow:none; border:none; max-width:unset; max-height:unset; }
-    .sheet-head{ display:none; }
-    .sheet-body{ padding:0; }
-    .print-area{ display:block; }
+  /* -- نموذج الادخال -- */
+  .form {
+    padding: 20px;
+    display: grid;
+    gap: 16px;
+  }
+  .row {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: 1fr 1fr;
+  }
+  @media (max-width: 680px) {
+    .row {
+      grid-template-columns: 1fr;
+    }
+  }
+  label {
+    font-weight: 700; font-size: 15px; margin-bottom: 6px; color: #273036;
+  }
+  input[type="text"], input[type="date"], textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: #fff;
+    color: var(--ink);
+    font-size: 15px;
+    outline: none;
+    transition: border .2s, box-shadow .2s, transform .08s ease;
+  }
+  input:focus, textarea:focus {
+    border-color: var(--brand);
+    box-shadow: 0 0 0 3px var(--brand-weak);
+  }
+  textarea {
+    min-height: 140px;
+    resize: vertical;
+  }
+  ::placeholder {
+    color: transparent;
+  }
 
-    html[dir="rtl"] *, .paper { direction: rtl; text-align: right; }
+  .upload {
+    border: 1.5px dashed var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    background: #FBFEFC;
+    text-align: center;
+    transition: background .2s, border-color .2s;
+  }
+  .upload input {
+    display: none;
+  }
+  .thumbs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+  .thumb {
+    width: 84px;
+    height: 64px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: #f2f6f4;
+  }
+  .thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
 
-    .gallery{ display:flex !important; flex-wrap:wrap !important; gap:4mm !important; }
-    .gallery figure{ width:calc(50% - 2mm); break-inside: avoid; page-break-inside: avoid; }
+  /* -- أزرار -- */
+  .btn {
+    appearance: none;
+    border: 0;
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-weight: 800;
+    cursor: pointer;
+    font-size: 14px;
+    transition: transform .12s ease, filter .2s ease, box-shadow .2s ease;
+  }
+  .btn:hover {
+    filter: brightness(1.02);
+    transform: translateY(-1px);
+  }
+  .btn:active {
+    transform: translateY(0);
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--brand) 0%, var(--brand-2) 100%);
+    color: #fff;
+    box-shadow: 0 8px 22px rgba(0,108,53,.25);
+  }
+  .btn-secondary {
+    background: var(--accent);
+    color: #fff;
+    box-shadow: 0 8px 18px rgba(0,163,108,.22);
+  }
+  .btn-ghost {
+    background: #fff;
+    color: #1e232e;
+    border: 1px solid var(--border);
+  }
+  .btn-danger {
+    background: var(--danger);
+    color: #fff;
+  }
+  .actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 6px;
+  }
+  .note {
+    color: var(--muted);
+    font-size: 12.5px;
+  }
+
+  /* -- نافذة معاينة وورقة A4 -- */
+  .modal {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(6,16,11,.55);
+    z-index: 9999;
+    padding: 20px;
+  }
+  .modal.show {
+    display: flex;
+  }
+  .sheet {
+    width: 100%;
+    max-width: 920px;
+    max-height: 90vh;
+    overflow: auto;
+    background: #fff;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    box-shadow: 0 22px 70px rgba(0,0,0,.35);
+    transform-origin: center;
+    opacity: 0;
+    transform: translateY(14px) scale(.98);
+    transition: opacity .25s ease, transform .25s ease;
+  }
+  .modal.show .sheet {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  .sheet-head {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 8px;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    background: #fff;
+    z-index: 2;
+  }
+  .sheet-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .sheet-body {
+    padding: 18px 20px 24px;
+  }
+
+  .paper {
+    width: var(--a4-w);
+    min-height: var(--a4-h);
+    padding: var(--paper-pad);
+    box-sizing: border-box;
+    margin: 0 auto;
+    background: #fff;
+    color: #000;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* منع انكسارات خاطئة */
+  .meta, .block, .gallery, .footer {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  @media print {
+    body > *:not(.print-area) {
+      display: none !important;
+    }
+    .modal {
+      display: block !important;
+      background: transparent !important;
+      padding: 0 !important;
+    }
+    .sheet {
+      box-shadow: none;
+      border: none;
+      max-width: unset;
+      max-height: unset;
+    }
+    .sheet-head {
+      display: none;
+    }
+    .sheet-body {
+      padding: 0;
+    }
+    .print-area {
+      display: block;
+    }
+    html[dir="rtl"] *, .paper {
+      direction: rtl;
+      text-align: right;
+    }
+    .gallery {
+      display: flex !important;
+      flex-wrap: wrap !important;
+      gap: 4mm !important;
+    }
+    .gallery figure {
+      width: calc(50% - 2mm);
+      break-inside: avoid;
+      page-break-inside: avoid;
+      margin: 0;
+    }
   }
 
   @page {
@@ -167,12 +342,16 @@
     margin: 0;
   }
 
-  @media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
 </style>
 </head>
 <body>
 
-<!-- ديباجة -->
 <div class="site-letterhead">
   <div class="inner" id="siteLetterhead">
     <div class="lh-placeholder">سيتم تحميل الديباجة تلقائيًا (ملف باسم <b>26</b> في جذر المستودع).</div>
@@ -195,12 +374,10 @@
         <label for="programName">اسم البرنامج</label>
         <input id="programName" type="text" />
       </div>
-
       <div>
         <label for="audience">الفئة المستهدفة</label>
         <input id="audience" type="text" />
       </div>
-
       <div class="row" id="row-date-one">
         <div>
           <label for="dateOne">التاريخ</label>
@@ -211,7 +388,6 @@
           <input id="place" type="text" />
         </div>
       </div>
-
       <div class="row" id="row-date-range" style="display:none">
         <div>
           <label for="dateFrom">من تاريخ</label>
@@ -222,17 +398,14 @@
           <input id="dateTo" type="date" />
         </div>
       </div>
-
       <div>
         <label for="executor">المنفذة</label>
         <input id="executor" type="text" />
       </div>
-
       <div>
         <label for="objectives">الأهداف (سطر لكل هدف)</label>
         <textarea id="objectives"></textarea>
       </div>
-
       <div>
         <label>الشواهد (حتى 4 صور)</label>
         <div class="upload" id="dropZone">
@@ -242,7 +415,6 @@
           <div class="thumbs" id="thumbs"></div>
         </div>
       </div>
-
       <div class="actions">
         <button class="btn btn-secondary" id="previewBtn">👁️‍🗨️ معاينة / طباعة</button>
         <button class="btn btn-primary" id="downloadBtn">⬇️ تنزيل PDF</button>
@@ -254,7 +426,6 @@
   </div>
 </div>
 
-<!-- نافذة المعاينة -->
 <div class="modal" id="modal" aria-hidden="true">
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="dlgTitle">
     <div class="sheet-head">
@@ -272,60 +443,99 @@
 </div>
 
 <script>
+  // ثابت اسم ملف الديباجة في جذر المشروع
   const SCHOOL_HEADER_BASENAME = "26";
+
+  // اختصار QuerySelector
   const $ = (sel) => document.querySelector(sel);
 
+  // عناصر واجهة المستخدم
   const tabsEl = $("#tabs"), formEl = $("#form"), thumbsEl = $("#thumbs"), dropZone = $("#dropZone");
-  const filesInput = $("#evidenceFiles"), uploadMsg = $("#uploadMsg"), modal = $("#modal"), printArea = $("#printArea");
+  const filesInput = $("#evidenceFiles"), uploadMsg = $("#uploadMsg");
+  const modal = $("#modal"), printArea = $("#printArea");
   const siteLetterhead = $("#siteLetterhead");
 
-  const programName=$("#programName"), audience=$("#audience"), dateOne=$("#dateOne");
-  const dateFrom=$("#dateFrom"), dateTo=$("#dateTo"), place=$("#place"), executor=$("#executor"), objectives=$("#objectives");
-  const rowDateOne=$("#row-date-one"), rowDateRange=$("#row-date-range");
+  // الحقول
+  const programName = $("#programName"),
+    audience = $("#audience"),
+    dateOne = $("#dateOne"),
+    dateFrom = $("#dateFrom"),
+    dateTo = $("#dateTo"),
+    place = $("#place"),
+    executor = $("#executor"),
+    objectives = $("#objectives");
 
-  const previewBtn=$("#previewBtn"), downloadBtn=$("#downloadBtn"), dlFromPrev=$("#dlFromPreviewBtn");
-  const printBtn=$("#printBtn"), closeModalBtn=$("#closeModalBtn"), clearBtn=$("#clearBtn"), saveBtn=$("#saveBtn");
+  const rowDateOne = $("#row-date-one"),
+    rowDateRange = $("#row-date-range");
 
-  const blank = () => ({ programName:"", audience:"", dateOne:"", dateFrom:"", dateTo:"", place:"", executor:"", objectives:"", images:[] });
-  const state = { currentTab:"daily", daily:blank(), weekly:blank(), monthly:blank() };
+  // أزرار
+  const previewBtn = $("#previewBtn"),
+    downloadBtn = $("#downloadBtn"),
+    dlFromPrev = $("#dlFromPreviewBtn"),
+    printBtn = $("#printBtn"),
+    closeModalBtn = $("#closeModalBtn"),
+    clearBtn = $("#clearBtn"),
+    saveBtn = $("#saveBtn");
+
+  // حالات وأماكن تخزين البيانات محليًا (localStorage)
+  const blank = () => ({
+    programName: "",
+    audience: "",
+    dateOne: "",
+    dateFrom: "",
+    dateTo: "",
+    place: "",
+    executor: "",
+    objectives: "",
+    images: []
+  });
+  const state = {
+    currentTab: "daily",
+    daily: blank(),
+    weekly: blank(),
+    monthly: blank()
+  };
   const cur = () => state[state.currentTab];
 
-  const saveAll = () => localStorage.setItem("report-suite-pro", JSON.stringify(state));
-  function loadAll(){
-    try{
+  function saveAll() {
+    localStorage.setItem("report-suite-pro", JSON.stringify(state));
+  }
+  function loadAll() {
+    try {
       const raw = localStorage.getItem("report-suite-pro");
-      if(!raw) return;
+      if (!raw) return;
       const p = JSON.parse(raw);
-      if(p && typeof p === 'object'){
-        if(p.daily) state.daily = {...blank(), ...p.daily};
-        if(p.weekly) state.weekly = {...blank(), ...p.weekly};
-        if(p.monthly) state.monthly = {...blank(), ...p.monthly};
-        if(p.currentTab) state.currentTab = p.currentTab;
+      if (p && typeof p === "object") {
+        if (p.daily) state.daily = { ...blank(), ...p.daily };
+        if (p.weekly) state.weekly = { ...blank(), ...p.weekly };
+        if (p.monthly) state.monthly = { ...blank(), ...p.monthly };
+        if (p.currentTab) state.currentTab = p.currentTab;
       }
-    }catch{}
+    } catch {}
   }
 
+  // تحميل صورة الديباجة
   let letterheadSrc = null;
-  async function resolveLetterheadSrc(base){
-    const exts=["",".png",".jpg",".jpeg",".webp",".svg"];
-    for(const ext of exts){
-      const url=`${base}${ext}`;
-      if(await imgExists(url)) return url;
+  async function resolveLetterheadSrc(base) {
+    const exts = ["", ".png", ".jpg", ".jpeg", ".webp", ".svg"];
+    for (const ext of exts) {
+      const url = `${base}${ext}`;
+      if (await imgExists(url)) return url;
     }
     return null;
   }
-  function imgExists(url){
-    return new Promise(res=>{
-      const i=new Image();
-      i.onload=()=>res(true);
-      i.onerror=()=>res(false);
-      i.src=`${url}?v=${Date.now()}`;
+  function imgExists(url) {
+    return new Promise((res) => {
+      const i = new Image();
+      i.onload = () => res(true);
+      i.onerror = () => res(false);
+      i.src = `${url}?v=${Date.now()}`;
     });
   }
-  async function loadSiteLetterhead(){
+  async function loadSiteLetterhead() {
     letterheadSrc = await resolveLetterheadSrc(SCHOOL_HEADER_BASENAME);
     siteLetterhead.innerHTML = "";
-    if(letterheadSrc){
+    if (letterheadSrc) {
       const img = document.createElement("img");
       img.alt = "ديباجة المدرسة";
       img.crossOrigin = "anonymous";
@@ -339,171 +549,253 @@
     }
   }
 
-  function switchTab(tab){
+  // التبديل بين التبويبات
+  function switchTab(tab) {
     state.currentTab = tab;
-    document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("active", t.dataset.tab===tab));
-    rowDateOne.style.display = (tab === "daily") ? "" : "none";
-    rowDateRange.style.display = (tab === "daily") ? "none" : "";
+    document.querySelectorAll(".tab").forEach((t) =>
+      t.classList.toggle("active", t.dataset.tab === tab)
+    );
+    rowDateOne.style.display = tab === "daily" ? "" : "none";
+    rowDateRange.style.display = tab === "daily" ? "none" : "";
 
     const s = cur();
-    programName.value=s.programName||"";
-    audience.value=s.audience||"";
-    dateOne.value=s.dateOne||"";
-    dateFrom.value=s.dateFrom||"";
-    dateTo.value=s.dateTo||"";
-    place.value=s.place||"";
-    executor.value=s.executor||"";
-    objectives.value=s.objectives||"";
+    programName.value = s.programName || "";
+    audience.value = s.audience || "";
+    dateOne.value = s.dateOne || "";
+    dateFrom.value = s.dateFrom || "";
+    dateTo.value = s.dateTo || "";
+    place.value = s.place || "";
+    executor.value = s.executor || "";
+    objectives.value = s.objectives || "";
     renderThumbs(s.images);
 
     saveAll();
   }
-  tabsEl.addEventListener("click",(e)=>{
-    const b=e.target.closest(".tab");
-    if(!b) return;
+  tabsEl.addEventListener("click", (e) => {
+    const b = e.target.closest(".tab");
+    if (!b) return;
     switchTab(b.dataset.tab);
   });
 
-  programName.addEventListener("input", e=>{ cur().programName=e.target.value; saveAll(); });
-  audience.addEventListener("input", e=>{ cur().audience=e.target.value; saveAll(); });
-  dateOne.addEventListener("input", e=>{ cur().dateOne=e.target.value; saveAll(); });
-  dateFrom.addEventListener("input", e=>{ cur().dateFrom=e.target.value; saveAll(); });
-  dateTo.addEventListener("input", e=>{ cur().dateTo=e.target.value; saveAll(); });
-  place.addEventListener("input", e=>{ cur().place=e.target.value; saveAll(); });
-  executor.addEventListener("input", e=>{ cur().executor=e.target.value; saveAll(); });
-  objectives.addEventListener("input", e=>{ cur().objectives=e.target.value; saveAll(); });
-  saveBtn.addEventListener("click", ()=>{ saveAll(); toast("تم الحفظ ✔️"); });
+  // حفظ التعديلات وربط الحدث مع الحقول
+  programName.addEventListener("input", (e) => {
+    cur().programName = e.target.value;
+    saveAll();
+  });
+  audience.addEventListener("input", (e) => {
+    cur().audience = e.target.value;
+    saveAll();
+  });
+  dateOne.addEventListener("input", (e) => {
+    cur().dateOne = e.target.value;
+    saveAll();
+  });
+  dateFrom.addEventListener("input", (e) => {
+    cur().dateFrom = e.target.value;
+    saveAll();
+  });
+  dateTo.addEventListener("input", (e) => {
+    cur().dateTo = e.target.value;
+    saveAll();
+  });
+  place.addEventListener("input", (e) => {
+    cur().place = e.target.value;
+    saveAll();
+  });
+  executor.addEventListener("input", (e) => {
+    cur().executor = e.target.value;
+    saveAll();
+  });
+  objectives.addEventListener("input", (e) => {
+    cur().objectives = e.target.value;
+    saveAll();
+  });
+  saveBtn.addEventListener("click", () => {
+    saveAll();
+    toast("تم الحفظ ✔️");
+  });
 
-  clearBtn.addEventListener("click", ()=>{
-    if(!confirm("هل تريدين مسح بيانات هذا القسم فقط؟")) return;
+  clearBtn.addEventListener("click", () => {
+    if (!confirm("هل تريدين مسح بيانات هذا القسم فقط؟")) return;
     state[state.currentTab] = blank();
     switchTab(state.currentTab);
     toast("تم المسح");
   });
 
-  filesInput.addEventListener("change", ()=> handleFiles(filesInput.files));
-  dropZone.addEventListener("dragover", e=>{
+  // رفع الصور
+  filesInput.addEventListener("change", () => handleFiles(filesInput.files));
+  dropZone.addEventListener("dragover", (e) => {
     e.preventDefault();
-    dropZone.style.background="#E8F4EC";
-    dropZone.style.borderColor="var(--brand)";
+    dropZone.style.background = "#E8F4EC";
+    dropZone.style.borderColor = "var(--brand)";
   });
-  dropZone.addEventListener("dragleave", ()=>{
-    dropZone.style.background="#FBFEFC";
-    dropZone.style.borderColor="var(--border)";
+  dropZone.addEventListener("dragleave", () => {
+    dropZone.style.background = "#FBFEFC";
+    dropZone.style.borderColor = "var(--border)";
   });
-  dropZone.addEventListener("drop", e=>{
+  dropZone.addEventListener("drop", (e) => {
     e.preventDefault();
-    dropZone.style.background="#FBFEFC";
-    dropZone.style.borderColor="var(--border)";
+    dropZone.style.background = "#FBFEFC";
+    dropZone.style.borderColor = "var(--border)";
     handleFiles(e.dataTransfer.files);
   });
 
-  async function handleFiles(files){
-    const arr = Array.from(files||[]);
-    if(!arr.length) return;
+  async function handleFiles(files) {
+    const arr = Array.from(files || []);
+    if (!arr.length) return;
     const s = cur();
     const room = Math.max(0, 4 - s.images.length);
-    if(room <= 0){
+    if (room <= 0) {
       setUploadMsg("وصلتِ إلى الحد الأقصى (4 صور).", true);
       return;
     }
-    if(arr.length > room){
+    if (arr.length > room) {
       setUploadMsg(`سيتم إضافة ${room} صور فقط (الحد 4).`, true);
     } else {
       setUploadMsg("تمت إضافة الصور ✔️");
     }
-    for(const f of arr.slice(0, room)){
-      if(!f.type.startsWith("image/")) continue;
+    for (const f of arr.slice(0, room)) {
+      if (!f.type.startsWith("image/")) continue;
       const data = await compressImage(f, 1400, 0.9);
       s.images.push(data);
     }
     renderThumbs(s.images);
     saveAll();
   }
-  function renderThumbs(list){
-    thumbsEl.innerHTML="";
-    (list||[]).slice(0,4).forEach(src=>{
-      const d=document.createElement("div");
-      d.className="thumb";
-      const img=document.createElement("img");
-      img.src=src; img.alt="شاهِد";
-      d.appendChild(img);
-      thumbsEl.appendChild(d);
-    });
+  function renderThumbs(list) {
+    thumbsEl.innerHTML = "";
+    (list || [])
+      .slice(0, 4)
+      .forEach((src) => {
+        const d = document.createElement("div");
+        d.className = "thumb";
+        const img = document.createElement("img");
+        img.src = src;
+        img.alt = "شاهِد";
+        d.appendChild(img);
+        thumbsEl.appendChild(d);
+      });
   }
-  function setUploadMsg(msg, danger=false){
-    uploadMsg.textContent=msg;
+  function setUploadMsg(msg, danger = false) {
+    uploadMsg.textContent = msg;
     uploadMsg.style.color = danger ? "var(--danger)" : "var(--muted)";
-    if(!danger){
-      setTimeout(()=>{
-        uploadMsg.textContent="يمكن سحب الصور وإفلاتها هنا. الحد 4 صور.";
-        uploadMsg.style.color="var(--muted)";
+    if (!danger) {
+      setTimeout(() => {
+        uploadMsg.textContent = "يمكن سحب الصور وإفلاتها هنا. الحد 4 صور.";
+        uploadMsg.style.color = "var(--muted)";
       }, 2000);
     }
   }
 
-  function fileToDataURL(file){
-    return new Promise((res,rej)=>{
-      const fr=new FileReader();
-      fr.onload=()=>res(fr.result);
-      fr.onerror=rej;
+  // ضغط الصور قبل رفعها
+  function fileToDataURL(file) {
+    return new Promise((res, rej) => {
+      const fr = new FileReader();
+      fr.onload = () => res(fr.result);
+      fr.onerror = rej;
       fr.readAsDataURL(file);
     });
   }
-  function loadImage(src){
-    return new Promise((res,rej)=>{
-      const img=new Image();
-      img.onload=()=>res(img);
-      img.onerror=rej;
-      img.src=src;
+  function loadImage(src) {
+    return new Promise((res, rej) => {
+      const img = new Image();
+      img.onload = () => res(img);
+      img.onerror = rej;
+      img.src = src;
     });
   }
-  async function compressImage(file, maxW=1200, quality=0.9){
+  async function compressImage(file, maxW = 1200, quality = 0.9) {
     const dataUrl = await fileToDataURL(file);
     const img = await loadImage(dataUrl);
-    const ratio=img.width/img.height;
-    const w=Math.min(maxW,img.width);
-    const h=Math.round(w/ratio);
-    const canvas=document.createElement("canvas");
-    canvas.width=w;
-    canvas.height=h;
-    const ctx=canvas.getContext("2d");
-    ctx.fillStyle="#fff";
-    ctx.fillRect(0,0,w,h);
-    ctx.drawImage(img,0,0,w,h);
+    const ratio = img.width / img.height;
+    const w = Math.min(maxW, img.width);
+    const h = Math.round(w / ratio);
+    const canvas = document.createElement("canvas");
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext("2d");
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(0, 0, w, h);
+    ctx.drawImage(img, 0, 0, w, h);
     return canvas.toDataURL("image/jpeg", quality);
   }
-  async function waitForImages(container){
+
+  // انتظار تحميل كل الصور في العنصر قبل المتابعة (مهم للطباعة وتحويل PDF)
+  async function waitForImages(container) {
     const imgs = Array.from(container.querySelectorAll("img"));
-    await Promise.all(imgs.map(img => img.complete ? Promise.resolve() : new Promise(res=>{
-      img.onload=res; img.onerror=()=>res();
-    })));
+    await Promise.all(
+      imgs.map((img) =>
+        img.complete
+          ? Promise.resolve()
+          : new Promise((res) => {
+              img.onload = res;
+              img.onerror = res;
+            })
+      )
+    );
   }
 
-  function fmtDate(iso){ if(!iso) return "—"; try{ return new Intl.DateTimeFormat('ar',{dateStyle:'long'}).format(new Date(iso)); }catch{ return iso; } }
-  function fmtRange(a,b){ if(!a||!b) return "—"; return `${fmtDate(a)} — ${fmtDate(b)}`; }
-  function escapeHtml(s){ return s.replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m])); }
-  function objectivesHTML(text){
-    const lines=(text||"").split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
-    return lines.length ? `<ul>${lines.map(li=>`<li>${escapeHtml(li)}`).join("")}</ul>` : `<ul><li>—</li></ul>`;
+  // تنسيق التاريخ
+  function fmtDate(iso) {
+    if (!iso) return "—";
+    try {
+      return new Intl.DateTimeFormat("ar", { dateStyle: "long" }).format(
+        new Date(iso)
+      );
+    } catch {
+      return iso;
+    }
+  }
+  function fmtRange(a, b) {
+    if (!a || !b) return "—";
+    return `${fmtDate(a)} — ${fmtDate(b)}`;
+  }
+  function escapeHtml(s) {
+    return s.replace(/[&<>"']/g, (m) => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;",
+    })[m]);
+  }
+  function objectivesHTML(text) {
+    const lines = (text || "")
+      .split(/\r?\n/)
+      .map((s) => s.trim())
+      .filter(Boolean);
+    return lines.length
+      ? `<ul>${lines.map((li) => `<li>${escapeHtml(li)}`).join("")}</ul>`
+      : `<ul><li>—</li></ul>`;
   }
 
-  function buildReportDOM(){
+  // بناء تقرير HTML داخل الورقة (ورقة A4)
+  function buildReportDOM() {
     const s = cur();
     const paper = document.createElement("div");
     paper.className = "paper";
     paper.innerHTML = `
       <div class="report">
         <div class="letterhead">
-          ${letterheadSrc ? `<img alt="ديباجة المدرسة" crossorigin="anonymous" src="${letterheadSrc}?v=${Date.now()}">` : `<div class="note" style="color:#b00020">لم يتم العثور على الديباجة</div>`}
+          ${
+            letterheadSrc
+              ? `<img alt="ديباجة المدرسة" crossorigin="anonymous" src="${letterheadSrc}?v=${Date.now()}">`
+              : `<div class="note" style="color:#b00020">لم يتم العثور على الديباجة</div>`
+          }
         </div>
 
         <div class="title"><h1>${escapeHtml(s.programName || "—")}</h1></div>
 
         <div class="meta">
           <div class="field">
-            <div class="label">${state.currentTab === "daily" ? "التاريخ" : "الفترة"}</div>
-            <div class="value">${state.currentTab === "daily" ? fmtDate(s.dateOne) : fmtRange(s.dateFrom, s.dateTo)}</div>
+            <div class="label">${
+              state.currentTab === "daily" ? "التاريخ" : "الفترة"
+            }</div>
+            <div class="value">${
+              state.currentTab === "daily"
+                ? fmtDate(s.dateOne)
+                : fmtRange(s.dateFrom, s.dateTo)
+            }</div>
           </div>
           <div class="field">
             <div class="label">مقر التنفيذ</div>
@@ -515,7 +807,7 @@
           </div>
           <div class="field">
             <div class="label">عدد الشواهد</div>
-            <div class="value">${(s.images||[]).length} / 4</div>
+            <div class="value">${(s.images || []).length} / 4</div>
           </div>
         </div>
 
@@ -541,128 +833,158 @@
       </div>
     `;
     const gal = paper.querySelector("#rep-gallery");
-    (s.images||[]).slice(0,4).forEach(src=>{
-      const fig=document.createElement("figure");
-      const img=document.createElement("img");
-      img.src=src; img.alt="شاهِد";
+    (s.images || []).slice(0, 4).forEach((src) => {
+      const fig = document.createElement("figure");
+      const img = document.createElement("img");
+      img.src = src;
+      img.alt = "شاهِد";
       fig.appendChild(img);
       gal.appendChild(fig);
     });
     return paper;
   }
 
-  function ensureValid(){
-    const s=cur();
-    if(!s.programName.trim()){ alert("أدخلي اسم البرنامج."); return false; }
-    if(state.currentTab==="daily"){
-      if(!s.dateOne){ alert("حددي التاريخ."); return false; }
-    }else{
-      if(!s.dateFrom||!s.dateTo){ alert("حددي فترة التاريخ (من / إلى)."); return false; }
-      if(new Date(s.dateFrom)>new Date(s.dateTo)){ alert("تسلسل التاريخ غير صحيح."); return false; }
+  // تحقق من صحة البيانات (حقول إجبارية)
+  function ensureValid() {
+    const s = cur();
+    if (!s.programName.trim()) {
+      alert("أدخلي اسم البرنامج.");
+      return false;
+    }
+    if (state.currentTab === "daily") {
+      if (!s.dateOne) {
+        alert("حددي التاريخ.");
+        return false;
+      }
+    } else {
+      if (!s.dateFrom || !s.dateTo) {
+        alert("حددي فترة التاريخ (من / إلى).");
+        return false;
+      }
+      if (new Date(s.dateFrom) > new Date(s.dateTo)) {
+        alert("تسلسل التاريخ غير صحيح.");
+        return false;
+      }
     }
     return true;
   }
 
-  async function openPreview(autoDownload=false){
-    if(!letterheadSrc) await loadSiteLetterhead();
-    printArea.innerHTML="";
+  // فتح نافذة المعاينة واعداد التقرير
+  async function openPreview(autoDownload = false) {
+    if (!letterheadSrc) await loadSiteLetterhead();
+    printArea.innerHTML = "";
     const paper = buildReportDOM();
     printArea.appendChild(paper);
+
     modal.classList.add("show");
-    modal.setAttribute("aria-hidden","false");
+    modal.setAttribute("aria-hidden", "false");
 
     await waitForImages(printArea);
-    if(autoDownload){
-      await generatePdf();
-    }
+
+    if (autoDownload) await generatePdf();
   }
-  function closePreview(){
+  function closePreview() {
     modal.classList.remove("show");
-    modal.setAttribute("aria-hidden","true");
+    modal.setAttribute("aria-hidden", "true");
   }
 
-  function pdfFileName(){
-    const s=cur();
-    const base=(s.programName||"تقرير").replace(/[\\/:*?"<>|]/g,"").trim()||"تقرير";
-    let suffix="";
-    if(state.currentTab==="daily" && s.dateOne) suffix=s.dateOne;
-    if(state.currentTab!=="daily" && s.dateFrom && s.dateTo) suffix=`${s.dateFrom}_الى_${s.dateTo}`;
-    return `${base}-${suffix || new Date().toISOString().slice(0,10)}.pdf`;
+  // اسم ملف PDF ديناميكي حسب التبويب والتواريخ
+  function pdfFileName() {
+    const s = cur();
+    const base = (s.programName || "تقرير").replace(/[\\/:*?"<>|]/g, "").trim() || "تقرير";
+    let suffix = "";
+    if (state.currentTab === "daily" && s.dateOne) suffix = s.dateOne;
+    if (state.currentTab !== "daily" && s.dateFrom && s.dateTo) suffix = `${s.dateFrom}_الى_${s.dateTo}`;
+    return `${base}-${suffix || new Date().toISOString().slice(0, 10)}.pdf`;
   }
 
-  function loadScript(src){
-    return new Promise((res,rej)=>{
-      const s=document.createElement("script");
-      s.src=src;
-      s.onload=()=>res(true);
-      s.onerror=()=>rej();
+  // تحميل مكتبة html2pdf لو لم تكن محملة
+  function loadScript(src) {
+    return new Promise((res, rej) => {
+      const s = document.createElement("script");
+      s.src = src;
+      s.onload = () => res(true);
+      s.onerror = () => rej();
       document.head.appendChild(s);
     });
   }
-  async function ensureHtml2Pdf(){
-    if(window.html2pdf) return true;
-    const fallbacks=[
-      "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
+  async function ensureHtml2Pdf() {
+    if (window.html2pdf) return true;
+    const fallbacks = [
+      "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js",
     ];
-    for(const url of fallbacks){
-      try{
+    for (const url of fallbacks) {
+      try {
         await loadScript(url);
-        if(window.html2pdf) return true;
-      }catch{}
+        if (window.html2pdf) return true;
+      } catch {}
     }
     alert("تعذّر تحميل مكتبة PDF. تحقّقي من الاتصال ثم أعيدي المحاولة.");
     return false;
   }
-  async function generatePdf(){
+  // توليد PDF مع احترام فواصل الصفحات وتجهيز الصور
+  async function generatePdf() {
     const ok = await ensureHtml2Pdf();
-    if(!ok) return;
+    if (!ok) return;
     await waitForImages(printArea);
-    const opt={
-      margin:0,
+
+    const opt = {
+      margin: 0,
       filename: pdfFileName(),
-      image:{ type:'jpeg', quality:0.96 },
-      html2canvas:{ scale:2, useCORS:true, backgroundColor:"#ffffff" },
-      jsPDF:{ unit:'mm', format:'a4', orientation:'portrait' },
-      pagebreak:{ mode:['avoid-all','css','legacy'], avoid:['.meta','.block','.gallery','.footer'] }
+      image: { type: "jpeg", quality: 0.96 },
+      html2canvas: { scale: 2, useCORS: true, backgroundColor: "#ffffff" },
+      jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+      pagebreak: {
+        mode: ["avoid-all", "css", "legacy"],
+        avoid: [".meta", ".block", ".gallery", ".footer"],
+      },
     };
-    try{
+
+    try {
       await window.html2pdf().set(opt).from(printArea.querySelector(".paper")).save();
-    }catch(e){
+    } catch (e) {
       console.error(e);
       alert("حدث خطأ أثناء إنشاء PDF.");
     }
   }
 
-  document.addEventListener("keydown",(e)=>{
-    if(e.key==="Escape") closePreview();
+  // أحداث الأزرار
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closePreview();
   });
-  previewBtn.addEventListener("click", async ()=>{
-    if(!ensureValid()) return;
+  previewBtn.addEventListener("click", async () => {
+    if (!ensureValid()) return;
     await openPreview(false);
   });
-  downloadBtn.addEventListener("click", async ()=>{
-    if(!ensureValid()) return;
+  downloadBtn.addEventListener("click", async () => {
+    if (!ensureValid()) return;
     await openPreview(true);
   });
-  dlFromPrev.addEventListener("click", async ()=>{ await generatePdf(); });
-  printBtn.addEventListener("click", ()=>{ window.print(); });
+  dlFromPrev.addEventListener("click", async () => {
+    await generatePdf();
+  });
+  printBtn.addEventListener("click", () => {
+    window.print();
+  });
   closeModalBtn.addEventListener("click", closePreview);
 
-  function toast(msg){
-    uploadMsg.textContent=msg;
-    uploadMsg.style.color="var(--muted)";
-    setTimeout(()=>{
-      uploadMsg.textContent="يمكن سحب الصور وإفلاتها هنا. الحد 4 صور.";
-      uploadMsg.style.color="var(--muted)";
+  // إشعار صغير
+  function toast(msg) {
+    uploadMsg.textContent = msg;
+    uploadMsg.style.color = "var(--muted)";
+    setTimeout(() => {
+      uploadMsg.textContent = "يمكن سحب الصور وإفلاتها هنا. الحد 4 صور.";
+      uploadMsg.style.color = "var(--muted)";
     }, 2000);
   }
 
-  (async function init(){
+  (async function init() {
     loadAll();
     switchTab(state.currentTab || "daily");
     await loadSiteLetterhead();
   })();
-
 </script>
+
 </body>
 </html>
+
