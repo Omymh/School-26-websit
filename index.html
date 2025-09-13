@@ -8,18 +8,42 @@
   <!-- خط عربي -->
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700;800&display=swap" rel="stylesheet">
 
-  <!-- محاولة تحميل html2pdf (بدون SRI لتجنّب حظر التحميل) -->
+  <!-- html2pdf (محاولة أولى) -->
   <script defer src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js"></script>
 
   <style>
     :root{
+      /* هوية الوزارة */
       --brand:#006C35; --brand-2:#0A8A4F; --accent:#00A36C; --brand-weak:#E8F4EC;
       --ink:#101315; --muted:#69707D; --bg:#F6F8F7; --card:#FFFFFF; --border:#E3E7EA; --danger:#DA3C3C;
       --radius:14px; --line:1.85; --page-w:920px;
     }
-    html,body{ margin:0; background:var(--bg); color:var(--ink); font-family:"Cairo",system-ui,-apple-system,"Segoe UI","Noto Kufi Arabic",Arial,sans-serif; line-height:var(--line); }
-    .container{ max-width:var(--page-w); margin:32px auto 44px; padding:0 16px; }
-    .card{ background:var(--card); border:1px solid var(--border); border-radius:var(--radius); box-shadow:0 14px 40px rgba(0,0,0,.05); overflow:hidden; }
+    html,body{ margin:0; background:var(--bg); color:var(--ink);
+      font-family:"Cairo",system-ui,-apple-system,"Segoe UI","Noto Kufi Arabic",Arial,sans-serif; line-height:var(--line);
+    }
+
+    /* ====== بانر الديباجة (ثابت بالواجهة) ====== */
+    .site-letterhead{
+      position:sticky; top:0; z-index:1000;
+      background:#fff;
+      border-bottom:1px solid var(--border);
+      box-shadow:0 8px 24px rgba(0,0,0,.05);
+    }
+    .site-letterhead .inner{
+      max-width:var(--page-w); margin:0 auto; padding:10px 16px;
+    }
+    .site-letterhead img{
+      display:block; margin:0 auto;
+      max-width:100%; max-height:140px; height:auto;
+    }
+    .lh-placeholder{
+      text-align:center; color:var(--muted); padding:20px 0; font-weight:700;
+    }
+
+    /* ====== محتوى الصفحة ====== */
+    .container{ max-width:var(--page-w); margin:22px auto 44px; padding:0 16px; }
+    .card{ background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
+      box-shadow:0 14px 40px rgba(0,0,0,.05); overflow:hidden; }
 
     .header{ padding:16px 18px; display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:space-between;
       background:linear-gradient(180deg, var(--brand-weak), #fff); border-bottom:1px solid var(--border); }
@@ -35,6 +59,7 @@
     .row{ display:grid; gap:12px; grid-template-columns:1fr 1fr; }
     @media (max-width:680px){ .row{ grid-template-columns:1fr; } }
     label{ display:block; font-weight:700; font-size:15px; margin-bottom:6px; color:#273036; }
+
     input[type="text"], input[type="date"], textarea{
       width:100%; padding:12px 14px; border:1px solid var(--border); border-radius:12px; background:#fff; color:var(--ink); font-size:15px;
       outline:none; transition:border .2s, box-shadow .2s, transform .08s ease;
@@ -42,7 +67,7 @@
     input:focus, textarea:focus{ border-color:var(--brand); box-shadow:0 0 0 3px var(--brand-weak); }
     input:active, textarea:active{ transform:scale(0.998); }
     textarea{ min-height:140px; resize:vertical; }
-    ::placeholder{ color:transparent; } /* بدون نص داخل المربعات */
+    ::placeholder{ color:transparent; } /* لا نص داخل المربعات */
 
     .upload{ border:1.5px dashed var(--border); border-radius:12px; padding:16px; background:#FBFEFC; text-align:center; transition:background .2s, border-color .2s; }
     .upload input{ display:none; }
@@ -61,6 +86,7 @@
     .actions{ display:flex; gap:10px; flex-wrap:wrap; margin-top:6px; }
     .note{ color:var(--muted); font-size:12.5px; }
 
+    /* نافذة المعاينة */
     .modal{ position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(6,16,11,.55); z-index:9999; padding:20px; }
     .modal.show{ display:flex; }
     .sheet{ width:100%; max-width:900px; max-height:90vh; overflow:auto; background:#fff; border-radius:16px; border:1px solid var(--border);
@@ -72,9 +98,10 @@
     .sheet-actions{ display:flex; gap:8px; flex-wrap:wrap; }
     .sheet-body{ padding:18px 20px 24px; }
 
+    /* التقرير */
     .report{ color:#000; font-size:14.5px; }
     .letterhead{ margin-bottom:12px; text-align:center; }
-    .letterhead img{ max-width:100%; height:auto; display:block; margin:0 auto; }
+    .letterhead img{ max-width:100%; height:auto; display:block; margin:0 auto; max-height:140px; }
     .title{ text-align:center; margin:10px 0 12px; }
     .title h1{ font-size:22px; margin:0; font-weight:800; color:#0b3f25; letter-spacing:.1px; }
     .meta{ display:grid; gap:12px; grid-template-columns:repeat(2,1fr); margin:8px 0 14px; }
@@ -90,9 +117,11 @@
     .gallery img{ width:100%; height:100%; object-fit:cover; display:block; }
     .footer{ margin-top:20px; border-top:1px solid var(--border); padding-top:12px; display:flex; justify-content:space-between; gap:8px; font-weight:800; }
 
+    /* حركة تغيير التبويب */
     .tab-panel{ animation:fadeSlide .28s ease; }
     @keyframes fadeSlide{ from{opacity:0;transform:translateY(8px);} to{opacity:1;transform:translateY(0);} }
 
+    /* الطباعة: نظهر التقرير فقط */
     @media print{
       body > *:not(.print-area){ display:none !important; }
       .modal{ display:block !important; background:transparent !important; padding:0 !important; }
@@ -103,10 +132,19 @@
       @page{ size:A4; margin:12mm; }
       .block, .meta, .gallery{ break-inside:avoid; }
     }
+
+    /* تقليل الحركة */
     @media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
   </style>
 </head>
 <body>
+
+  <!-- === بانر الديباجة الثابت في الواجهة === -->
+  <div class="site-letterhead">
+    <div class="inner" id="siteLetterhead">
+      <div class="lh-placeholder">سيتم تحميل الديباجة تلقائيًا (ملف باسم <b>26</b> في جذر المستودع).</div>
+    </div>
+  </div>
 
   <div class="container">
     <div class="card">
@@ -187,7 +225,7 @@
     </div>
   </div>
 
-  <!-- نافذة المعاينة -->
+  <!-- نافذة المعاينة (التقرير الذي يُطبَع ويُحفظ) -->
   <div class="modal" id="modal" aria-hidden="true">
     <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="dlgTitle">
       <div class="sheet-head">
@@ -206,36 +244,36 @@
 
 <script>
 /* ============== ثوابت ============== */
-const SCHOOL_HEADER_BASENAME = "26"; // ملف الديباجة في جذر المستودع (بدون امتداد)
+const SCHOOL_HEADER_BASENAME = "26"; // اسم ملف الديباجة في جذر المستودع (بدون امتداد)
 
-/* ============== أدوات DOM ============== */
+/* ============== أدوات مختصرة ============== */
 const $ = (sel) => document.querySelector(sel);
+
+/* عناصر واجهة */
 const tabsEl = $("#tabs"), formEl = $("#form"), thumbsEl = $("#thumbs"), dropZone = $("#dropZone");
 const filesInput = $("#evidenceFiles"), uploadMsg = $("#uploadMsg"), modal = $("#modal"), printArea = $("#printArea");
+const siteLetterhead = $("#siteLetterhead");
 
 /* الحقول */
 const programName=$("#programName"), audience=$("#audience"), dateOne=$("#dateOne");
 const dateFrom=$("#dateFrom"), dateTo=$("#dateTo"), place=$("#place"), executor=$("#executor"), objectives=$("#objectives");
-
-/* سطور التاريخ */
 const rowDateOne=$("#row-date-one"), rowDateRange=$("#row-date-range");
 
 /* أزرار */
 const previewBtn=$("#previewBtn"), downloadBtn=$("#downloadBtn"), dlFromPrev=$("#dlFromPreviewBtn");
 const printBtn=$("#printBtn"), closeModalBtn=$("#closeModalBtn"), clearBtn=$("#clearBtn"), saveBtn=$("#saveBtn");
 
-/* ============== الحالة والتخزين ============== */
+/* حالة عامة + تخزين */
 const blank = () => ({
   programName:"", audience:"", dateOne:"", dateFrom:"", dateTo:"",
   place:"", executor:"", objectives:"", images:[]
 });
 const state = { currentTab:"daily", daily:blank(), weekly:blank(), monthly:blank() };
 const cur = () => state[state.currentTab];
-const saveAll = () => localStorage.setItem("report-suite-v4", JSON.stringify(state));
+const saveAll = () => localStorage.setItem("report-suite-v5", JSON.stringify(state));
 function loadAll(){
   try{
-    const raw = localStorage.getItem("report-suite-v4");
-    if(!raw) return;
+    const raw = localStorage.getItem("report-suite-v5"); if(!raw) return;
     const p = JSON.parse(raw);
     if(p && typeof p === 'object'){
       if(p.daily) state.daily = {...blank(), ...p.daily};
@@ -246,29 +284,62 @@ function loadAll(){
   }catch{}
 }
 
-/* ============== تبويبات + انتقال ============== */
+/* ====== تحميل الديباجة واستعمالها في الواجهة والتقرير ====== */
+let letterheadSrc = null;
+
+async function resolveLetterheadSrc(base){
+  const exts=["",".png",".jpg",".jpeg",".webp",".svg"];
+  for(const ext of exts){
+    const url=`${base}${ext}`;
+    if(await imgExists(url)) return url;
+  }
+  return null;
+}
+function imgExists(url){
+  return new Promise(res=>{
+    const i=new Image();
+    i.onload=()=>res(true);
+    i.onerror=()=>res(false);
+    i.src=`${url}?v=${Date.now()}`; // كسر الكاش
+  });
+}
+
+async function loadSiteLetterhead(){
+  letterheadSrc = await resolveLetterheadSrc(SCHOOL_HEADER_BASENAME);
+  siteLetterhead.innerHTML = "";
+  if(letterheadSrc){
+    const img = document.createElement("img");
+    img.alt = "ديباجة المدرسة";
+    img.src = `${letterheadSrc}?v=${Date.now()}`; // اضمن التحديث
+    siteLetterhead.appendChild(img);
+  }else{
+    const div = document.createElement("div");
+    div.className = "lh-placeholder";
+    div.innerHTML = `تعذّر العثور على ملف الديباجة باسم <b>${SCHOOL_HEADER_BASENAME}</b> (مثال: 26.png / 26.jpg / 26.svg)`;
+    siteLetterhead.appendChild(div);
+  }
+}
+
+/* ====== تبويبات ====== */
 function switchTab(tab){
   state.currentTab = tab;
   document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("active", t.dataset.tab===tab));
-
-  // التاريخ: يومي أو فترة
   rowDateOne.style.display = (tab === "daily") ? "" : "none";
   rowDateRange.style.display = (tab === "daily") ? "none" : "";
 
-  // تعبئة الحقول من الحالة
   const s = cur();
   programName.value=s.programName||""; audience.value=s.audience||"";
   dateOne.value=s.dateOne||""; dateFrom.value=s.dateFrom||""; dateTo.value=s.dateTo||"";
   place.value=s.place||""; executor.value=s.executor||""; objectives.value=s.objectives||"";
   renderThumbs(s.images);
 
-  // إعادة حركة اللوحة
+  // إعادة حركة
   formEl.classList.remove("tab-panel"); void formEl.offsetWidth; formEl.classList.add("tab-panel");
   saveAll();
 }
-tabsEl.addEventListener("click", (e)=>{ const b=e.target.closest(".tab"); if(!b) return; switchTab(b.dataset.tab); });
+tabsEl.addEventListener("click",(e)=>{ const b=e.target.closest(".tab"); if(!b) return; switchTab(b.dataset.tab); });
 
-/* ============== ربط المدخلات ============== */
+/* ====== ربط المدخلات ====== */
 programName.addEventListener("input", e=>{ cur().programName=e.target.value; saveAll(); });
 audience.addEventListener("input", e=>{ cur().audience=e.target.value; saveAll(); });
 dateOne.addEventListener("input", e=>{ cur().dateOne=e.target.value; saveAll(); });
@@ -286,17 +357,15 @@ clearBtn.addEventListener("click", ()=>{
   toast("تم المسح");
 });
 
-/* ============== رفع الصور (حتى 4) ============== */
+/* ====== رفع الصور (حتى 4) ====== */
 filesInput.addEventListener("change", ()=> handleFiles(filesInput.files));
 dropZone.addEventListener("dragover", e=>{ e.preventDefault(); dropZone.style.background="#E8F4EC"; dropZone.style.borderColor="var(--brand)"; });
 dropZone.addEventListener("dragleave", ()=>{ dropZone.style.background="#FBFEFC"; dropZone.style.borderColor="var(--border)"; });
 dropZone.addEventListener("drop", e=>{ e.preventDefault(); dropZone.style.background="#FBFEFC"; dropZone.style.borderColor="var(--border)"; handleFiles(e.dataTransfer.files); });
 
 async function handleFiles(files){
-  const arr = Array.from(files||[]);
-  if(!arr.length) return;
-  const s = cur();
-  const room = Math.max(0, 4 - s.images.length);
+  const arr = Array.from(files||[]); if(!arr.length) return;
+  const s = cur(); const room = Math.max(0, 4 - s.images.length);
   if(room <= 0){ setUploadMsg("وصلتِ إلى الحد الأقصى (4 صور).", true); return; }
   if(arr.length > room){ setUploadMsg(`سيتم إضافة ${room} صور فقط (الحد 4).`, true); } else { setUploadMsg("تمت إضافة الصور ✔️"); }
   for(const f of arr.slice(0, room)){
@@ -315,21 +384,21 @@ function setUploadMsg(msg, danger=false){
   if(!danger){ setTimeout(()=>{ uploadMsg.textContent="يمكن سحب الصور وإفلاتها هنا. الحد 4 صور."; uploadMsg.style.color="var(--muted)"; }, 2000); }
 }
 
-/* ============== أدوات صور ============== */
+/* ====== أدوات صور ====== */
 function fileToDataURL(file){ return new Promise((res,rej)=>{ const fr=new FileReader(); fr.onload=()=>res(fr.result); fr.onerror=rej; fr.readAsDataURL(file); }); }
 function loadImage(src){ return new Promise((res,rej)=>{ const img=new Image(); img.onload=()=>res(img); img.onerror=rej; img.src=src; }); }
 async function compressImage(file, maxW=1200, quality=0.9){
-  const dataUrl = await fileToDataURL(file); const img = await loadImage(dataUrl); const ratio = img.width/img.height;
-  const w = Math.min(maxW, img.width); const h = Math.round(w/ratio);
+  const dataUrl = await fileToDataURL(file); const img = await loadImage(dataUrl); const ratio=img.width/img.height;
+  const w=Math.min(maxW,img.width), h=Math.round(w/ratio);
   const canvas=document.createElement("canvas"); canvas.width=w; canvas.height=h; const ctx=canvas.getContext("2d");
   ctx.fillStyle="#fff"; ctx.fillRect(0,0,w,h); ctx.drawImage(img,0,0,w,h); return canvas.toDataURL("image/jpeg", quality);
 }
 async function waitForImages(container){
   const imgs = Array.from(container.querySelectorAll("img"));
-  await Promise.all(imgs.map(img => img.complete ? Promise.resolve() : new Promise((res,rej)=>{ img.onload=res; img.onerror=()=>res(); })));
+  await Promise.all(imgs.map(img => img.complete ? Promise.resolve() : new Promise(res=>{ img.onload=res; img.onerror=()=>res(); })));
 }
 
-/* ============== بناء التقرير ============== */
+/* ====== بناء التقرير ====== */
 function fmtDate(iso){ if(!iso) return "—"; try{ return new Intl.DateTimeFormat('ar',{dateStyle:'long'}).format(new Date(iso)); }catch{ return iso; } }
 function fmtRange(a,b){ if(!a||!b) return "—"; return `${fmtDate(a)} — ${fmtDate(b)}`; }
 function objectivesHTML(text){ const lines=(text||"").split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
@@ -340,7 +409,9 @@ function buildReportDOM(){
   const s = cur();
   const wrap = document.createElement("div");
   wrap.innerHTML = `
-    <div class="letterhead" id="rep-letterhead"><div class="note">جاري تحميل الديباجة…</div></div>
+    <div class="letterhead" id="rep-letterhead">
+      ${letterheadSrc ? `<img alt="ديباجة المدرسة" src="${letterheadSrc}?v=${Date.now()}">` : `<div class="note" style="color:#b00020">لم يتم العثور على الديباجة</div>`}
+    </div>
     <div class="title"><h1>${escapeHtml(s.programName || "—")}</h1></div>
     <div class="meta">
       <div class="field">
@@ -383,20 +454,7 @@ function buildReportDOM(){
   return wrap;
 }
 
-/* ============== تحميل الديباجة (ملف 26) ============== */
-async function resolveLetterheadSrc(base){
-  const exts=["",".png",".jpg",".jpeg",".webp",".svg"];
-  for(const ext of exts){ const url=`${base}${ext}`; if(await imgExists(url)) return url; }
-  return null;
-}
-function imgExists(url){
-  return new Promise(res=>{
-    const i=new Image(); i.onload=()=>res(true); i.onerror=()=>res(false);
-    i.src=`${url}?v=${Date.now()}`; // كسر الكاش
-  });
-}
-
-/* ============== معاينة / طباعة / تنزيل PDF ============== */
+/* ====== معاينة / طباعة / PDF ====== */
 function ensureValid(){
   const s=cur();
   if(!s.programName.trim()){ alert("أدخلي اسم البرنامج."); return false; }
@@ -410,14 +468,11 @@ function ensureValid(){
 }
 
 async function openPreview(autoDownload=false){
+  // تأكد من وجود الديباجة في الواجهة، وإن لم تكن فحاول تحميلها الآن
+  if(!letterheadSrc) await loadSiteLetterhead();
+
   printArea.innerHTML="";
   const dom=buildReportDOM(); printArea.appendChild(dom);
-
-  // ديباجة
-  const src=await resolveLetterheadSrc(SCHOOL_HEADER_BASENAME);
-  const holder=printArea.querySelector("#rep-letterhead"); holder.innerHTML="";
-  if(src){ const img=document.createElement("img"); img.alt="ديباجة المدرسة"; img.src=src; holder.appendChild(img); }
-  else{ holder.innerHTML=`<div class="note" style="color:#b00020">تعذّر العثور على ملف الديباجة باسم <b>${SCHOOL_HEADER_BASENAME}</b> (مثال: 26.png / 26.jpg / 26.svg)</div>`; }
 
   // صور الشواهد
   const gal=printArea.querySelector("#rep-gallery");
@@ -425,8 +480,7 @@ async function openPreview(autoDownload=false){
 
   modal.classList.add("show"); modal.setAttribute("aria-hidden","false");
 
-  // انتظر الصور قبل الطباعة/التنزيل
-  await waitForImages(printArea);
+  await waitForImages(printArea); // انتظر الصور كاملة
 
   if(autoDownload){ await generatePdf(); }
 }
@@ -456,17 +510,23 @@ async function ensureHtml2Pdf(){
 
 async function generatePdf(){
   const ok = await ensureHtml2Pdf(); if(!ok) return;
-  const opt={ margin:[10,10,12,10], filename:pdfFileName(), image:{type:'jpeg',quality:0.96}, html2canvas:{scale:2,useCORS:true,backgroundColor:"#ffffff"}, jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}, pagebreak:{mode:['css','legacy']} };
-  await waitForImages(printArea); // تأكيد نهائي
+  const opt={
+    margin:[10,10,12,10], filename:pdfFileName(),
+    image:{type:'jpeg',quality:0.96},
+    html2canvas:{scale:2,useCORS:true,backgroundColor:"#ffffff"},
+    jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},
+    pagebreak:{mode:['css','legacy']}
+  };
+  await waitForImages(printArea);
   try{
-    await window.html2pdf().set(opt).from(printArea).save(); // تنزيل مباشر على الجهاز
+    await window.html2pdf().set(opt).from(printArea).save(); // تنزيل مباشر
   }catch(e){
     console.error(e);
     alert("حدث خطأ أثناء إنشاء ملف الـPDF. لو سمحتِ جرّبي من متصفح مختلف أو أعيدي تحميل الصفحة.");
   }
 }
 
-/* ============== أزرار ============== */
+/* ====== أزرار ====== */
 document.addEventListener("keydown",(e)=>{ if(e.key==="Escape") closePreview(); });
 previewBtn.addEventListener("click", async ()=>{ if(!ensureValid()) return; await openPreview(false); });
 downloadBtn.addEventListener("click", async ()=>{ if(!ensureValid()) return; await openPreview(true); });
@@ -474,11 +534,15 @@ dlFromPrev.addEventListener("click", async ()=>{ await generatePdf(); });
 printBtn.addEventListener("click", ()=>{ window.print(); });
 closeModalBtn.addEventListener("click", closePreview);
 
-/* ============== إشعار صغير ============== */
+/* ====== إشعار صغير ====== */
 function toast(msg){ uploadMsg.textContent=msg; uploadMsg.style.color="var(--muted)"; setTimeout(()=>{ uploadMsg.textContent="يمكن سحب الصور وإفلاتها هنا. الحد 4 صور."; uploadMsg.style.color="var(--muted)"; },2000); }
 
-/* ============== تشغيل ============== */
-(function init(){ loadAll(); switchTab(state.currentTab || "daily"); })();
+/* ====== تشغيل أولي ====== */
+(async function init(){
+  loadAll();
+  switchTab(state.currentTab || "daily");
+  await loadSiteLetterhead(); // حمّل الديباجة واعرضها في الواجهة فورًا
+})();
 </script>
 </body>
 </html>
