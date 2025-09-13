@@ -3,169 +3,238 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>تقرير برنامج — الثانوية السادسة والعشرون</title>
+  <title>منصة التقارير — يومية / أسبوعية / شهرية</title>
   <style>
     :root{
-      --ink:#0f172a;
-      --muted:#5f6b7a;
-      --bg:#f8fafc;
-      --card:#ffffff;
-      --line:#cfe8d3;
-      --brand:#10b981;  /* أخضر */
-      --brand-2:#0ea5e9;/* تركواز خفيف */
-      --radius:18px;
-      --shadow:0 10px 30px rgba(2,6,23,.06);
-      --maxw:1100px;
+      --ink:#0f172a; --muted:#64748b; --bg:#f6faf8; --card:#ffffff; --line:#cfe8d3;
+      --brand:#10b981; --brand2:#0ea5e9; --dark:#0b3a50; --teal:#134e4a;
+      --radius:18px; --shadow:0 10px 30px rgba(2,6,23,.06); --maxw:1100px;
     }
     *{box-sizing:border-box}
-    body{
-      margin:0; background:var(--bg); color:var(--ink);
-      font:16px/1.9 "Tajawal","Noto Naskh Arabic",system-ui,-apple-system,Segoe UI,Arial,sans-serif;
-      -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
-    }
-    .wrap{max-width:var(--maxw); margin:0 auto; padding:20px}
-    /* شريط الديباجة (صورة 26.png) */
-    .banner{
-      background:#e6f5fd; border:1px solid #d7ecff; border-radius:20px;
-      box-shadow:var(--shadow); overflow:hidden;
-    }
-    .banner img{display:block; width:100%; height:auto}
+    body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.9 "Tajawal","Noto Naskh Arabic",system-ui,-apple-system,Segoe UI,Arial,sans-serif}
+    .wrap{max-width:var(--maxw);margin:0 auto;padding:18px}
 
-    /* عنوان المدرسة */
-    .school{
-      margin:16px auto 10px; text-align:center;
-      background:#0b3a50; color:#fff;
-      padding:12px 16px; border-radius:14px; font-weight:700; letter-spacing:.2px;
-    }
+    /* ديباجة أعلى الصفحة (26.png محفوظة في الجذر) */
+    .banner{border-radius:20px;overflow:hidden;border:1px solid #d7ecff;box-shadow:var(--shadow);background:#e6f5fd}
+    .banner img{display:block;width:100%;height:auto}
 
-    /* شريط اسم البرنامج */
-    .prog{
-      background:#134e4a; color:#fff; text-align:center; font-weight:800;
-      padding:12px 18px; border-radius:14px; margin:8px 0 16px;
-      box-shadow:0 4px 18px rgba(0,0,0,.06);
-    }
+    /* تبويبات يومي/أسبوعي/شهري */
+    .tabs{display:flex;gap:8px;margin:14px 0 10px}
+    .tab{flex:1 1 0; text-align:center; padding:10px 12px; border-radius:12px; font-weight:900; cursor:pointer; user-select:none;
+      border:2px solid #cfe8d3; background:#fff; color:#0b3a50; box-shadow:var(--shadow)}
+    .tab.active{background:linear-gradient(135deg,var(--brand),#34d399); color:#fff; border-color:transparent}
 
-    /* شبكة المعلومات */
-    .grid{
-      display:grid; gap:18px; grid-template-columns: 1fr 1fr;
-    }
-    @media (max-width:900px){ .grid{grid-template-columns:1fr} }
+    /* التقرير */
+    .prog{background:var(--teal);color:#fff;text-align:center;font-weight:900;padding:12px 16px;border-radius:14px;margin:10px 0 16px;box-shadow:0 4px 18px rgba(0,0,0,.06)}
 
-    .card{
-      background:var(--card); border:2px solid var(--line);
-      border-radius:var(--radius); padding:16px 18px; box-shadow:var(--shadow);
-    }
-    .card h3{
-      margin:0 0 10px; font-size:18px; font-weight:800; color:#0b8359;
-      border-right:6px solid var(--brand); padding-right:10px;
-    }
-    .pill{
-      background:#f0fff7; border:2px solid var(--line);
-      padding:10px 12px; border-radius:12px; font-weight:700;
-    }
+    .grid{display:grid;gap:18px;grid-template-columns:1fr 1fr}
+    @media (max-width:900px){.grid{grid-template-columns:1fr}}
 
-    /* الأهداف */
-    .goals{min-height:230px}
-    .goals ul{
-      margin:0; padding:0 18px; list-style:decimal;
-    }
-    .goals li{margin:4px 0}
+    .card{background:var(--card);border:2px solid var(--line);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow)}
+    .card h3{margin:0 0 10px;font-size:18px;font-weight:900;color:#0b8359;border-right:6px solid var(--brand);padding-right:10px}
+    .pill{background:#f0fff7;border:2px solid var(--line);padding:10px 12px;border-radius:12px;font-weight:800}
 
-    /* الشواهد */
-    .gallery{
-      display:grid; grid-template-columns:1fr 1fr; gap:14px;
-    }
-    .shot{
-      border:2px solid var(--line); border-radius:16px; overflow:hidden; background:#fff;
-    }
-    .shot img{display:block; width:100%; height:220px; object-fit:cover}
+    .goals ul{margin:0;padding:0 20px;list-style:decimal}
+    .goals li{margin:5px 0}
 
-    /* ترويسة قسم */
-    .section-title{
-      margin:22px 0 10px; text-align:center; font-weight:900; color:#107e5f;
-      letter-spacing:.25px; font-size:20px; position:relative;
-    }
-    .section-title:after{
-      content:""; height:3px; width:90px; background:linear-gradient(90deg,var(--brand),var(--brand-2));
-      position:absolute; left:50%; transform:translateX(-50%); bottom:-6px; border-radius:2px;
-    }
+    .section-title{margin:8px 0 10px;text-align:center;font-weight:900;color:#107e5f;letter-spacing:.25px;font-size:20px;position:relative}
+    .section-title:after{content:"";height:3px;width:90px;background:linear-gradient(90deg,var(--brand),var(--brand2));position:absolute;left:50%;transform:translateX(-50%);bottom:-6px;border-radius:2px}
 
-    /* تذييل */
-    footer{
-      margin:20px 0 6px; padding:14px 10px; border-top:2px solid var(--line);
-      text-align:center; color:#334155; font-weight:700;
-      background:#f9fffb; border-radius:14px;
-    }
-    footer small{display:block; color:#64748b; font-weight:600; margin-top:6px}
+    .gallery{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .shot{border:2px solid var(--line);border-radius:16px;overflow:hidden;background:#fff}
+    .shot img{display:block;width:100%;height:220px;object-fit:cover}
 
-    /* طباعة */
-    @media print{
-      body{background:#fff}
-      .wrap{padding:0}
-      .banner, .card, footer{box-shadow:none}
-    }
+    .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0 14px}
+    .btn{appearance:none;border:1px solid #cbd5e1;background:#fff;border-radius:12px;padding:10px 14px;font-weight:900;cursor:pointer;box-shadow:var(--shadow)}
+    .btn.primary{background:var(--brand);color:#fff;border-color:transparent}
+
+    .panel{display:none}
+    .panel.active{display:block}
+
+    footer{margin:20px 0 6px;padding:14px 10px;border-top:2px solid var(--line);text-align:center;color:#334155;font-weight:800;background:#f9fffb;border-radius:14px}
+    footer small{display:block;color:#64748b;font-weight:700;margin-top:6px}
+
+    @media print{body{background:#fff}.wrap{padding:0}.banner,.card,footer,.tabs,.toolbar{box-shadow:none}.tabs,.toolbar,details{display:none!important}}
+
+    /* قيم قابلة للتحرير */
+    [contenteditable="true"]{outline:none}
+    [contenteditable="true"]:focus{box-shadow:0 0 0 3px rgba(16,185,129,.25); border-radius:8px}
   </style>
 </head>
 <body>
   <div class="wrap">
+    <!-- ديباجة المدرسة -->
+    <div class="banner"><img src="26.png" alt="ديباجة المدرسة"></div>
 
-    <!-- الديباجة (الصورة 26.png محفوظة بالمستودع) -->
-    <div class="banner">
-      <img src="26.png" alt="ديباجة المدرسة" />
+    <!-- تبويبات التقارير -->
+    <div class="tabs" role="tablist">
+      <div class="tab active" role="tab" aria-selected="true" data-cat="daily">تقارير يومية</div>
+      <div class="tab" role="tab" aria-selected="false" data-cat="weekly">تقارير أسبوعية</div>
+      <div class="tab" role="tab" aria-selected="false" data-cat="monthly">تقارير شهرية</div>
     </div>
 
-    <!-- اسم المدرسة (عدّل النص إن أردت) -->
-    <div class="school">مدرسة أسامة بن زيد</div>
+    <!-- لوحة أدوات عامة -->
+    <div class="toolbar">
+      <button class="btn primary" onclick="window.print()">طباعة</button>
+      <button class="btn" onclick="exportHTML()">تصدير كملف HTML</button>
+      <button class="btn" onclick="resetCurrent()">استعادة القيم الافتراضية</button>
+    </div>
 
-    <!-- اسم البرنامج -->
-    <div class="prog">اسم البرنامج</div>
+    <!-- ======= لوحة: يومية ======= -->
+    <section class="panel active" data-cat="daily">
+      <div class="prog"><span data-field="program" contenteditable="true">اسم البرنامج</span></div>
 
-    <!-- شبكة: التاريخ / مقر التنفيذ / المنفذة -->
-    <section class="grid" aria-label="بيانات البرنامج">
-      <div class="card">
-        <h3>التاريخ</h3>
-        <div class="pill">— 12/12/1446 هـ —</div>
+      <section class="grid" aria-label="بيانات البرنامج اليومية">
+        <div class="card"><h3>التاريخ</h3><div class="pill"><span data-field="date" contenteditable="true">12/12/1446 هـ</span></div></div>
+        <div class="card"><h3>مقر التنفيذ</h3><div class="pill"><span data-field="place" contenteditable="true">الفصول الدراسية</span></div></div>
+        <div class="card"><h3>المنفذة</h3><div class="pill"><span data-field="owner" contenteditable="true">المعلمة/ ………………………</span></div></div>
+        <div class="card goals" style="grid-column:1/-1"><h3>الأهداف</h3><ul data-field="goals" contenteditable="true"><li>الهدف الأول.</li><li>الهدف الثاني.</li><li>الهدف الثالث.</li><li>الهدف الرابع.</li><li>الهدف الخامس.</li></ul></div>
+      </section>
+
+      <h2 class="section-title">الشواهد</h2>
+      <div class="toolbar">
+        <input id="shots-daily" type="file" accept="image/*" multiple style="display:none" />
+        <button class="btn" onclick="document.getElementById('shots-daily').click()">رفع الشواهد (صور)</button>
       </div>
-
-      <div class="card">
-        <h3>مقر التنفيذ</h3>
-        <div class="pill">— الفصول الدراسية —</div>
-      </div>
-
-      <div class="card">
-        <h3>المنفذة</h3>
-        <div class="pill">— المعلمة/ ……………………… —</div>
-      </div>
-
-      <!-- «الأهداف» صندوق واسع؛ خليه يمتد عمودين على الشاشات العريضة -->
-      <div class="card goals" style="grid-column:1 / -1">
-        <h3>الأهداف</h3>
-        <ul>
-          <li>الهدف الأول.</li>
-          <li>الهدف الثاني.</li>
-          <li>الهدف الثالث.</li>
-          <li>الهدف الرابع.</li>
-          <li>الهدف الخامس.</li>
-        </ul>
-      </div>
+      <section class="gallery" id="gallery-daily" aria-label="الشواهد اليومية"></section>
     </section>
 
-    <!-- الشواهد -->
-    <h2 class="section-title">الشواهد</h2>
-    <section class="gallery" aria-label="الشواهد (صور)">
-      <!-- ضع صورك داخل images/ بالأسماء التالية أو غيّر المسارات -->
-      <figure class="shot"><img src="images/shot-01.jpg" alt="شاهد 1"></figure>
-      <figure class="shot"><img src="images/shot-02.jpg" alt="شاهد 2"></figure>
-      <figure class="shot"><img src="images/shot-03.jpg" alt="شاهد 3"></figure>
-      <figure class="shot"><img src="images/shot-04.jpg" alt="شاهد 4"></figure>
+    <!-- ======= لوحة: أسبوعية ======= -->
+    <section class="panel" data-cat="weekly">
+      <div class="prog"><span data-field="program" contenteditable="true">اسم البرنامج</span></div>
+
+      <section class="grid" aria-label="بيانات البرنامج الأسبوعية">
+        <div class="card"><h3>التاريخ</h3><div class="pill"><span data-field="date" contenteditable="true">—</span></div></div>
+        <div class="card"><h3>مقر التنفيذ</h3><div class="pill"><span data-field="place" contenteditable="true">—</span></div></div>
+        <div class="card"><h3>المنفذة</h3><div class="pill"><span data-field="owner" contenteditable="true">—</span></div></div>
+        <div class="card goals" style="grid-column:1/-1"><h3>الأهداف</h3><ul data-field="goals" contenteditable="true"><li>—</li></ul></div>
+      </section>
+
+      <h2 class="section-title">الشواهد</h2>
+      <div class="toolbar">
+        <input id="shots-weekly" type="file" accept="image/*" multiple style="display:none" />
+        <button class="btn" onclick="document.getElementById('shots-weekly').click()">رفع الشواهد (صور)</button>
+      </div>
+      <section class="gallery" id="gallery-weekly" aria-label="الشواهد الأسبوعية"></section>
     </section>
 
-    <!-- التذييل المطلوب سابقًا -->
+    <!-- ======= لوحة: شهرية ======= -->
+    <section class="panel" data-cat="monthly">
+      <div class="prog"><span data-field="program" contenteditable="true">اسم البرنامج</span></div>
+
+      <section class="grid" aria-label="بيانات البرنامج الشهرية">
+        <div class="card"><h3>التاريخ</h3><div class="pill"><span data-field="date" contenteditable="true">—</span></div></div>
+        <div class="card"><h3>مقر التنفيذ</h3><div class="pill"><span data-field="place" contenteditable="true">—</span></div></div>
+        <div class="card"><h3>المنفذة</h3><div class="pill"><span data-field="owner" contenteditable="true">—</span></div></div>
+        <div class="card goals" style="grid-column:1/-1"><h3>الأهداف</h3><ul data-field="goals" contenteditable="true"><li>—</li></ul></div>
+      </section>
+
+      <h2 class="section-title">الشواهد</h2>
+      <div class="toolbar">
+        <input id="shots-monthly" type="file" accept="image/*" multiple style="display:none" />
+        <button class="btn" onclick="document.getElementById('shots-monthly').click()">رفع الشواهد (صور)</button>
+      </div>
+      <section class="gallery" id="gallery-monthly" aria-label="الشواهد الشهرية"></section>
+    </section>
+
+    <!-- التذييل المطلوب -->
     <footer>
       مديرة المدرسة: أماني آل عبشان
       <small>تصميم : أ ريم نافل</small>
     </footer>
-
   </div>
+
+  <script>
+    // مفاتيح الحفظ لكل تبويب
+    const KEY = (cat)=>`moeReport:${cat}`;
+
+    // التبويب
+    document.querySelectorAll('.tab').forEach(tab=>{
+      tab.addEventListener('click',()=>{
+        const cat = tab.dataset.cat;
+        document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t===tab));
+        document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active', p.dataset.cat===cat));
+      });
+    });
+
+    // ربط الحقول القابلة للتحرير والحفظ التلقائي
+    ['daily','weekly','monthly'].forEach(initPanel);
+
+    function initPanel(cat){
+      const panel = document.querySelector(`.panel[data-cat="${cat}"]`);
+      const state = load(cat);
+
+      // ملء القيم عند التحميل
+      panel.querySelectorAll('[data-field]').forEach(el=>{
+        const field = el.dataset.field;
+        if(field==='goals'){
+          if(Array.isArray(state.goals) && state.goals.length){
+            el.innerHTML = state.goals.map(g=>`<li>${escapeHtml(g)}</li>`).join('');
+          }
+        }else{
+          if(state[field]) el.textContent = state[field];
+        }
+
+        // استماع للتغييرات
+        el.addEventListener('input',()=>{
+          const s = load(cat);
+          if(field==='goals'){
+            s.goals = Array.from(el.querySelectorAll('li')).map(li=>li.textContent.trim()).filter(Boolean);
+          }else{
+            s[field] = el.textContent.trim();
+          }
+          save(cat,s);
+        });
+      });
+
+      // عرض الصور المخزنة
+      const gal = document.getElementById(`gallery-${cat}`);
+      renderShots(gal, state.shots||[]);
+
+      // رفع صور جديدة
+      const input = document.getElementById(`shots-${cat}`);
+      input.addEventListener('change', async (e)=>{
+        const files = Array.from(e.target.files).slice(0,4); // 4 صور كحد أقصى
+        const dataUrls = [];
+        for (const f of files){ dataUrls.push(await fileToDataURL(f)); }
+        const s = load(cat); s.shots = dataUrls; save(cat,s); renderShots(gal, dataUrls);
+        input.value = '';
+      });
+    }
+
+    function renderShots(gal, urls){
+      gal.innerHTML = '';
+      urls.forEach(u=>{
+        const fig = document.createElement('figure'); fig.className='shot';
+        const img = document.createElement('img'); img.src=u; fig.appendChild(img); gal.appendChild(fig);
+      });
+    }
+
+    function load(cat){
+      try{ return JSON.parse(localStorage.getItem(KEY(cat)))||{} }catch{ return {} }
+    }
+    function save(cat,data){ localStorage.setItem(KEY(cat), JSON.stringify(data)); }
+
+    function resetCurrent(){
+      const active = document.querySelector('.panel.active').dataset.cat;
+      localStorage.removeItem(KEY(active)); location.reload();
+    }
+
+    function fileToDataURL(file){
+      return new Promise((res, rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsDataURL(file); });
+    }
+
+    // تصدير كـ HTML (يحتفظ بالصور Base64 المخزنة محليًا)
+    function exportHTML(){
+      const css = document.querySelector('style').innerHTML;
+      const html = document.querySelector('.wrap').outerHTML;
+      const doc = `<!doctype html><html lang=\"ar\" dir=\"rtl\"><head><meta charset=\"utf-8\"/><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"/><title>تقرير — نسخة للتشارك</title><style>${css}</style></head><body>${html}</body></html>`;
+      const blob = new Blob([doc], {type:'text/html'});
+      const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='reports.html'; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),3000);
+    }
+
+    function escapeHtml(s){ return s.replace(/[&<>\"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c])); }
+  </script>
 </body>
 </html>
+
