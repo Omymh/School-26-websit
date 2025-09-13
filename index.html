@@ -13,12 +13,9 @@
 
 <style>
   :root{
-    /* ألوان وهوية */
     --brand:#006C35; --brand-2:#0A8A4F; --accent:#00A36C; --brand-weak:#E8F4EC;
     --ink:#101315; --muted:#69707D; --bg:#F6F8F7; --card:#FFFFFF; --border:#E3E7EA; --danger:#DA3C3C;
     --radius:14px; --line:1.85; --page-w:920px;
-
-    /* قياسات A4 للشاشة */
     --a4-w:210mm; --a4-h:297mm; --paper-pad:12mm;
   }
 
@@ -28,7 +25,6 @@
     line-height:var(--line);
   }
 
-  /* ====== ديباجة ثابتة في واجهة الموقع ====== */
   .site-letterhead{
     position:sticky; top:0; z-index:1000; background:#fff;
     border-bottom:1px solid var(--border); box-shadow:0 8px 24px rgba(0,0,0,.05);
@@ -37,7 +33,6 @@
   .site-letterhead img{ display:block; margin:0 auto; max-width:100%; height:auto; max-height:140px; }
   .lh-placeholder{ text-align:center; color:var(--muted); padding:16px 0; font-weight:700; }
 
-  /* ====== غلاف المحتوى ====== */
   .container{ max-width:var(--page-w); margin:22px auto 44px; padding:0 16px; }
   .card{
     background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
@@ -62,7 +57,6 @@
   .row{ display:grid; gap:12px; grid-template-columns:1fr 1fr; }
   @media (max-width:680px){ .row{ grid-template-columns:1fr; } }
   label{ display:block; font-weight:700; font-size:15px; margin-bottom:6px; color:#273036; }
-
   input[type="text"], input[type="date"], textarea{
     width:100%; padding:12px 14px; border:1px solid var(--border); border-radius:12px; background:#fff; color:var(--ink); font-size:15px;
     outline:none; transition:border .2s, box-shadow .2s, transform .08s ease;
@@ -91,7 +85,7 @@
   .actions{ display:flex; gap:10px; flex-wrap:wrap; margin-top:6px; }
   .note{ color:var(--muted); font-size:12.5px; }
 
-  /* ====== نافذة المعاينة + ورقة A4 ====== */
+  /* نافذة المعاينة + ورقة A4 */
   .modal{
     position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(6,16,11,.55);
     z-index:9999; padding:20px;
@@ -110,7 +104,7 @@
   .sheet-actions{ display:flex; gap:8px; flex-wrap:wrap; }
   .sheet-body{ padding:18px 20px 24px; }
 
-  /* ورقة A4 دقيقة للشاشة */
+  /* ورقة A4 دقيقة */
   .paper{
     width:var(--a4-w);
     min-height:var(--a4-h);
@@ -150,10 +144,10 @@
     display:flex; justify-content:space-between; gap:8px; font-weight:800;
   }
 
-  /* منع انكسارات سيئة داخل أقسام حساسة */
-  .meta, .block, .gallery, .footer { break-inside: avoid; page-break-inside: avoid; }
+  /* منع انكسارات سيئة */
+  .meta, .block, .gallery, .footer { break-inside: avoid; page-break-inside: avoid;  }
 
-  /* ====== ضبط الطباعة: نطبع الورقة فقط ====== */
+  /* طباعة */
   @media print{
     body > *:not(.print-area){ display:none !important; }
     .modal{ display:block !important; background:transparent !important; padding:0 !important; }
@@ -162,25 +156,23 @@
     .sheet-body{ padding:0; }
     .print-area{ display:block; }
 
-    /* نسخة أبسط للمعرض لتجنب مشاكل grid عند التحويل */
+    html[dir="rtl"] *, .paper { direction: rtl; text-align: right; }
+
     .gallery{ display:flex !important; flex-wrap:wrap !important; gap:4mm !important; }
     .gallery figure{ width:calc(50% - 2mm); break-inside: avoid; page-break-inside: avoid; }
-
-    html[dir="rtl"] *, .paper { direction: rtl; text-align: right; }
   }
-</style>
 
-/* ====== @page على مستوى الجذر لضبط A4 للطباعة ====== */
-<style>
   @page {
-    size: A4 portrait;  /* 210mm x 297mm */
-    margin: 0;          /* الهوامش داخل .paper */
+    size: A4 portrait;
+    margin: 0;
   }
+
+  @media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
 </style>
 </head>
 <body>
 
-<!-- ===== ديباجة ثابتة في الواجهة ===== -->
+<!-- ديباجة -->
 <div class="site-letterhead">
   <div class="inner" id="siteLetterhead">
     <div class="lh-placeholder">سيتم تحميل الديباجة تلقائيًا (ملف باسم <b>26</b> في جذر المستودع).</div>
@@ -201,41 +193,39 @@
     <form class="form" id="form" onsubmit="return false;">
       <div>
         <label for="programName">اسم البرنامج</label>
-        <input id="programName" type="text">
+        <input id="programName" type="text" />
       </div>
 
       <div>
         <label for="audience">الفئة المستهدفة</label>
-        <input id="audience" type="text">
+        <input id="audience" type="text" />
       </div>
 
-      <!-- التاريخ اليومي -->
       <div class="row" id="row-date-one">
         <div>
           <label for="dateOne">التاريخ</label>
-          <input id="dateOne" type="date">
+          <input id="dateOne" type="date" />
         </div>
         <div>
           <label for="place">مقر التنفيذ</label>
-          <input id="place" type="text">
+          <input id="place" type="text" />
         </div>
       </div>
 
-      <!-- فترة التاريخ (للأسبوعي/الشهري) -->
       <div class="row" id="row-date-range" style="display:none">
         <div>
           <label for="dateFrom">من تاريخ</label>
-          <input id="dateFrom" type="date">
+          <input id="dateFrom" type="date" />
         </div>
         <div>
           <label for="dateTo">إلى تاريخ</label>
-          <input id="dateTo" type="date">
+          <input id="dateTo" type="date" />
         </div>
       </div>
 
       <div>
         <label for="executor">المنفذة</label>
-        <input id="executor" type="text">
+        <input id="executor" type="text" />
       </div>
 
       <div>
@@ -243,11 +233,10 @@
         <textarea id="objectives"></textarea>
       </div>
 
-      <!-- الشواهد -->
       <div>
         <label>الشواهد (حتى 4 صور)</label>
         <div class="upload" id="dropZone">
-          <input id="evidenceFiles" type="file" accept="image/*" multiple>
+          <input id="evidenceFiles" type="file" accept="image/*" multiple />
           <label for="evidenceFiles" class="btn btn-ghost">اختيار الصور</label>
           <div class="note" id="uploadMsg">يمكن سحب الصور وإفلاتها هنا. الحد 4 صور.</div>
           <div class="thumbs" id="thumbs"></div>
@@ -265,7 +254,7 @@
   </div>
 </div>
 
-<!-- نافذة المعاينة / الطباعة -->
+<!-- نافذة المعاينة -->
 <div class="modal" id="modal" aria-hidden="true">
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="dlgTitle">
     <div class="sheet-head">
@@ -283,340 +272,397 @@
 </div>
 
 <script>
-/* =================== ثابت اسم ملف الديباجة =================== */
-const SCHOOL_HEADER_BASENAME = "26"; // مثال: 26.png أو 26.svg بجانب index.html
+  const SCHOOL_HEADER_BASENAME = "26";
+  const $ = (sel) => document.querySelector(sel);
 
-/* =================== أدوات مختصرة =================== */
-const $ = (sel) => document.querySelector(sel);
+  const tabsEl = $("#tabs"), formEl = $("#form"), thumbsEl = $("#thumbs"), dropZone = $("#dropZone");
+  const filesInput = $("#evidenceFiles"), uploadMsg = $("#uploadMsg"), modal = $("#modal"), printArea = $("#printArea");
+  const siteLetterhead = $("#siteLetterhead");
 
-/* عناصر الواجهة */
-const tabsEl = $("#tabs"), formEl = $("#form"), thumbsEl = $("#thumbs"), dropZone = $("#dropZone");
-const filesInput = $("#evidenceFiles"), uploadMsg = $("#uploadMsg"), modal = $("#modal"), printArea = $("#printArea");
-const siteLetterhead = $("#siteLetterhead");
+  const programName=$("#programName"), audience=$("#audience"), dateOne=$("#dateOne");
+  const dateFrom=$("#dateFrom"), dateTo=$("#dateTo"), place=$("#place"), executor=$("#executor"), objectives=$("#objectives");
+  const rowDateOne=$("#row-date-one"), rowDateRange=$("#row-date-range");
 
-/* الحقول */
-const programName=$("#programName"), audience=$("#audience"), dateOne=$("#dateOne");
-const dateFrom=$("#dateFrom"), dateTo=$("#dateTo"), place=$("#place"), executor=$("#executor"), objectives=$("#objectives");
-const rowDateOne=$("#row-date-one"), rowDateRange=$("#row-date-range");
+  const previewBtn=$("#previewBtn"), downloadBtn=$("#downloadBtn"), dlFromPrev=$("#dlFromPreviewBtn");
+  const printBtn=$("#printBtn"), closeModalBtn=$("#closeModalBtn"), clearBtn=$("#clearBtn"), saveBtn=$("#saveBtn");
 
-/* أزرار */
-const previewBtn=$("#previewBtn"), downloadBtn=$("#downloadBtn"), dlFromPrev=$("#dlFromPreviewBtn");
-const printBtn=$("#printBtn"), closeModalBtn=$("#closeModalBtn"), clearBtn=$("#clearBtn"), saveBtn=$("#saveBtn");
+  const blank = () => ({ programName:"", audience:"", dateOne:"", dateFrom:"", dateTo:"", place:"", executor:"", objectives:"", images:[] });
+  const state = { currentTab:"daily", daily:blank(), weekly:blank(), monthly:blank() };
+  const cur = () => state[state.currentTab];
 
-/* =================== الحالة والتخزين =================== */
-const blank = () => ({ programName:"", audience:"", dateOne:"", dateFrom:"", dateTo:"", place:"", executor:"", objectives:"", images:[] });
-const state = { currentTab:"daily", daily:blank(), weekly:blank(), monthly:blank() };
-const cur = () => state[state.currentTab];
-const saveAll = () => localStorage.setItem("report-suite-pro", JSON.stringify(state));
-function loadAll(){
-  try{
-    const raw = localStorage.getItem("report-suite-pro"); if(!raw) return;
-    const p = JSON.parse(raw);
-    if(p && typeof p === 'object'){
-      if(p.daily) state.daily = {...blank(), ...p.daily};
-      if(p.weekly) state.weekly = {...blank(), ...p.weekly};
-      if(p.monthly) state.monthly = {...blank(), ...p.monthly};
-      if(p.currentTab) state.currentTab = p.currentTab;
+  const saveAll = () => localStorage.setItem("report-suite-pro", JSON.stringify(state));
+  function loadAll(){
+    try{
+      const raw = localStorage.getItem("report-suite-pro");
+      if(!raw) return;
+      const p = JSON.parse(raw);
+      if(p && typeof p === 'object'){
+        if(p.daily) state.daily = {...blank(), ...p.daily};
+        if(p.weekly) state.weekly = {...blank(), ...p.weekly};
+        if(p.monthly) state.monthly = {...blank(), ...p.monthly};
+        if(p.currentTab) state.currentTab = p.currentTab;
+      }
+    }catch{}
+  }
+
+  let letterheadSrc = null;
+  async function resolveLetterheadSrc(base){
+    const exts=["",".png",".jpg",".jpeg",".webp",".svg"];
+    for(const ext of exts){
+      const url=`${base}${ext}`;
+      if(await imgExists(url)) return url;
     }
-  }catch{}
-}
-
-/* =================== تحميل الديباجة (واجهة + تقرير) =================== */
-let letterheadSrc = null;
-async function resolveLetterheadSrc(base){
-  const exts=["",".png",".jpg",".jpeg",".webp",".svg"];
-  for(const ext of exts){ const url=${base}${ext}; if(await imgExists(url)) return url; }
-  return null;
-}
-function imgExists(url){
-  return new Promise(res=>{
-    const i=new Image(); i.onload=()=>res(true); i.onerror=()=>res(false);
-    i.src=${url}?v=${Date.now()}; // كسر الكاش
-  });
-}
-async function loadSiteLetterhead(){
-  letterheadSrc = await resolveLetterheadSrc(SCHOOL_HEADER_BASENAME);
-  siteLetterhead.innerHTML = "";
-  if(letterheadSrc){
-    const img = document.createElement("img");
-    img.alt = "ديباجة المدرسة";
-    img.crossOrigin = "anonymous";        // لمخرجات PDF بدون مشاكل CORS
-    img.src = ${letterheadSrc}?v=${Date.now()};
-    siteLetterhead.appendChild(img);
-  }else{
-    const div = document.createElement("div");
-    div.className = "lh-placeholder";
-    div.innerHTML = تعذّر العثور على ملف الديباجة باسم <b>${SCHOOL_HEADER_BASENAME}</b> (مثال: 26.png / 26.jpg / 26.svg);
-    siteLetterhead.appendChild(div);
+    return null;
   }
-}
-
-/* =================== تبويبات =================== */
-function switchTab(tab){
-  state.currentTab = tab;
-  document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("active", t.dataset.tab===tab));
-  rowDateOne.style.display = (tab === "daily") ? "" : "none";
-  rowDateRange.style.display = (tab === "daily") ? "none" : "";
-
-  const s = cur();
-  programName.value=s.programName||""; audience.value=s.audience||"";
-  dateOne.value=s.dateOne||""; dateFrom.value=s.dateFrom||""; dateTo.value=s.dateTo||"";
-  place.value=s.place||""; executor.value=s.executor||""; objectives.value=s.objectives||"";
-  renderThumbs(s.images);
-
-  saveAll();
-}
-tabsEl.addEventListener("click",(e)=>{ const b=e.target.closest(".tab"); if(!b) return; switchTab(b.dataset.tab); });
-
-/* =================== ربط المدخلات =================== */
-programName.addEventListener("input", e=>{ cur().programName=e.target.value; saveAll(); });
-audience.addEventListener("input", e=>{ cur().audience=e.target.value; saveAll(); });
-dateOne.addEventListener("input", e=>{ cur().dateOne=e.target.value; saveAll(); });
-dateFrom.addEventListener("input", e=>{ cur().dateFrom=e.target.value; saveAll(); });
-dateTo.addEventListener("input", e=>{ cur().dateTo=e.target.value; saveAll(); });
-place.addEventListener("input", e=>{ cur().place=e.target.value; saveAll(); });
-executor.addEventListener("input", e=>{ cur().executor=e.target.value; saveAll(); });
-objectives.addEventListener("input", e=>{ cur().objectives=e.target.value; saveAll(); });
-saveBtn.addEventListener("click", ()=>{ saveAll(); toast("تم الحفظ ✔️"); });
-
-clearBtn.addEventListener("click", ()=>{
-  if(!confirm("هل تريدين مسح بيانات هذا القسم فقط؟")) return;
-  state[state.currentTab] = blank();
-  switchTab(state.currentTab);
-  toast("تم المسح");
-});
-
-/* =================== رفع الصور (حتى 4) =================== */
-filesInput.addEventListener("change", ()=> handleFiles(filesInput.files));
-dropZone.addEventListener("dragover", e=>{ e.preventDefault(); dropZone.style.background="#E8F4EC"; dropZone.style.borderColor="var(--brand)"; });
-dropZone.addEventListener("dragleave", ()=>{ dropZone.style.background="#FBFEFC"; dropZone.style.borderColor="var(--border)"; });
-dropZone.addEventListener("drop", e=>{
-  e.preventDefault(); dropZone.style.background="#FBFEFC"; dropZone.style.borderColor="var(--border)";
-  handleFiles(e.dataTransfer.files);
-});
-
-async function handleFiles(files){
-  const arr = Array.from(files||[]); if(!arr.length) return;
-  const s = cur(); const room = Math.max(0, 4 - s.images.length);
-  if(room <= 0){ setUploadMsg("وصلتِ إلى الحد الأقصى (4 صور).", true); return; }
-  if(arr.length > room){ setUploadMsg(سيتم إضافة ${room} صور فقط (الحد 4)., true); }
-  else { setUploadMsg("تمت إضافة الصور ✔️"); }
-
-  for(const f of arr.slice(0, room)){
-    if(!f.type.startsWith("image/")) continue;
-    const data = await compressImage(f, 1400, 0.9);
-    s.images.push(data);
+  function imgExists(url){
+    return new Promise(res=>{
+      const i=new Image();
+      i.onload=()=>res(true);
+      i.onerror=()=>res(false);
+      i.src=`${url}?v=${Date.now()}`;
+    });
   }
-  renderThumbs(s.images); saveAll();
-}
-function renderThumbs(list){
-  thumbsEl.innerHTML="";
-  (list||[]).slice(0,4).forEach(src=>{
-    const d=document.createElement("div"); d.className="thumb";
-    const img=document.createElement("img"); img.src=src; img.alt="شاهِد";
-    d.appendChild(img); thumbsEl.appendChild(d);
+  async function loadSiteLetterhead(){
+    letterheadSrc = await resolveLetterheadSrc(SCHOOL_HEADER_BASENAME);
+    siteLetterhead.innerHTML = "";
+    if(letterheadSrc){
+      const img = document.createElement("img");
+      img.alt = "ديباجة المدرسة";
+      img.crossOrigin = "anonymous";
+      img.src = `${letterheadSrc}?v=${Date.now()}`;
+      siteLetterhead.appendChild(img);
+    } else {
+      const div = document.createElement("div");
+      div.className = "lh-placeholder";
+      div.innerHTML = `تعذّر العثور على ملف الديباجة باسم <b>${SCHOOL_HEADER_BASENAME}</b> (مثال: 26.png / 26.jpg / 26.svg)`;
+      siteLetterhead.appendChild(div);
+    }
+  }
+
+  function switchTab(tab){
+    state.currentTab = tab;
+    document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("active", t.dataset.tab===tab));
+    rowDateOne.style.display = (tab === "daily") ? "" : "none";
+    rowDateRange.style.display = (tab === "daily") ? "none" : "";
+
+    const s = cur();
+    programName.value=s.programName||"";
+    audience.value=s.audience||"";
+    dateOne.value=s.dateOne||"";
+    dateFrom.value=s.dateFrom||"";
+    dateTo.value=s.dateTo||"";
+    place.value=s.place||"";
+    executor.value=s.executor||"";
+    objectives.value=s.objectives||"";
+    renderThumbs(s.images);
+
+    saveAll();
+  }
+  tabsEl.addEventListener("click",(e)=>{
+    const b=e.target.closest(".tab");
+    if(!b) return;
+    switchTab(b.dataset.tab);
   });
-}
-function setUploadMsg(msg, danger=false){
-  uploadMsg.textContent=msg; uploadMsg.style.color = danger ? "var(--danger)" : "var(--muted)";
-  if(!danger){
+
+  programName.addEventListener("input", e=>{ cur().programName=e.target.value; saveAll(); });
+  audience.addEventListener("input", e=>{ cur().audience=e.target.value; saveAll(); });
+  dateOne.addEventListener("input", e=>{ cur().dateOne=e.target.value; saveAll(); });
+  dateFrom.addEventListener("input", e=>{ cur().dateFrom=e.target.value; saveAll(); });
+  dateTo.addEventListener("input", e=>{ cur().dateTo=e.target.value; saveAll(); });
+  place.addEventListener("input", e=>{ cur().place=e.target.value; saveAll(); });
+  executor.addEventListener("input", e=>{ cur().executor=e.target.value; saveAll(); });
+  objectives.addEventListener("input", e=>{ cur().objectives=e.target.value; saveAll(); });
+  saveBtn.addEventListener("click", ()=>{ saveAll(); toast("تم الحفظ ✔️"); });
+
+  clearBtn.addEventListener("click", ()=>{
+    if(!confirm("هل تريدين مسح بيانات هذا القسم فقط؟")) return;
+    state[state.currentTab] = blank();
+    switchTab(state.currentTab);
+    toast("تم المسح");
+  });
+
+  filesInput.addEventListener("change", ()=> handleFiles(filesInput.files));
+  dropZone.addEventListener("dragover", e=>{
+    e.preventDefault();
+    dropZone.style.background="#E8F4EC";
+    dropZone.style.borderColor="var(--brand)";
+  });
+  dropZone.addEventListener("dragleave", ()=>{
+    dropZone.style.background="#FBFEFC";
+    dropZone.style.borderColor="var(--border)";
+  });
+  dropZone.addEventListener("drop", e=>{
+    e.preventDefault();
+    dropZone.style.background="#FBFEFC";
+    dropZone.style.borderColor="var(--border)";
+    handleFiles(e.dataTransfer.files);
+  });
+
+  async function handleFiles(files){
+    const arr = Array.from(files||[]);
+    if(!arr.length) return;
+    const s = cur();
+    const room = Math.max(0, 4 - s.images.length);
+    if(room <= 0){
+      setUploadMsg("وصلتِ إلى الحد الأقصى (4 صور).", true);
+      return;
+    }
+    if(arr.length > room){
+      setUploadMsg(`سيتم إضافة ${room} صور فقط (الحد 4).`, true);
+    } else {
+      setUploadMsg("تمت إضافة الصور ✔️");
+    }
+    for(const f of arr.slice(0, room)){
+      if(!f.type.startsWith("image/")) continue;
+      const data = await compressImage(f, 1400, 0.9);
+      s.images.push(data);
+    }
+    renderThumbs(s.images);
+    saveAll();
+  }
+  function renderThumbs(list){
+    thumbsEl.innerHTML="";
+    (list||[]).slice(0,4).forEach(src=>{
+      const d=document.createElement("div");
+      d.className="thumb";
+      const img=document.createElement("img");
+      img.src=src; img.alt="شاهِد";
+      d.appendChild(img);
+      thumbsEl.appendChild(d);
+    });
+  }
+  function setUploadMsg(msg, danger=false){
+    uploadMsg.textContent=msg;
+    uploadMsg.style.color = danger ? "var(--danger)" : "var(--muted)";
+    if(!danger){
+      setTimeout(()=>{
+        uploadMsg.textContent="يمكن سحب الصور وإفلاتها هنا. الحد 4 صور.";
+        uploadMsg.style.color="var(--muted)";
+      }, 2000);
+    }
+  }
+
+  function fileToDataURL(file){
+    return new Promise((res,rej)=>{
+      const fr=new FileReader();
+      fr.onload=()=>res(fr.result);
+      fr.onerror=rej;
+      fr.readAsDataURL(file);
+    });
+  }
+  function loadImage(src){
+    return new Promise((res,rej)=>{
+      const img=new Image();
+      img.onload=()=>res(img);
+      img.onerror=rej;
+      img.src=src;
+    });
+  }
+  async function compressImage(file, maxW=1200, quality=0.9){
+    const dataUrl = await fileToDataURL(file);
+    const img = await loadImage(dataUrl);
+    const ratio=img.width/img.height;
+    const w=Math.min(maxW,img.width);
+    const h=Math.round(w/ratio);
+    const canvas=document.createElement("canvas");
+    canvas.width=w;
+    canvas.height=h;
+    const ctx=canvas.getContext("2d");
+    ctx.fillStyle="#fff";
+    ctx.fillRect(0,0,w,h);
+    ctx.drawImage(img,0,0,w,h);
+    return canvas.toDataURL("image/jpeg", quality);
+  }
+  async function waitForImages(container){
+    const imgs = Array.from(container.querySelectorAll("img"));
+    await Promise.all(imgs.map(img => img.complete ? Promise.resolve() : new Promise(res=>{
+      img.onload=res; img.onerror=()=>res();
+    })));
+  }
+
+  function fmtDate(iso){ if(!iso) return "—"; try{ return new Intl.DateTimeFormat('ar',{dateStyle:'long'}).format(new Date(iso)); }catch{ return iso; } }
+  function fmtRange(a,b){ if(!a||!b) return "—"; return `${fmtDate(a)} — ${fmtDate(b)}`; }
+  function escapeHtml(s){ return s.replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m])); }
+  function objectivesHTML(text){
+    const lines=(text||"").split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+    return lines.length ? `<ul>${lines.map(li=>`<li>${escapeHtml(li)}`).join("")}</ul>` : `<ul><li>—</li></ul>`;
+  }
+
+  function buildReportDOM(){
+    const s = cur();
+    const paper = document.createElement("div");
+    paper.className = "paper";
+    paper.innerHTML = `
+      <div class="report">
+        <div class="letterhead">
+          ${letterheadSrc ? `<img alt="ديباجة المدرسة" crossorigin="anonymous" src="${letterheadSrc}?v=${Date.now()}">` : `<div class="note" style="color:#b00020">لم يتم العثور على الديباجة</div>`}
+        </div>
+
+        <div class="title"><h1>${escapeHtml(s.programName || "—")}</h1></div>
+
+        <div class="meta">
+          <div class="field">
+            <div class="label">${state.currentTab === "daily" ? "التاريخ" : "الفترة"}</div>
+            <div class="value">${state.currentTab === "daily" ? fmtDate(s.dateOne) : fmtRange(s.dateFrom, s.dateTo)}</div>
+          </div>
+          <div class="field">
+            <div class="label">مقر التنفيذ</div>
+            <div class="value">${escapeHtml(s.place || "—")}</div>
+          </div>
+          <div class="field">
+            <div class="label">المنفذة</div>
+            <div class="value">${escapeHtml(s.executor || "—")}</div>
+          </div>
+          <div class="field">
+            <div class="label">عدد الشواهد</div>
+            <div class="value">${(s.images||[]).length} / 4</div>
+          </div>
+        </div>
+
+        <div class="block">
+          <h3>الفئة المستهدفة</h3>
+          <div class="value">${escapeHtml(s.audience || "—")}</div>
+        </div>
+
+        <div class="block objectives">
+          <h3>الأهداف</h3>
+          <div>${objectivesHTML(s.objectives)}</div>
+        </div>
+
+        <div class="block">
+          <h3>الشواهد (صور)</h3>
+          <div class="gallery" id="rep-gallery"></div>
+        </div>
+
+        <div class="footer">
+          <div>مديرة المدرسة: أماني آل عبشان</div>
+          <div>تصميم : أ ريم نافل</div>
+        </div>
+      </div>
+    `;
+    const gal = paper.querySelector("#rep-gallery");
+    (s.images||[]).slice(0,4).forEach(src=>{
+      const fig=document.createElement("figure");
+      const img=document.createElement("img");
+      img.src=src; img.alt="شاهِد";
+      fig.appendChild(img);
+      gal.appendChild(fig);
+    });
+    return paper;
+  }
+
+  function ensureValid(){
+    const s=cur();
+    if(!s.programName.trim()){ alert("أدخلي اسم البرنامج."); return false; }
+    if(state.currentTab==="daily"){
+      if(!s.dateOne){ alert("حددي التاريخ."); return false; }
+    }else{
+      if(!s.dateFrom||!s.dateTo){ alert("حددي فترة التاريخ (من / إلى)."); return false; }
+      if(new Date(s.dateFrom)>new Date(s.dateTo)){ alert("تسلسل التاريخ غير صحيح."); return false; }
+    }
+    return true;
+  }
+
+  async function openPreview(autoDownload=false){
+    if(!letterheadSrc) await loadSiteLetterhead();
+    printArea.innerHTML="";
+    const paper = buildReportDOM();
+    printArea.appendChild(paper);
+    modal.classList.add("show");
+    modal.setAttribute("aria-hidden","false");
+
+    await waitForImages(printArea);
+    if(autoDownload){
+      await generatePdf();
+    }
+  }
+  function closePreview(){
+    modal.classList.remove("show");
+    modal.setAttribute("aria-hidden","true");
+  }
+
+  function pdfFileName(){
+    const s=cur();
+    const base=(s.programName||"تقرير").replace(/[\\/:*?"<>|]/g,"").trim()||"تقرير";
+    let suffix="";
+    if(state.currentTab==="daily" && s.dateOne) suffix=s.dateOne;
+    if(state.currentTab!=="daily" && s.dateFrom && s.dateTo) suffix=`${s.dateFrom}_الى_${s.dateTo}`;
+    return `${base}-${suffix || new Date().toISOString().slice(0,10)}.pdf`;
+  }
+
+  function loadScript(src){
+    return new Promise((res,rej)=>{
+      const s=document.createElement("script");
+      s.src=src;
+      s.onload=()=>res(true);
+      s.onerror=()=>rej();
+      document.head.appendChild(s);
+    });
+  }
+  async function ensureHtml2Pdf(){
+    if(window.html2pdf) return true;
+    const fallbacks=[
+      "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
+    ];
+    for(const url of fallbacks){
+      try{
+        await loadScript(url);
+        if(window.html2pdf) return true;
+      }catch{}
+    }
+    alert("تعذّر تحميل مكتبة PDF. تحقّقي من الاتصال ثم أعيدي المحاولة.");
+    return false;
+  }
+  async function generatePdf(){
+    const ok = await ensureHtml2Pdf();
+    if(!ok) return;
+    await waitForImages(printArea);
+    const opt={
+      margin:0,
+      filename: pdfFileName(),
+      image:{ type:'jpeg', quality:0.96 },
+      html2canvas:{ scale:2, useCORS:true, backgroundColor:"#ffffff" },
+      jsPDF:{ unit:'mm', format:'a4', orientation:'portrait' },
+      pagebreak:{ mode:['avoid-all','css','legacy'], avoid:['.meta','.block','.gallery','.footer'] }
+    };
+    try{
+      await window.html2pdf().set(opt).from(printArea.querySelector(".paper")).save();
+    }catch(e){
+      console.error(e);
+      alert("حدث خطأ أثناء إنشاء PDF.");
+    }
+  }
+
+  document.addEventListener("keydown",(e)=>{
+    if(e.key==="Escape") closePreview();
+  });
+  previewBtn.addEventListener("click", async ()=>{
+    if(!ensureValid()) return;
+    await openPreview(false);
+  });
+  downloadBtn.addEventListener("click", async ()=>{
+    if(!ensureValid()) return;
+    await openPreview(true);
+  });
+  dlFromPrev.addEventListener("click", async ()=>{ await generatePdf(); });
+  printBtn.addEventListener("click", ()=>{ window.print(); });
+  closeModalBtn.addEventListener("click", closePreview);
+
+  function toast(msg){
+    uploadMsg.textContent=msg;
+    uploadMsg.style.color="var(--muted)";
     setTimeout(()=>{
       uploadMsg.textContent="يمكن سحب الصور وإفلاتها هنا. الحد 4 صور.";
       uploadMsg.style.color="var(--muted)";
     }, 2000);
   }
-}
 
-/* =================== أدوات صور =================== */
-function fileToDataURL(file){
-  return new Promise((res,rej)=>{
-    const fr=new FileReader(); fr.onload=()=>res(fr.result); fr.onerror=rej; fr.readAsDataURL(file);
-  });
-}
-function loadImage(src){
-  return new Promise((res,rej)=>{
-    const img=new Image(); img.onload=()=>res(img); img.onerror=rej; img.src=src;
-  });
-}
-async function compressImage(file, maxW=1200, quality=0.9){
-  const dataUrl = await fileToDataURL(file); const img = await loadImage(dataUrl);
-  const ratio=img.width/img.height; const w=Math.min(maxW,img.width); const h=Math.round(w/ratio);
-  const canvas=document.createElement("canvas"); canvas.width=w; canvas.height=h;
-  const ctx=canvas.getContext("2d");
-  ctx.fillStyle="#fff"; ctx.fillRect(0,0,w,h); ctx.drawImage(img,0,0,w,h);
-  return canvas.toDataURL("image/jpeg", quality);
-}
-async function waitForImages(container){
-  const imgs = Array.from(container.querySelectorAll("img"));
-  await Promise.all(imgs.map(img => img.complete ? Promise.resolve() : new Promise(res=>{
-    img.onload=res; img.onerror=()=>res();
-  })));
-}
+  (async function init(){
+    loadAll();
+    switchTab(state.currentTab || "daily");
+    await loadSiteLetterhead();
+  })();
 
-/* =================== بناء التقرير (A4) =================== */
-function fmtDate(iso){ if(!iso) return "—"; try{ return new Intl.DateTimeFormat('ar',{dateStyle:'long'}).format(new Date(iso)); }catch{ return iso; } }
-function fmtRange(a,b){ if(!a||!b) return "—"; return ${fmtDate(a)} — ${fmtDate(b)}; }
-function escapeHtml(s){ return s.replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m])); }
-function objectivesHTML(text){
-  const lines=(text||"").split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
-  return lines.length ? <ul>${lines.map(li=><li>${escapeHtml(li)}).join("")}</ul> : <ul><li>—</li></ul>;
-}
-function buildReportDOM(){
-  const s = cur();
-  const paper = document.createElement("div");
-  paper.className = "paper";
-  paper.innerHTML = `
-    <div class="report">
-      <div class="letterhead">
-        ${letterheadSrc ? <img alt="ديباجة المدرسة" crossorigin="anonymous" src="${letterheadSrc}?v=${Date.now()}"> : <div class="note" style="color:#b00020">لم يتم العثور على الديباجة</div>}
-      </div>
-
-      <div class="title"><h1>${escapeHtml(s.programName || "—")}</h1></div>
-
-      <div class="meta">
-        <div class="field">
-          <div class="label">${state.currentTab === "daily" ? "التاريخ" : "الفترة"}</div>
-          <div class="value">${state.currentTab === "daily" ? fmtDate(s.dateOne) : fmtRange(s.dateFrom, s.dateTo)}</div>
-        </div>
-        <div class="field">
-          <div class="label">مقر التنفيذ</div>
-          <div class="value">${escapeHtml(s.place || "—")}</div>
-        </div>
-        <div class="field">
-          <div class="label">المنفذة</div>
-          <div class="value">${escapeHtml(s.executor || "—")}</div>
-        </div>
-        <div class="field">
-          <div class="label">عدد الشواهد</div>
-          <div class="value">${(s.images||[]).length} / 4</div>
-        </div>
-      </div>
-
-      <div class="block">
-        <h3>الفئة المستهدفة</h3>
-        <div class="value">${escapeHtml(s.audience || "—")}</div>
-      </div>
-
-      <div class="block objectives">
-        <h3>الأهداف</h3>
-        <div>${objectivesHTML(s.objectives)}</div>
-      </div>
-
-      <div class="block">
-        <h3>الشواهد (صور)</h3>
-        <div class="gallery" id="rep-gallery"></div>
-      </div>
-
-      <div class="footer">
-        <div>مديرة المدرسة: أماني آل عبشان</div>
-        <div>تصميم : أ ريم نافل</div>
-      </div>
-    </div>
-  `;
-  const gal = paper.querySelector("#rep-gallery");
-  (s.images||[]).slice(0,4).forEach(src=>{
-    const fig=document.createElement("figure"); const img=document.createElement("img");
-    img.src=src; img.alt="شاهِد"; fig.appendChild(img); gal.appendChild(fig);
-  });
-  return paper;
-}
-
-/* =================== تحقق أساسي =================== */
-function ensureValid(){
-  const s=cur();
-  if(!s.programName.trim()){ alert("أدخلي اسم البرنامج."); return false; }
-  if(state.currentTab==="daily"){
-    if(!s.dateOne){ alert("حددي التاريخ."); return false; }
-  }else{
-    if(!s.dateFrom||!s.dateTo){ alert("حددي فترة التاريخ (من / إلى)."); return false; }
-    if(new Date(s.dateFrom)>new Date(s.dateTo)){ alert("تسلسل التاريخ غير صحيح."); return false; }
-  }
-  return true;
-}
-
-/* =================== معاينة / طباعة / PDF =================== */
-async function openPreview(autoDownload=false){
-  if(!letterheadSrc) await loadSiteLetterhead();
-  printArea.innerHTML="";
-  const paper = buildReportDOM();
-  printArea.appendChild(paper);
-
-  modal.classList.add("show"); modal.setAttribute("aria-hidden","false");
-  await waitForImages(printArea);
-
-  if(autoDownload){ await generatePdf(); }
-}
-function closePreview(){ modal.classList.remove("show"); modal.setAttribute("aria-hidden","true"); }
-
-function pdfFileName(){
-  const s=cur();
-  const base=(s.programName||"تقرير").replace(/[\\/:*?"<>|]/g,"").trim()||"تقرير";
-  let suffix="";
-  if(state.currentTab==="daily" && s.dateOne) suffix=s.dateOne;
-  if(state.currentTab!=="daily" && s.dateFrom && s.dateTo) suffix=${s.dateFrom}_الى_${s.dateTo};
-  return ${base}-${suffix || new Date().toISOString().slice(0,10)}.pdf;
-}
-
-/* تحميل html2pdf احتياطيًا إن لزم */
-function loadScript(src){
-  return new Promise((res,rej)=>{
-    const s=document.createElement("script"); s.src=src; s.onload=()=>res(true); s.onerror=()=>rej(); document.head.appendChild(s);
-  });
-}
-async function ensureHtml2Pdf(){
-  if(window.html2pdf) return true;
-  const fallbacks=[
-    "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
-  ];
-  for(const url of fallbacks){ try{ await loadScript(url); if(window.html2pdf) return true; }catch{} }
-  alert("تعذّر تحميل مكتبة PDF. تحقّقي من الاتصال ثم أعيدي المحاولة."); return false;
-}
-
-async function generatePdf(){
-  const ok = await ensureHtml2Pdf(); if(!ok) return;
-  await waitForImages(printArea);
-
-  const opt={
-    margin:0,
-    filename: pdfFileName(),
-    image:{ type:'jpeg', quality:0.96 },
-    html2canvas:{ scale:2, useCORS:true, backgroundColor:"#ffffff" },
-    jsPDF:{ unit:'mm', format:'a4', orientation:'portrait' },
-    pagebreak:{
-      mode:['avoid-all','css','legacy'],
-      avoid:['.meta','.block','.gallery','.footer']
-      // before:['.new-page'], after:[]
-    }
-  };
-
-  try{
-    await window.html2pdf().set(opt).from(printArea.querySelector(".paper")).save();
-  }catch(e){
-    console.error(e);
-    alert("حدث خطأ أثناء إنشاء PDF.");
-  }
-}
-
-/* =================== أزرار =================== */
-document.addEventListener("keydown",(e)=>{ if(e.key==="Escape") closePreview(); });
-previewBtn.addEventListener("click", async ()=>{ if(!ensureValid()) return; await openPreview(false); });
-downloadBtn.addEventListener("click", async ()=>{ if(!ensureValid()) return; await openPreview(true); });
-dlFromPrev.addEventListener("click", async ()=>{ await generatePdf(); });
-printBtn.addEventListener("click", ()=>{ window.print(); });
-closeModalBtn.addEventListener("click", closePreview);
-
-/* =================== إشعار صغير =================== */
-function toast(msg){
-  uploadMsg.textContent=msg; uploadMsg.style.color="var(--muted)";
-  setTimeout(()=>{ uploadMsg.textContent="يمكن سحب الصور وإفلاتها هنا. الحد 4 صور."; uploadMsg.style.color="var(--muted)"; },2000);
-}
-
-/* =================== تشغيل =================== */
-(async function init(){
-  loadAll();
-  switchTab(state.currentTab || "daily");
-  await loadSiteLetterhead(); // عرض الديباجة بالواجهة مباشرة
-})();
 </script>
 </body>
 </html>
