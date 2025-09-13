@@ -79,6 +79,65 @@ textarea {
   resize: vertical;
 }
 
+/* Image Upload Styles */
+.image-upload-area {
+  border: 2px dashed #c0c9d2;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+.image-upload-area input[type="file"] {
+  display: none;
+}
+.image-upload-area label {
+  cursor: pointer;
+  background-color: #3498db;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 8px;
+  transition: background-color 0.3s;
+}
+.image-upload-area label:hover {
+  background-color: #2980b9;
+}
+.image-thumbs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 15px;
+}
+.image-thumb {
+  position: relative;
+  width: 100px;
+  height: 80px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.image-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.image-thumb .remove-btn {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 /* Button Styles */
 .btn-container {
   text-align: center;
@@ -154,6 +213,18 @@ textarea {
 }
 .report-details p {
   line-height: 1.8;
+}
+.image-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+  margin-top: 15px;
+}
+.image-gallery img {
+  width: 100%;
+  height: auto;
+  border: 1px solid #e0e6ed;
+  border-radius: 8px;
 }
 .signature-section {
   display: flex;
@@ -239,7 +310,12 @@ textarea {
     </div>
 
     <div class="form-section">
-      <h3>الملاحظات والتحديات</h3>
+      <h3>الشواهد (صور)</h3>
+      <div class="image-upload-area">
+        <input type="file" id="imageInput" multiple accept="image/*">
+        <label for="imageInput">اختر الصور</label>
+        <div class="image-thumbs" id="imageThumbs"></div>
+      </div>
       <div class="form-group">
         <label for="notes">ملاحظات حول تفاعل الطالبات</label>
         <textarea id="notes" placeholder="اكتب ملاحظاتك هنا"></textarea>
@@ -256,12 +332,35 @@ textarea {
   </form>
 </div>
 
-<div id="report-paper" class="report-paper"></div>
+<div id="report-paper"></div>
 
 <script>
+const imageInput = document.getElementById('imageInput');
+const imageThumbsContainer = document.getElementById('imageThumbs');
+let images = []; // Array to store base64 image data
+
+// Handle image upload and display
+imageInput.addEventListener('change', function(event) {
+  const files = event.target.files;
+  images = [];
+  imageThumbsContainer.innerHTML = '';
+  
+  Array.from(files).forEach(file => {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      images.push(e.target.result);
+      const thumb = document.createElement('div');
+      thumb.className = 'image-thumb';
+      thumb.innerHTML = `<img src="${e.target.result}" alt="صورة مرفقة">`;
+      imageThumbsContainer.appendChild(thumb);
+    };
+    reader.readAsDataURL(file);
+  });
+});
+
 document.getElementById('reportForm').addEventListener('submit', function(event) {
   event.preventDefault();
-  
+
   // Get form data
   const teacherName = document.getElementById('teacherName').value;
   const specialization = document.getElementById('specialization').value;
@@ -277,7 +376,9 @@ document.getElementById('reportForm').addEventListener('submit', function(event)
   const notes = document.getElementById('notes').value;
   const challenges = document.getElementById('challenges').value;
 
-  // Generate HTML for the PDF
+  // Generate HTML for the PDF with images
+  const imagesHTML = images.map(imgSrc => `<img src="${imgSrc}" alt="شاهد">`).join('');
+
   const reportHTML = `
     <div class="report-paper">
       <div class="report-header">
@@ -332,11 +433,16 @@ document.getElementById('reportForm').addEventListener('submit', function(event)
 
       <div class="report-details">
         <h3>أهداف الدرس</h3>
-        <p>${objectives || '...'}</p>
+        <p>${objectives.split('\n').filter(line => line.trim() !== '').map(line => `<span>${line}</span><br/>`).join('') || '...'}</p>
         <h3>ملاحظات حول تفاعل الطالبات</h3>
         <p>${notes || '...'}</p>
         <h3>التحديات الصفية</h3>
         <p>${challenges || '...'}</p>
+      </div>
+
+      <div class="report-details">
+        <h3>الشواهد</h3>
+        <div class="image-gallery">${imagesHTML || 'لا توجد شواهد مرفقة.'}</div>
       </div>
 
       <div class="signature-section">
@@ -346,12 +452,21 @@ document.getElementById('reportForm').addEventListener('submit', function(event)
     </div>
   `;
 
-  // Set the HTML content to the hidden div
   const reportPaper = document.getElementById('report-paper');
   reportPaper.innerHTML = reportHTML;
 
-  // Generate and download the PDF
-  html2pdf().from(reportPaper).save(`تقرير-المعلمة-${date}.pdf`);
+  // Use a short delay to ensure rendering is complete before PDF generation
+  setTimeout(() => {
+    // Generate and download the PDF
+    const options = {
+      margin: 1,
+      filename: `تقرير-المعلمة-${date}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, logging: false, dpi: 192, letterRendering: true, useCORS: true },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+    html2pdf().set(options).from(reportPaper).save();
+  }, 500); // 500ms delay
 });
 </script>
 
