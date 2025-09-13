@@ -3,689 +3,356 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>نظام التقارير • تقارير فورية</title>
+<title>نظام تقارير أداء المعلمة</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800&display=swap" rel="stylesheet">
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 <style>
-/* ======================== الأنماط الأساسية ======================== */
-:root {
-  --primary: #006C35;
-  --primary-dark: #005B2E;
-  --secondary: #27ae60;
-  --text-dark: #2c3e50;
-  --text-light: #7f8c8d;
-  --bg-light: #f7f9fb;
-  --bg-card: #ffffff;
-  --border-color: #e0e6ed;
-  --danger: #e74c3c;
-  --radius: 12px;
-  --font-tajawal: 'Tajawal', sans-serif;
-  --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-}
-
-* {
-  box-sizing: border-box;
-}
-
+/* Base Styles */
 body {
-  font-family: var(--font-tajawal);
-  background-color: var(--bg-light);
-  color: var(--text-dark);
-  margin: 0;
+  font-family: 'Tajawal', sans-serif;
+  background-color: #f0f4f8;
+  color: #2c3e50;
   line-height: 1.6;
-  direction: rtl;
-  text-align: right;
+  padding: 20px;
 }
-
 .container {
-  max-width: 900px;
-  margin: 30px auto;
-  padding: 0 15px;
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+h1, h2 {
+  text-align: center;
+  color: #34495e;
+}
+h1 {
+  font-size: 2rem;
+  margin-bottom: 5px;
+}
+h2 {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+  color: #7f8c8d;
 }
 
-.card {
-  background-color: var(--bg-card);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  overflow: hidden;
-  border: 1px solid var(--border-color);
+/* Form Styles */
+.form-section {
+  border-bottom: 1px solid #e0e6ed;
+  padding-bottom: 20px;
+  margin-bottom: 20px;
 }
-
-.header {
-  padding: 25px;
-  background: linear-gradient(to left, var(--primary), var(--secondary));
-  color: #fff;
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-bottom: 15px;
+}
+.form-group {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 10px;
 }
-
-.header h1 {
-  margin: 0;
-  font-size: 2rem;
-  font-weight: 800;
-  letter-spacing: 1px;
-}
-
-.header p {
-  margin: 0;
-  font-size: 0.9rem;
-  opacity: 0.9;
-}
-
-.form-body {
-  padding: 25px;
-  display: grid;
-  gap: 20px;
-}
-
-.form-group {
-  margin-bottom: 0;
-}
-
-.form-group label {
-  display: block;
+label {
   font-weight: 700;
   margin-bottom: 8px;
-  font-size: 0.95rem;
-  color: var(--text-dark);
+  color: #34495e;
 }
-
-.form-group input[type="text"],
-.form-group input[type="date"],
-.form-group textarea {
+input, textarea {
   width: 100%;
-  padding: 12px 15px;
-  border: 1px solid var(--border-color);
+  padding: 12px;
+  border: 1px solid #c0c9d2;
   border-radius: 8px;
-  font-family: inherit;
+  font-family: 'Tajawal', sans-serif;
   font-size: 1rem;
-  color: var(--text-dark);
-  background-color: var(--bg-light);
-  transition: all 0.3s ease;
+  background-color: #f9fbfd;
+  transition: border-color 0.3s;
 }
-
-.form-group input:focus,
-.form-group textarea:focus {
+input:focus, textarea:focus {
   outline: none;
-  border-color: var(--secondary);
-  box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.2);
+  border-color: #3498db;
 }
-
-.form-group textarea {
-  min-height: 120px;
+textarea {
+  min-height: 100px;
   resize: vertical;
 }
 
-/* ======================== الأزرار والتحكم ======================== */
-.actions {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 12px;
-  margin-top: 20px;
+/* Button Styles */
+.btn-container {
+  text-align: center;
+  margin-top: 30px;
 }
-
 .btn {
   padding: 12px 25px;
+  background-color: #27ae60;
+  color: #fff;
   border: none;
   border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 700;
   cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  transition: background-color 0.3s, transform 0.2s;
 }
-
-.btn-primary {
-  background-color: var(--primary);
-  color: #fff;
-}
-
-.btn-primary:hover {
-  background-color: var(--primary-dark);
-  transform: translateY(-2px);
-}
-
-.btn-secondary {
-  background-color: var(--secondary);
-  color: #fff;
-}
-
-.btn-secondary:hover {
+.btn:hover {
   background-color: #2ecc71;
   transform: translateY(-2px);
 }
 
-.btn-clear {
-  background-color: var(--danger);
-  color: #fff;
-}
-
-.btn-clear:hover {
-  background-color: #c0392b;
-  transform: translateY(-2px);
-}
-
-/* ======================== تبويبات التقرير ======================== */
-.tabs {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 25px;
-  border-bottom: 2px solid var(--border-color);
-}
-
-.tab {
-  padding: 12px 20px;
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--text-light);
-  background: none;
-  border: none;
-  cursor: pointer;
-  border-bottom: 2px solid transparent;
-  transition: all 0.3s ease;
-}
-
-.tab.active {
-  color: var(--primary);
-  border-bottom: 2px solid var(--primary);
-}
-
-/* ======================== تحميل الصور (الشواهد) ======================== */
-.upload-area {
-  border: 2px dashed var(--border-color);
-  border-radius: var(--radius);
-  padding: 20px;
-  text-align: center;
-  background-color: var(--bg-light);
-}
-
-.upload-area input[type="file"] {
-  display: none;
-}
-
-.upload-area .label-btn {
-  display: inline-block;
-  padding: 8px 16px;
-  background-color: var(--text-dark);
-  color: #fff;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 500;
-}
-
-.thumbs-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 15px;
-  justify-content: center;
-}
-
-.thumb {
-  width: 90px;
-  height: 70px;
-  border-radius: 8px;
-  overflow: hidden;
-  position: relative;
-  border: 1px solid var(--border-color);
-  transition: transform 0.2s;
-}
-.thumb:hover {
-    transform: scale(1.05);
-}
-
-.thumb img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.thumb .remove-btn {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  background-color: rgba(0, 0, 0, 0.6);
-  color: #fff;
-  border: none;
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  font-size: 1.2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-}
-
-/* ======================== تنسيق ورقة التقرير PDF ======================== */
+/* --- PDF Report Styles (Hidden in HTML) --- */
 .report-paper {
-  width: 210mm;
-  min-height: 297mm;
-  padding: 20mm;
+  display: none; /* Hide by default */
+  width: 210mm; /* A4 width */
+  min-height: 297mm; /* A4 height */
   box-sizing: border-box;
-  background: #fff;
+  padding: 20mm;
+  background-color: #fff;
   color: #000;
-  font-family: var(--font-tajawal);
-  display: none; /* مخفي في العرض العادي */
+  font-family: 'Tajawal', sans-serif;
 }
-
 .report-header {
   text-align: center;
-  margin-bottom: 15mm;
+  margin-bottom: 20mm;
 }
-
 .report-header img {
   max-width: 100%;
-  max-height: 35mm;
-  margin-bottom: 5mm;
-}
-
-.report-header h2 {
-  font-size: 28px;
-  margin: 0;
-  color: var(--primary-dark);
-  font-weight: 800;
-}
-
-.report-info {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 10mm;
+  max-height: 40mm;
   margin-bottom: 10mm;
 }
-
-.info-item {
-  border: 1px solid #ddd;
-  padding: 8mm;
-  border-radius: 8px;
-}
-
-.info-item h4 {
-  margin: 0 0 5mm;
-  font-size: 16px;
-  color: var(--text-light);
-  font-weight: 500;
-}
-
-.info-item p {
+.report-title h1 {
+  font-size: 24px;
+  color: #0a3d62;
   margin: 0;
+}
+.report-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px 30px;
+  margin-bottom: 15mm;
+  font-size: 14px;
+}
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.info-item .label {
+  font-weight: 700;
+  color: #555;
+  white-space: nowrap;
+}
+.info-item .value {
+  text-align: left;
+}
+.report-details h3 {
+  font-size: 18px;
+  color: #0a3d62;
+  border-bottom: 2px solid #0a3d62;
+  padding-bottom: 5px;
+  margin-bottom: 10px;
+}
+.report-details p {
+  line-height: 1.8;
+}
+.signature-section {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 25mm;
   font-size: 15px;
   font-weight: 700;
 }
-
-.report-section {
-  margin-bottom: 10mm;
-}
-
-.report-section h3 {
-  font-size: 20px;
-  border-right: 4px solid var(--primary);
-  padding-right: 10px;
-  margin: 0 0 8mm;
-  color: var(--primary-dark);
-}
-
-.objectives-list {
-  padding-right: 25px;
-  margin: 0;
-}
-
-.objectives-list li {
-  margin-bottom: 5px;
-}
-
-.gallery-section {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(45%, 1fr));
-  gap: 8mm;
-}
-
-.gallery-section figure {
-  margin: 0;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  overflow: hidden;
-  aspect-ratio: 4/3;
-}
-
-.gallery-section img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.report-footer {
-  margin-top: 15mm;
-  border-top: 1px solid #ddd;
-  padding-top: 5mm;
-  display: flex;
-  justify-content: space-between;
-  font-weight: 500;
-  font-size: 14px;
-}
-
-/* ======================== الطباعة والتحويل لـ PDF ======================== */
 @media print {
-  body > :not(.report-paper) {
-    display: none !important;
-  }
-  .report-paper {
-    display: block !important;
-    margin: 0;
-    box-shadow: none;
-  }
+  body > :not(.report-paper) { display: none !important; }
+  .report-paper { display: block !important; margin: 0; box-shadow: none; }
 }
 </style>
 </head>
 <body>
 
 <div class="container">
-  <div class="card">
-    <div class="header">
-      <h1>نظام التقارير</h1>
-      <p>يومية • أسبوعية • شهرية</p>
-    </div>
+  <h1>نظام تقارير أداء المعلمة</h1>
+  <h2>وزارة التعليم - إدارة التعليم</h2>
+  <p style="text-align:center; color:#7f8c8d;">أدخل البيانات التالية لإنشاء التقرير اليومي</p>
+  <hr style="border:0; height:1px; background-color:#e0e6ed; margin:20px 0;">
 
-    <div class="form-body">
-      <div class="tabs">
-        <button class="tab active" data-tab="daily">تقرير يومي</button>
-        <button class="tab" data-tab="weekly">تقرير أسبوعي</button>
-        <button class="tab" data-tab="monthly">تقرير شهري</button>
+  <form id="reportForm">
+    <div class="form-section">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="teacherName">اسم المعلمة</label>
+          <input type="text" id="teacherName" required>
+        </div>
+        <div class="form-group">
+          <label for="specialization">التخصص</label>
+          <input type="text" id="specialization" required>
+        </div>
       </div>
-
-      <form id="report-form">
+      <div class="form-row">
         <div class="form-group">
-          <label for="programName">اسم البرنامج</label>
-          <input type="text" id="programName" placeholder="أدخل اسم البرنامج" required>
+          <label for="schoolName">اسم المدرسة</label>
+          <input type="text" id="schoolName" required>
         </div>
-        
         <div class="form-group">
-          <label for="audience">الفئة المستهدفة</label>
-          <input type="text" id="audience" placeholder="أدخل الفئة المستهدفة" required>
+          <label for="date">التاريخ</label>
+          <input type="date" id="date" required>
         </div>
-        
-        <div id="date-one-group">
-          <div class="form-group">
-            <label for="dateOne">التاريخ</label>
-            <input type="date" id="dateOne" required>
-          </div>
-        </div>
-        
-        <div id="date-range-group" style="display: none;">
-          <div class="form-group">
-            <label for="dateFrom">من تاريخ</label>
-            <input type="date" id="dateFrom" required>
-          </div>
-          <div class="form-group">
-            <label for="dateTo">إلى تاريخ</label>
-            <input type="date" id="dateTo" required>
-          </div>
-        </div>
-        
-        <div class="form-group">
-          <label for="executor">المنفذة</label>
-          <input type="text" id="executor" placeholder="أدخل اسم المنفذة" required>
-        </div>
-        
-        <div class="form-group">
-          <label for="objectives">الأهداف (سطر لكل هدف)</label>
-          <textarea id="objectives" placeholder="اكتب أهداف التقرير..."></textarea>
-        </div>
-
-        <div class="form-group">
-          <label>الشواهد (صور)</label>
-          <div class="upload-area" id="upload-area">
-            <input type="file" id="image-upload" accept="image/*" multiple>
-            <label for="image-upload" class="label-btn">اختر الصور</label>
-            <p style="font-size: 0.9em; color: var(--text-light); margin: 10px 0 0;">يمكن سحب الصور وإفلاتها هنا. الحد الأقصى 4 صور.</p>
-            <div class="thumbs-container" id="thumbs-container"></div>
-          </div>
-        </div>
-
-        <div class="actions">
-          <button type="button" class="btn btn-secondary" id="preview-btn">👁️‍🗨️ معاينة</button>
-          <button type="button" class="btn btn-primary" id="download-btn">⬇️ تنزيل PDF</button>
-          <button type="button" class="btn btn-clear" id="clear-btn">🧹 مسح البيانات</button>
-        </div>
-      </form>
+      </div>
     </div>
-  </div>
+    
+    <div class="form-section">
+      <h3>بيانات الدرس</h3>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="unit">الوحدة الدراسية</label>
+          <input type="text" id="unit">
+        </div>
+        <div class="form-group">
+          <label for="lessonTitle">عنوان الدرس</label>
+          <input type="text" id="lessonTitle">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="class">الصف</label>
+          <input type="text" id="class">
+        </div>
+        <div class="form-group">
+          <label for="period">الحصة</label>
+          <input type="text" id="period">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="objectives">أهداف الدرس</label>
+        <textarea id="objectives" placeholder="اكتب أهداف الدرس"></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="achievement">نسبة تحقق الأهداف</label>
+          <input type="text" id="achievement" placeholder="مثال: 90% أو ممتاز">
+        </div>
+        <div class="form-group">
+          <label for="term">الفصل الدراسي</label>
+          <input type="text" id="term" placeholder="مثال: الأول">
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h3>الملاحظات والتحديات</h3>
+      <div class="form-group">
+        <label for="notes">ملاحظات حول تفاعل الطالبات</label>
+        <textarea id="notes" placeholder="اكتب ملاحظاتك هنا"></textarea>
+      </div>
+      <div class="form-group">
+        <label for="challenges">التحديات الصفية</label>
+        <textarea id="challenges" placeholder="اكتب التحديات التي واجهتك"></textarea>
+      </div>
+    </div>
+
+    <div class="btn-container">
+      <button type="submit" class="btn">إنشاء التقرير</button>
+    </div>
+  </form>
 </div>
 
-<div class="report-paper" id="report-paper"></div>
+<div id="report-paper" class="report-paper"></div>
 
 <script>
-// ==================== متغيرات الحالة والتخزين ====================
-const state = {
-  currentTab: 'daily',
-  daily: { programName: '', audience: '', dateOne: '', executor: '', objectives: '', images: [] },
-  weekly: { programName: '', audience: '', dateFrom: '', dateTo: '', executor: '', objectives: '', images: [] },
-  monthly: { programName: '', audience: '', dateFrom: '', dateTo: '', executor: '', objectives: '', images: [] },
-};
+document.getElementById('reportForm').addEventListener('submit', function(event) {
+  event.preventDefault();
+  
+  // Get form data
+  const teacherName = document.getElementById('teacherName').value;
+  const specialization = document.getElementById('specialization').value;
+  const schoolName = document.getElementById('schoolName').value;
+  const date = document.getElementById('date').value;
+  const unit = document.getElementById('unit').value;
+  const lessonTitle = document.getElementById('lessonTitle').value;
+  const lessonClass = document.getElementById('class').value;
+  const period = document.getElementById('period').value;
+  const objectives = document.getElementById('objectives').value;
+  const achievement = document.getElementById('achievement').value;
+  const term = document.getElementById('term').value;
+  const notes = document.getElementById('notes').value;
+  const challenges = document.getElementById('challenges').value;
 
-const saveState = () => localStorage.setItem('report_data', JSON.stringify(state));
-const loadState = () => {
-  try {
-    const data = JSON.parse(localStorage.getItem('report_data'));
-    if (data) {
-      Object.keys(data).forEach(key => {
-        if (state[key]) {
-          Object.assign(state[key], data[key]);
-        }
-      });
-      state.currentTab = data.currentTab || 'daily';
-    }
-  } catch (e) {
-    console.error('Failed to load data:', e);
-  }
-};
+  // Generate HTML for the PDF
+  const reportHTML = `
+    <div class="report-paper">
+      <div class="report-header">
+        <img src="https://c.top4top.io/p_353083rj21.png" alt="شعار وزارة التعليم">
+        <div class="report-title">
+          <h1>نظام تقارير أداء المعلمة</h1>
+        </div>
+      </div>
+      
+      <div class="report-info">
+        <div class="info-item">
+          <span class="label">اسم المعلمة:</span>
+          <span class="value">${teacherName || '...'}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">التخصص:</span>
+          <span class="value">${specialization || '...'}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">اسم المدرسة:</span>
+          <span class="value">${schoolName || '...'}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">التاريخ:</span>
+          <span class="value">${date || '...'}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">الوحدة الدراسية:</span>
+          <span class="value">${unit || '...'}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">عنوان الدرس:</span>
+          <span class="value">${lessonTitle || '...'}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">الصف:</span>
+          <span class="value">${lessonClass || '...'}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">الحصة:</span>
+          <span class="value">${period || '...'}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">الفصل الدراسي:</span>
+          <span class="value">${term || '...'}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">نسبة تحقق الأهداف:</span>
+          <span class="value">${achievement || '...'}</span>
+        </div>
+      </div>
 
-// ==================== عناصر DOM ====================
-const $ = selector => document.querySelector(selector);
-const $$ = selector => document.querySelectorAll(selector);
+      <div class="report-details">
+        <h3>أهداف الدرس</h3>
+        <p>${objectives || '...'}</p>
+        <h3>ملاحظات حول تفاعل الطالبات</h3>
+        <p>${notes || '...'}</p>
+        <h3>التحديات الصفية</h3>
+        <p>${challenges || '...'}</p>
+      </div>
 
-const form = $('#report-form');
-const tabsContainer = $('.tabs');
-const reportPaper = $('#report-paper');
-const thumbsContainer = $('#thumbs-container');
-const imageUpload = $('#image-upload');
-const dateOneGroup = $('#date-one-group');
-const dateRangeGroup = $('#date-range-group');
-
-// ==================== وظائف الواجهة ====================
-const updateForm = () => {
-  const currentData = state[state.currentTab];
-  for (const key in currentData) {
-    const el = $(`#${key}`);
-    if (el) el.value = currentData[key];
-  }
-  updateThumbs(currentData.images);
-  updateDateInputs();
-};
-
-const updateDateInputs = () => {
-  const isDaily = state.currentTab === 'daily';
-  dateOneGroup.style.display = isDaily ? 'block' : 'none';
-  dateRangeGroup.style.display = isDaily ? 'none' : 'grid';
-  $$('input[type="date"]').forEach(el => el.required = !isDaily);
-  if (!isDaily) $('#dateFrom').required = true;
-};
-
-const updateThumbs = (images) => {
-  thumbsContainer.innerHTML = '';
-  images.forEach((imgSrc, index) => {
-    const thumbDiv = document.createElement('div');
-    thumbDiv.className = 'thumb';
-    thumbDiv.innerHTML = `<img src="${imgSrc}" alt="صورة ${index + 1}"><button type="button" class="remove-btn" data-index="${index}">×</button>`;
-    thumbsContainer.appendChild(thumbDiv);
-  });
-};
-
-const switchTab = (tabName) => {
-  state.currentTab = tabName;
-  $$('.tab').forEach(tab => tab.classList.remove('active'));
-  $(`.tab[data-tab="${tabName}"]`).classList.add('active');
-  updateForm();
-  saveState();
-};
-
-// ==================== معالجة الصور ====================
-const handleImageUpload = (files) => {
-  const currentImages = state[state.currentTab].images;
-  const newImages = Array.from(files).slice(0, 4 - currentImages.length);
-  newImages.forEach(file => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      currentImages.push(e.target.result);
-      updateThumbs(currentImages);
-      saveState();
-    };
-    reader.readAsDataURL(file);
-  });
-};
-
-const removeImage = (index) => {
-  state[state.currentTab].images.splice(index, 1);
-  updateThumbs(state[state.currentTab].images);
-  saveState();
-};
-
-// ==================== توليد التقرير ====================
-const generateReportHTML = () => {
-  const data = state[state.currentTab];
-  const dateText = state.currentTab === 'daily' ? (data.dateOne || '-') : `${data.dateFrom || '-'} إلى ${data.dateTo || '-'}`;
-  const imagesHTML = data.images.map(img => `<figure><img src="${img}" alt="شاهد"></figure>`).join('');
-  const objectivesHTML = data.objectives.split('\n').filter(o => o.trim()).map(o => `<li>${o.trim()}</li>`).join('');
-
-  return `
-    <div class="report-header">
-      <img src="https://via.placeholder.com/600x120.png?text=LOGO" alt="شعار">
-      <h2>${state.currentTab === 'daily' ? 'تقرير يومي' : (state.currentTab === 'weekly' ? 'تقرير أسبوعي' : 'تقرير شهري')}</h2>
-    </div>
-    <div class="report-info">
-      <div class="info-item"><h4>اسم البرنامج</h4><p>${data.programName || '-'}</p></div>
-      <div class="info-item"><h4>الفئة المستهدفة</h4><p>${data.audience || '-'}</p></div>
-      <div class="info-item"><h4>التاريخ</h4><p>${dateText}</p></div>
-      <div class="info-item"><h4>المنفذة</h4><p>${data.executor || '-'}</p></div>
-    </div>
-    <div class="report-section">
-      <h3>الأهداف</h3>
-      <ul class="objectives-list">${objectivesHTML || '<li>لا توجد أهداف مُدخلة.</li>'}</ul>
-    </div>
-    <div class="report-section">
-      <h3>الشواهد</h3>
-      <div class="gallery-section">${imagesHTML || 'لا توجد شواهد مرفقة.'}</div>
-    </div>
-    <div class="report-footer">
-      <span>توقيع المنفذة: ........................</span>
-      <span>${new Date().toLocaleDateString('ar-SA')}</span>
+      <div class="signature-section">
+        <p>اسم المعلمة: ${teacherName || '...'}</p>
+        <p>مديرة المدرسة: ........................</p>
+      </div>
     </div>
   `;
-};
 
-const handleGeneratePDF = async () => {
-  const reportHtml = generateReportHTML();
-  reportPaper.innerHTML = reportHtml;
+  // Set the HTML content to the hidden div
+  const reportPaper = document.getElementById('report-paper');
+  reportPaper.innerHTML = reportHTML;
 
-  // Wait for all images to load
-  const images = reportPaper.querySelectorAll('img');
-  const imagePromises = Array.from(images).map(img => new Promise(resolve => {
-    if (img.complete) {
-      resolve();
-    } else {
-      img.onload = resolve;
-      img.onerror = resolve; // Continue even if an image fails to load
-    }
-  }));
-  await Promise.all(imagePromises);
-
-  // Generate PDF
-  const options = {
-    margin: 1,
-    filename: `تقرير-${state[state.currentTab].programName || 'جديد'}.pdf`,
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 2, logging: false, dpi: 192, letterRendering: true, useCORS: true },
-    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-  };
-  html2pdf().set(options).from(reportPaper).save();
-};
-
-const handlePreview = () => {
-    const reportHtml = generateReportHTML();
-    const newWindow = window.open('', '_blank');
-    newWindow.document.write(`
-        <html>
-        <head>
-            <title>معاينة التقرير</title>
-            <style>${document.querySelector('style').textContent}</style>
-            <style>
-                body { background-color: #f0f0f0; display: flex; justify-content: center; padding: 20px; }
-                .report-paper { display: block !important; box-shadow: 0 0 15px rgba(0,0,0,0.2); }
-            </style>
-        </head>
-        <body>
-            <div class="report-paper">
-                ${reportHtml}
-            </div>
-        </body>
-        </html>
-    `);
-    newWindow.document.close();
-};
-
-// ==================== تهيئة الأحداث ====================
-const init = () => {
-  loadState();
-  switchTab(state.currentTab);
-
-  tabsContainer.addEventListener('click', (e) => {
-    const tab = e.target.closest('.tab');
-    if (tab) switchTab(tab.dataset.tab);
-  });
-
-  form.addEventListener('input', (e) => {
-    const target = e.target;
-    const currentData = state[state.currentTab];
-    if (currentData.hasOwnProperty(target.id)) {
-      currentData[target.id] = target.value;
-      saveState();
-    }
-  });
-  
-  thumbsContainer.addEventListener('click', (e) => {
-    const removeBtn = e.target.closest('.remove-btn');
-    if (removeBtn) {
-      const index = parseInt(removeBtn.dataset.index, 10);
-      removeImage(index);
-    }
-  });
-
-  imageUpload.addEventListener('change', (e) => handleImageUpload(e.target.files));
-
-  $('#upload-area').addEventListener('dragover', (e) => e.preventDefault());
-  $('#upload-area').addEventListener('drop', (e) => {
-    e.preventDefault();
-    handleImageUpload(e.dataTransfer.files);
-  });
-
-  $('#preview-btn').addEventListener('click', handlePreview);
-  $('#download-btn').addEventListener('click', handleGeneratePDF);
-  $('#clear-btn').addEventListener('click', () => {
-    if (confirm('هل أنت متأكد من مسح جميع البيانات؟ هذا الإجراء لا يمكن التراجع عنه.')) {
-      localStorage.removeItem('report_data');
-      location.reload();
-    }
-  });
-};
-
-document.addEventListener('DOMContentLoaded', init);
+  // Generate and download the PDF
+  html2pdf().from(reportPaper).save(`تقرير-المعلمة-${date}.pdf`);
+});
 </script>
 
 </body>
