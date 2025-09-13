@@ -3,144 +3,140 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>نظام التقارير | يومية - أسبوعية - شهرية</title>
+  <title>نظام التقارير | يومية • أسبوعية • شهرية</title>
 
-  <!-- خط عربي متوازن -->
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <!-- خط مناسب عربي -->
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700;800&display=swap" rel="stylesheet">
 
-  <!-- html2pdf (يشمل html2canvas + jsPDF) -->
+  <!-- html2pdf (html2canvas + jsPDF) لتنزيل PDF مباشرة -->
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
-    integrity="sha512-YcsIPfS+vJr4k2bV5Sef9cYk1Y1gE0jYbHcUarWnms0i3dHf/9QF9lqzNwbtCw2dTmtQ1qClgZsxK9Y1sGfLwQ=="
-    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+          integrity="sha512-YcsIPfS+vJr4k2bV5Sef9cYk1Y1gE0jYbHcUarWnms0i3dHf/9QF9lqzNwbtCw2dTmtQ1qClgZsxK9Y1sGfLwQ=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
   <style>
     :root{
-      --bg:#f6f7fb;
-      --card:#fff;
-      --ink:#151515;
-      --muted:#6c7280;
-      --brand:#185adb;
-      --brand-weak:#eaf1ff;
-      --accent:#00a37a;
-      --border:#e6e8ef;
-      --danger:#d9363e;
+      /* ألوان هوية الوزارة (درجات الأخضر السعودي) */
+      --brand:#006C35;           /* أخضر أساسي */
+      --brand-2:#0A8A4F;         /* أخضر أغمق قليلاً */
+      --accent:#00A36C;          /* أخضر زمردي مساعد */
+      --brand-weak:#E8F4EC;      /* خلفية فاتحة */
+      --ink:#101315;
+      --muted:#69707D;
+      --bg:#F6F8F7;
+      --card:#FFFFFF;
+      --border:#E3E7EA;
+      --danger:#DA3C3C;
       --radius:14px;
-      --page-w:880px;
-      --line:1.9;
+      --line:1.85;
+      --page-w:920px;
     }
 
     html,body{
-      background:var(--bg);
-      color:var(--ink);
-      margin:0;
+      margin:0; background:var(--bg); color:var(--ink);
       font-family:"Cairo", system-ui, -apple-system, "Segoe UI", "Noto Kufi Arabic", Arial, sans-serif;
       line-height:var(--line);
     }
 
+    /* ====== غلاف ====== */
     .container{
       max-width:var(--page-w);
-      margin:32px auto 40px;
-      padding:0 16px;
+      margin:32px auto 44px; padding:0 16px;
     }
 
     .card{
-      background:var(--card);
-      border:1px solid var(--border);
-      border-radius:var(--radius);
-      box-shadow:0 10px 30px rgba(20,25,40,.06);
+      background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
+      box-shadow:0 14px 40px rgba(0,0,0,.05);
+      overflow:hidden;
     }
 
+    /* ====== رأس + تبويبات ====== */
     .header{
-      padding:18px 20px;
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:center;
-      justify-content:space-between;
+      padding:16px 18px; display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:space-between;
+      background:linear-gradient(180deg, var(--brand-weak), #fff);
+      border-bottom:1px solid var(--border);
     }
     .brand{
-      font-weight:800;
-      letter-spacing:.2px;
+      display:flex; align-items:center; gap:10px; font-weight:800; letter-spacing:.2px;
+      color:var(--brand-2);
     }
-    .tabs{
-      display:flex; gap:8px; flex-wrap:wrap;
-    }
-    .tab{
-      border:1px solid var(--border);
-      background:#fff;
-      padding:8px 14px;
-      border-radius:10px;
-      cursor:pointer;
-      font-weight:700;
-      color:#2a2f3a;
-    }
-    .tab.active{
-      background:var(--brand);
-      border-color:var(--brand);
-      color:#fff;
+    .brand .dot{
+      width:12px; height:12px; border-radius:50%; background:var(--brand);
+      box-shadow:0 0 0 6px rgba(0,108,53,.12);
     }
 
-    .form{
-      padding:20px;
-      display:grid;
-      gap:14px;
+    .tabs{ display:flex; gap:8px; flex-wrap:wrap; }
+    .tab{
+      border:1px solid var(--border); background:#fff; color:#1f242b;
+      padding:8px 14px; border-radius:10px; cursor:pointer; font-weight:800;
+      transition:transform .2s ease, background .2s ease, color .2s ease, box-shadow .2s ease;
     }
-    label{font-weight:700; font-size:15px; margin-bottom:6px; display:block;}
-    .row{display:grid; gap:12px; grid-template-columns:1fr 1fr;}
-    @media (max-width:620px){ .row{grid-template-columns:1fr;} }
+    .tab:hover{ transform:translateY(-1px); box-shadow:0 6px 16px rgba(0,0,0,.08); }
+    .tab.active{
+      background:var(--brand); border-color:var(--brand); color:#fff;
+      box-shadow:0 6px 16px rgba(0,108,53,.25);
+    }
+
+    /* ====== النموذج ====== */
+    .form{ padding:20px; display:grid; gap:16px; }
+    .row{ display:grid; gap:12px; grid-template-columns:1fr 1fr; }
+    @media (max-width:680px){ .row{ grid-template-columns:1fr; } }
+
+    label{ display:block; font-weight:700; font-size:15px; margin-bottom:6px; color:#273036; }
 
     input[type="text"], input[type="date"], textarea{
-      width:100%;
-      padding:12px 14px;
-      border:1px solid var(--border);
-      border-radius:12px;
-      font-size:15px;
-      outline:none;
-      background:#fff;
-      color:var(--ink);
-      transition:border .2s, box-shadow .2s;
+      width:100%; padding:12px 14px;
+      border:1px solid var(--border); border-radius:12px; background:#fff; color:var(--ink); font-size:15px;
+      outline:none; transition:border .2s, box-shadow .2s, transform .08s ease;
     }
-    textarea{ min-height:140px; resize:vertical; }
     input:focus, textarea:focus{ border-color:var(--brand); box-shadow:0 0 0 3px var(--brand-weak); }
+    input:active, textarea:active{ transform:scale(0.998); }
+    textarea{ min-height:140px; resize:vertical; }
+
+    /* لا نضع أي placeholder حسب طلبك */
+    ::placeholder{ color:transparent; }
 
     .upload{
-      border:1.5px dashed var(--border);
-      border-radius:12px;
-      padding:16px;
-      background:#fbfcff;
-      text-align:center;
+      border:1.5px dashed var(--border); border-radius:12px; padding:16px; background:#FBFEFC;
+      text-align:center; transition:background .2s, border-color .2s;
     }
     .upload input{ display:none; }
+    .thumbs{ display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; justify-content:flex-start; }
+    .thumb{ width:84px; height:64px; border-radius:10px; overflow:hidden; border:1px solid var(--border); background:#f2f6f4; }
+    .thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
+
     .btn{
-      appearance:none; border:0; border-radius:12px;
-      padding:12px 16px; font-weight:800; cursor:pointer; font-size:14px;
+      appearance:none; border:0; border-radius:12px; padding:12px 16px; font-weight:800; cursor:pointer; font-size:14px;
+      transition:transform .12s ease, filter .2s ease, box-shadow .2s ease;
     }
-    .btn-primary{ background:var(--accent); color:#fff; }
-    .btn-secondary{ background:var(--brand); color:#fff; }
+    .btn:hover{ filter:brightness(1.02); transform:translateY(-1px); }
+    .btn:active{ transform:translateY(0); }
+
+    .btn-primary{
+      background:linear-gradient(135deg, var(--brand) 0%, var(--brand-2) 100%); color:#fff;
+      box-shadow:0 8px 22px rgba(0,108,53,.25);
+    }
+    .btn-secondary{ background:var(--accent); color:#fff; box-shadow:0 8px 18px rgba(0,163,108,.22); }
     .btn-ghost{ background:#fff; color:#1e232e; border:1px solid var(--border); }
     .btn-danger{ background:var(--danger); color:#fff; }
 
     .actions{ display:flex; gap:10px; flex-wrap:wrap; margin-top:6px; }
-
     .note{ color:var(--muted); font-size:12.5px; }
-    .thumbs{ display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; justify-content:flex-start;}
-    .thumb{
-      width:80px; height:60px; border-radius:10px; overflow:hidden; border:1px solid var(--border);
-      background:#f2f4f8;
-    }
-    .thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
 
-    /* النافذة المنبثقة للمعاينة */
+    /* ====== نافذة المعاينة (انتقالات ذكية) ====== */
     .modal{
       position:fixed; inset:0; display:none; align-items:center; justify-content:center;
-      background:rgba(15,20,30,.55); z-index:9999; padding:20px;
+      background:rgba(6,16,11,.55); z-index:9999; padding:20px;
     }
     .modal.show{ display:flex; }
     .sheet{
       width:100%; max-width:900px; max-height:90vh; overflow:auto;
       background:#fff; border-radius:16px; border:1px solid var(--border);
-      box-shadow:0 20px 60px rgba(10,15,30,.25);
+      box-shadow:0 22px 70px rgba(0,0,0,.35);
+      transform-origin:center; opacity:0; transform:translateY(14px) scale(.98);
+      transition:opacity .25s ease, transform .25s ease;
     }
+    .modal.show .sheet{ opacity:1; transform:translateY(0) scale(1); }
+
     .sheet-head{
       padding:10px 14px; border-bottom:1px solid var(--border); display:flex; gap:8px; justify-content:space-between; align-items:center;
       position:sticky; top:0; background:#fff; z-index:2;
@@ -148,26 +144,20 @@
     .sheet-actions{ display:flex; gap:8px; flex-wrap:wrap; }
     .sheet-body{ padding:18px 20px 24px; }
 
-    /* التقرير داخل المعاينة */
-    .report{
-      position:relative;
-      background:#fff;
-      color:#000;
-      font-size:14.5px;
-    }
+    /* ====== التقرير داخل المعاينة ====== */
+    .report{ color:#000; font-size:14.5px; }
     .letterhead{ margin-bottom:12px; text-align:center; }
     .letterhead img{ max-width:100%; height:auto; display:block; margin:0 auto; }
     .title{ text-align:center; margin:10px 0 12px; }
-    .title h1{ font-size:22px; margin:0; font-weight:800; }
+    .title h1{ font-size:22px; margin:0; font-weight:800; color:#0b3f25; letter-spacing:.1px; }
     .meta{
-      display:grid; gap:12px; grid-template-columns:repeat(2,1fr);
-      margin:8px 0 14px;
+      display:grid; gap:12px; grid-template-columns:repeat(2,1fr); margin:8px 0 14px;
     }
     .meta .field{ border:1px solid var(--border); border-radius:10px; padding:10px 12px; }
     .meta .label{ color:#6c7280; font-size:12.5px; margin-bottom:2px; }
     .meta .value{ font-weight:800; }
     .block{ margin:16px 0; }
-    .block h3{ margin:0 0 8px; font-size:18px; border-right:4px solid var(--brand); padding-right:8px; }
+    .block h3{ margin:0 0 8px; font-size:18px; border-right:4px solid var(--brand); padding-right:8px; color:#0b3f25; }
     .objectives ul{ margin:0; padding:0 18px; }
     .objectives li{ margin:6px 0; }
 
@@ -185,7 +175,14 @@
       display:flex; justify-content:space-between; gap:8px; font-weight:800;
     }
 
-    /* تحسين الطباعة: نظهر الورقة فقط */
+    /* انتقال تبويبات (تلاشي/انزلاق لطيف) */
+    .tab-panel{ animation:fadeSlide .28s ease; }
+    @keyframes fadeSlide{
+      from{ opacity:0; transform:translateY(8px); }
+      to{ opacity:1; transform:translateY(0); }
+    }
+
+    /* طباعة */
     @media print{
       body > *:not(.print-area){ display:none !important; }
       .modal{ display:block !important; background:transparent !important; padding:0 !important; }
@@ -196,6 +193,11 @@
       @page{ size:A4; margin:12mm; }
       .block, .meta, .gallery{ break-inside:avoid; }
     }
+
+    /* احترام تفضيلات تقليل الحركة */
+    @media (prefers-reduced-motion: reduce){
+      *{ animation:none !important; transition:none !important; }
+    }
   </style>
 </head>
 <body>
@@ -203,7 +205,7 @@
   <div class="container">
     <div class="card">
       <div class="header">
-        <div class="brand">📋 نظام التقارير</div>
+        <div class="brand"><span class="dot"></span> نظام التقارير</div>
         <nav class="tabs" id="tabs">
           <button class="tab active" data-tab="daily">تقارير يومية</button>
           <button class="tab" data-tab="weekly">تقارير أسبوعية</button>
@@ -211,10 +213,10 @@
         </nav>
       </div>
 
-      <form class="form" id="form" onsubmit="return false;">
+      <form class="form tab-panel" id="form" onsubmit="return false;">
         <div>
           <label for="programName">اسم البرنامج</label>
-          <input id="programName" type="text" placeholder="مثال: برنامج تعزيز القيم" required>
+          <input id="programName" type="text">
         </div>
 
         <!-- التاريخ اليومي -->
@@ -225,7 +227,7 @@
           </div>
           <div>
             <label for="place">مقر التنفيذ</label>
-            <input id="place" type="text" placeholder="مثال: القاعة الكبرى">
+            <input id="place" type="text">
           </div>
         </div>
 
@@ -243,12 +245,12 @@
 
         <div>
           <label for="executor">المنفذة</label>
-          <input id="executor" type="text" placeholder="اسم المنفذة">
+          <input id="executor" type="text">
         </div>
 
         <div>
           <label for="objectives">الأهداف (سطر لكل هدف)</label>
-          <textarea id="objectives" placeholder="اكتبي كل هدف في سطر مستقل"></textarea>
+          <textarea id="objectives"></textarea>
         </div>
 
         <!-- الشواهد -->
@@ -256,8 +258,8 @@
           <label>الشواهد (حتى 4 صور)</label>
           <div class="upload" id="dropZone">
             <input id="evidenceFiles" type="file" accept="image/*" multiple>
-            <label for="evidenceFiles" class="btn btn-secondary">اختر الصور</label>
-            <div class="note" id="uploadMsg">يمكن السحب والإفلات هنا.</div>
+            <label for="evidenceFiles" class="btn btn-ghost">اختيار الصور</label>
+            <div class="note" id="uploadMsg">يمكن سحب الصور وإفلاتها هنا. الحد 4 صور.</div>
             <div class="thumbs" id="thumbs"></div>
           </div>
         </div>
@@ -268,16 +270,16 @@
           <button class="btn btn-ghost" id="saveBtn">💾 حفظ</button>
           <button class="btn btn-danger" id="clearBtn" type="button">مسح البيانات</button>
         </div>
-        <div class="note">يتم حفظ البيانات محليًا على جهازك (LocalStorage). لا تُرفع تلقائيًا للإنترنت.</div>
+        <div class="note">يتم حفظ البيانات محليًا على جهازك فقط (LocalStorage).</div>
       </form>
     </div>
   </div>
 
-  <!-- نافذة المعاينة (التقرير يُبنى هنا عند الطلب فقط) -->
-  <div class="modal" id="modal">
-    <div class="sheet">
+  <!-- نافذة المعاينة -->
+  <div class="modal" id="modal" aria-hidden="true">
+    <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="dlgTitle">
       <div class="sheet-head">
-        <strong>معاينة التقرير</strong>
+        <strong id="dlgTitle">معاينة التقرير</strong>
         <div class="sheet-actions">
           <button class="btn btn-secondary" id="printBtn">🖨️ طباعة</button>
           <button class="btn btn-primary" id="dlFromPreviewBtn">⬇️ تنزيل PDF</button>
@@ -285,14 +287,14 @@
         </div>
       </div>
       <div class="sheet-body">
-        <div id="printArea" class="report print-area"></div>
+        <div id="printArea" class="report print-area" aria-live="polite"></div>
       </div>
     </div>
   </div>
 
 <script>
 /* ======================= إعدادات عامة ======================= */
-const SCHOOL_HEADER_BASENAME = "26"; // اسم ملف الديباجة بالمستودع (بدون امتداد)
+const SCHOOL_HEADER_BASENAME = "26"; // اسم ملف الديباجة في جذر المستودع (بدون امتداد)
 
 /* ======================= أدوات مساعدة ======================= */
 const $ = (sel) => document.querySelector(sel);
@@ -326,32 +328,26 @@ const clearBtn    = $("#clearBtn");
 const saveBtn     = $("#saveBtn");
 
 /* ======================= الحالة والتخزين ======================= */
-const todayISO = () => {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
-};
-
 const blank = () => ({
-  programName:"", dateOne:todayISO(), dateFrom:"", dateTo:"",
+  programName:"", dateOne:"", dateFrom:"", dateTo:"",
   place:"", executor:"", objectives:"", images:[]
 });
 
 const state = {
   currentTab: "daily",
   daily:   blank(),
-  weekly:  {...blank(), dateOne:""}, // لا يستخدم dateOne هنا
-  monthly: {...blank(), dateOne:""}
+  weekly:  blank(),
+  monthly: blank()
 };
 
-function saveAll(){
-  localStorage.setItem("report-suite-v2", JSON.stringify(state));
-}
+function cur(){ return state[state.currentTab]; }
+
+function saveAll(){ localStorage.setItem("report-suite-v3", JSON.stringify(state)); }
 function loadAll(){
   try{
-    const raw = localStorage.getItem("report-suite-v2");
+    const raw = localStorage.getItem("report-suite-v3");
     if(!raw) return;
     const parsed = JSON.parse(raw);
-    // حافظ على البنية الحالية
     if(parsed && typeof parsed === 'object'){
       if(parsed.daily)   state.daily = {...blank(), ...parsed.daily};
       if(parsed.weekly)  state.weekly = {...blank(), ...parsed.weekly};
@@ -361,26 +357,23 @@ function loadAll(){
   }catch{}
 }
 
-/* ======================= تبويبات ======================= */
+/* ======================= تبويبات مع انتقال ذكي ======================= */
 function switchTab(tab){
   state.currentTab = tab;
   document.querySelectorAll(".tab").forEach(t=>{
     t.classList.toggle("active", t.dataset.tab === tab);
   });
 
-  const s = state[tab];
-
-  // حقول التاريخ بحسب نوع التقرير
+  // التاريخ: يومي (حقل واحد) أو فترة (من-إلى)
   if(tab === "daily"){
     rowDateOne.style.display = "";
     rowDateRange.style.display = "none";
-    if(!s.dateOne) s.dateOne = todayISO();
   }else{
     rowDateOne.style.display = "none";
     rowDateRange.style.display = "";
   }
 
-  // ضخ البيانات للحقل
+  const s = cur();
   programName.value = s.programName || "";
   dateOne.value     = s.dateOne || "";
   dateFrom.value    = s.dateFrom || "";
@@ -388,9 +381,11 @@ function switchTab(tab){
   place.value       = s.place || "";
   executor.value    = s.executor || "";
   objectives.value  = s.objectives || "";
-
-  // معاينة مصغّرات الصور
   renderThumbs(s.images);
+
+  // إعادة تشغيل حركة التبويب
+  formEl.classList.remove("tab-panel"); void formEl.offsetWidth; formEl.classList.add("tab-panel");
+
   saveAll();
 }
 
@@ -400,7 +395,7 @@ tabsEl.addEventListener("click", (e)=>{
   switchTab(b.dataset.tab);
 });
 
-/* ======================= مدخلات النموذج ======================= */
+/* ======================= مدخلات ======================= */
 programName.addEventListener("input", e=>{ cur().programName = e.target.value; saveAll(); });
 dateOne.addEventListener("input", e=>{ cur().dateOne = e.target.value; saveAll(); });
 dateFrom.addEventListener("input", e=>{ cur().dateFrom = e.target.value; saveAll(); });
@@ -412,7 +407,7 @@ objectives.addEventListener("input", e=>{ cur().objectives = e.target.value; sav
 saveBtn.addEventListener("click", ()=>{ saveAll(); toast("تم الحفظ ✔️"); });
 
 clearBtn.addEventListener("click", ()=>{
-  if(!confirm("هل تريد مسح بيانات هذا القسم فقط؟")) return;
+  if(!confirm("هل تريدين مسح بيانات هذا القسم فقط؟")) return;
   state[state.currentTab] = blank();
   switchTab(state.currentTab);
   toast("تم المسح");
@@ -422,14 +417,18 @@ clearBtn.addEventListener("click", ()=>{
 filesInput.addEventListener("change", ()=> handleFiles(filesInput.files));
 
 dropZone.addEventListener("dragover", e=>{
-  e.preventDefault(); dropZone.style.background="#f0f6ff"; dropZone.style.borderColor="var(--brand)";
+  e.preventDefault();
+  dropZone.style.background="#E8F4EC";
+  dropZone.style.borderColor="var(--brand)";
 });
 dropZone.addEventListener("dragleave", ()=>{
-  dropZone.style.background="#fbfcff"; dropZone.style.borderColor="var(--border)";
+  dropZone.style.background="#FBFEFC";
+  dropZone.style.borderColor="var(--border)";
 });
 dropZone.addEventListener("drop", e=>{
   e.preventDefault();
-  dropZone.style.background="#fbfcff"; dropZone.style.borderColor="var(--border)";
+  dropZone.style.background="#FBFEFC";
+  dropZone.style.borderColor="var(--border)";
   handleFiles(e.dataTransfer.files);
 });
 
@@ -438,13 +437,11 @@ async function handleFiles(files){
   if(!arr.length) return;
   const s = cur();
   const room = Math.max(0, 4 - s.images.length);
-  if(room <= 0){ uploadMsg.textContent = "وصلتِ إلى الحد الأقصى (4 صور)."; uploadMsg.style.color="var(--danger)"; return; }
+  if(room <= 0){ setUploadMsg("وصلتِ إلى الحد الأقصى (4 صور).", true); return; }
   if(arr.length > room){
-    uploadMsg.textContent = `سيتم إضافة ${room} صور فقط (الحد 4).`;
-    uploadMsg.style.color="var(--danger)";
+    setUploadMsg(`سيتم إضافة ${room} صور فقط (الحد 4).`, true);
   }else{
-    uploadMsg.textContent = "تمت إضافة الصور ✔️";
-    uploadMsg.style.color="var(--muted)";
+    setUploadMsg("تمت إضافة الصور ✔️");
   }
   for(const f of arr.slice(0, room)){
     if(!f.type.startsWith("image/")) continue;
@@ -457,7 +454,7 @@ async function handleFiles(files){
 
 function renderThumbs(list){
   thumbsEl.innerHTML = "";
-  list.slice(0,4).forEach((src, idx)=>{
+  (list||[]).slice(0,4).forEach((src)=>{
     const d = document.createElement("div");
     d.className = "thumb";
     const img = document.createElement("img");
@@ -467,7 +464,13 @@ function renderThumbs(list){
   });
 }
 
-/* ضغط الصور لتخفيف الـPDF */
+function setUploadMsg(msg, danger=false){
+  uploadMsg.textContent = msg;
+  uploadMsg.style.color = danger ? "var(--danger)" : "var(--muted)";
+  if(!danger){ setTimeout(()=>{ uploadMsg.textContent = "يمكن سحب الصور وإفلاتها هنا. الحد 4 صور."; uploadMsg.style.color = "var(--muted)"; }, 2000); }
+}
+
+/* ضغط الصور */
 function fileToDataURL(file){
   return new Promise((res, rej)=>{
     const fr = new FileReader();
@@ -499,30 +502,12 @@ async function compressImage(file, maxW=1200, quality=0.9){
 }
 
 /* ======================= بناء التقرير ======================= */
-function cur(){ return state[state.currentTab]; }
-
-function ensureValid(){
-  const s = cur();
-  if(!s.programName.trim()) return alert("من فضلك أدخلي اسم البرنامج."), false;
-  if(state.currentTab === "daily"){
-    if(!s.dateOne) return alert("من فضلك حددي التاريخ."), false;
-  }else{
-    if(!s.dateFrom || !s.dateTo) return alert("من فضلك حددي فترة التاريخ (من / إلى)."), false;
-    if(new Date(s.dateFrom) > new Date(s.dateTo)) return alert("تسلسل التاريخ غير صحيح (من يجب أن يكون قبل إلى)."), false;
-  }
-  return true;
-}
-
 function fmtDate(iso){
   if(!iso) return "—";
   try{ return new Intl.DateTimeFormat('ar', { dateStyle:'long' }).format(new Date(iso)); }
   catch{ return iso; }
 }
-function fmtRange(a,b){
-  if(!a || !b) return "—";
-  return `${fmtDate(a)} — ${fmtDate(b)}`;
-}
-
+function fmtRange(a,b){ if(!a || !b) return "—"; return `${fmtDate(a)} — ${fmtDate(b)}`; }
 function objectivesHTML(text){
   const lines = (text||"").split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
   if(!lines.length) return `<ul><li>—</li></ul>`;
@@ -574,13 +559,12 @@ function buildReportDOM(){
 }
 
 /* ======================= تحميل الديباجة (ملف 26) ======================= */
-// تجنّبنا طلب HEAD لأن بعض الاستضافات تمنعه. نستعمل Image.onload
+/* نتحقق عبر عنصر Image لضمان التوافق مع GitHub Pages (قد يرفض طلب HEAD). */
 async function resolveLetterheadSrc(base){
   const exts = ["", ".png",".jpg",".jpeg",".webp",".svg"];
   for(const ext of exts){
     const url = `${base}${ext}`;
-    const ok = await imgExists(url);
-    if(ok) return url;
+    if(await imgExists(url)) return url;
   }
   return null;
 }
@@ -589,38 +573,30 @@ function imgExists(url){
     const i = new Image();
     i.onload = ()=>res(true);
     i.onerror = ()=>res(false);
-    // cache-bust للتأكد من جلب الملف المرفوع حديثًا
+    // كسر التخزين المؤقت لضمان جلب الملف عند تحديثه في المستودع
     i.src = `${url}?v=${Date.now()}`;
   });
 }
 
-/* ======================= معاينة / طباعة / PDF ======================= */
-previewBtn.addEventListener("click", async ()=>{
-  if(!ensureValid()) return;
-  openPreview();
-});
-
-downloadBtn.addEventListener("click", async ()=>{
-  if(!ensureValid()) return;
-  // نعرض المعاينة أيضًا (حسب طلبك تشوفي التقرير وقت التحميل)
-  await openPreview(true); // true = ثم تنزيل تلقائي
-});
-
-dlFromPrev.addEventListener("click", ()=> generatePdf());
-
-printBtn.addEventListener("click", ()=>{
-  window.print();
-});
-
-closeModalBtn.addEventListener("click", closePreview);
+/* ======================= معاينة / طباعة / تنزيل PDF ======================= */
+function ensureValid(){
+  const s = cur();
+  if(!s.programName.trim()){ alert("أدخلي اسم البرنامج."); return false; }
+  if(state.currentTab === "daily"){
+    if(!s.dateOne){ alert("حددي التاريخ."); return false; }
+  }else{
+    if(!s.dateFrom || !s.dateTo){ alert("حددي فترة التاريخ (من / إلى)."); return false; }
+    if(new Date(s.dateFrom) > new Date(s.dateTo)){ alert("تسلسل التاريخ غير صحيح."); return false; }
+  }
+  return true;
+}
 
 async function openPreview(autoDownload=false){
-  // ابني التقرير داخل منطقة الطباعة
   printArea.innerHTML = "";
   const dom = buildReportDOM();
   printArea.appendChild(dom);
 
-  // حمّل الديباجة
+  // تحميل الديباجة
   const src = await resolveLetterheadSrc(SCHOOL_HEADER_BASENAME);
   const holder = printArea.querySelector("#rep-letterhead");
   holder.innerHTML = "";
@@ -630,10 +606,10 @@ async function openPreview(autoDownload=false){
     img.src = src;
     holder.appendChild(img);
   }else{
-    holder.innerHTML = `<div class="note" style="color:#b00020">تعذّر العثور على ملف الديباجة باسم <b>${SCHOOL_HEADER_BASENAME}</b> (جرب: 26.png / 26.jpg / 26.svg)</div>`;
+    holder.innerHTML = `<div class="note" style="color:#b00020">تعذّر العثور على ملف الديباجة باسم <b>${SCHOOL_HEADER_BASENAME}</b> (مثال: 26.png / 26.jpg / 26.svg)</div>`;
   }
 
-  // أضف الصور (بمقاس موحّد 4:3)
+  // صور الشواهد
   const gal = printArea.querySelector("#rep-gallery");
   (cur().images || []).slice(0,4).forEach(src=>{
     const fig = document.createElement("figure");
@@ -643,15 +619,19 @@ async function openPreview(autoDownload=false){
     gal.appendChild(fig);
   });
 
+  // عرض النافذة مع انتقال
   modal.classList.add("show");
+  modal.setAttribute("aria-hidden", "false");
+
   if(autoDownload){
-    // انتظر إطار الرسم ثم نزّل
-    setTimeout(generatePdf, 250);
+    // انتظر رسم عناصر المعاينة ثم نزّل
+    setTimeout(generatePdf, 280);
   }
 }
 
 function closePreview(){
   modal.classList.remove("show");
+  modal.setAttribute("aria-hidden", "true");
 }
 
 function pdfFileName(){
@@ -665,25 +645,32 @@ function pdfFileName(){
 
 async function generatePdf(){
   const opt = {
-    margin:       [10,10,12,10],
-    filename:     pdfFileName(),
-    image:        { type:'jpeg', quality:0.96 },
-    html2canvas:  { scale:2, useCORS:true, backgroundColor:"#ffffff" },
-    jsPDF:        { unit:'mm', format:'a4', orientation:'portrait' },
-    pagebreak:    { mode:['css','legacy'] }
+    margin:[10,10,12,10],
+    filename: pdfFileName(),
+    image:{ type:'jpeg', quality:0.96 },
+    html2canvas:{ scale:2, useCORS:true, backgroundColor:"#ffffff" },
+    jsPDF:{ unit:'mm', format:'a4', orientation:'portrait' },
+    pagebreak:{ mode:['css','legacy'] }
   };
-  // نستخدم save() لضمان عدم حظر فتح التبويب من المتصفح
-  await html2pdf().set(opt).from(printArea).save();
+  await html2pdf().set(opt).from(printArea).save(); // تنزيل مباشر على الجهاز
 }
 
-/* ======================= إشعارات صغيرة ======================= */
+/* أزرار */
+document.addEventListener("keydown", (e)=>{ if(e.key==="Escape") closePreview(); });
+$("#previewBtn").addEventListener("click", ()=>{ if(!ensureValid()) return; openPreview(false); });
+$("#downloadBtn").addEventListener("click", ()=>{ if(!ensureValid()) return; openPreview(true); });
+$("#dlFromPreviewBtn").addEventListener("click", ()=> generatePdf());
+$("#printBtn").addEventListener("click", ()=> window.print());
+$("#closeModalBtn").addEventListener("click", closePreview);
+
+/* إشعار صغير */
 function toast(msg){
   uploadMsg.textContent = msg;
   uploadMsg.style.color = "var(--muted)";
-  setTimeout(()=>{ uploadMsg.textContent = "يمكن السحب والإفلات هنا."; uploadMsg.style.color = "var(--muted)"; }, 2000);
+  setTimeout(()=>{ uploadMsg.textContent = "يمكن سحب الصور وإفلاتها هنا. الحد 4 صور."; uploadMsg.style.color = "var(--muted)"; }, 2000);
 }
 
-/* ======================= بدء التشغيل ======================= */
+/* تشغيل أولي */
 (function init(){
   loadAll();
   switchTab(state.currentTab || "daily");
