@@ -1,541 +1,691 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>نظام التقارير | يومية • أسبوعية • شهرية</title>
+<title>نظام التقارير • تقارير فورية</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700;800&display=swap" rel="stylesheet">
-
-<script defer src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 <style>
-  :root{
-    /* ألوان وهوية */
-    --brand:#006C35; --brand-2:#0A8A4F; --accent:#00A36C; --brand-weak:#E8F4EC;
-    --ink:#101315; --muted:#69707D; --bg:#F6F8F7; --card:#FFFFFF; --border:#E3E7EA; --danger:#DA3C3C;
-    --radius:14px; --line:1.85; --page-w:920px;
+/* ======================== الأنماط الأساسية ======================== */
+:root {
+  --primary: #006C35;
+  --primary-dark: #005B2E;
+  --secondary: #27ae60;
+  --text-dark: #2c3e50;
+  --text-light: #7f8c8d;
+  --bg-light: #f7f9fb;
+  --bg-card: #ffffff;
+  --border-color: #e0e6ed;
+  --danger: #e74c3c;
+  --radius: 12px;
+  --font-tajawal: 'Tajawal', sans-serif;
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
 
-    /* قياسات A4 للشاشة */
-    --a4-w:210mm; --a4-h:297mm; --paper-pad:12mm;
-  }
+* {
+  box-sizing: border-box;
+}
 
-  html,body{
-    margin:0; background:var(--bg); color:var(--ink);
-    font-family:"Cairo",system-ui,-apple-system,"Segoe UI","Noto Kufi Arabic",Arial,sans-serif;
-    line-height:var(--line);
-  }
+body {
+  font-family: var(--font-tajawal);
+  background-color: var(--bg-light);
+  color: var(--text-dark);
+  margin: 0;
+  line-height: 1.6;
+  direction: rtl;
+  text-align: right;
+}
 
-  /* ====== ديباجة ثابتة في واجهة الموقع ====== */
-  .site-letterhead{
-    position:sticky; top:0; z-index:1000; background:#fff;
-    border-bottom:1px solid var(--border); box-shadow:0 8px 24px rgba(0,0,0,.05);
-  }
-  .site-letterhead .inner{ max-width:var(--page-w); margin:0 auto; padding:8px 16px; }
-  .site-letterhead img{ display:block; margin:0 auto; max-width:100%; height:auto; max-height:140px; }
-  .lh-placeholder{ text-align:center; color:var(--muted); padding:16px 0; font-weight:700; }
+.container {
+  max-width: 900px;
+  margin: 30px auto;
+  padding: 0 15px;
+}
 
-  /* ====== غلاف المحتوى ====== */
-  .container{ max-width:var(--page-w); margin:22px auto 44px; padding:0 16px; }
-  .card{
-    background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
-    box-shadow:0 14px 40px rgba(0,0,0,.05); overflow:hidden;
-  }
+.card {
+  background-color: var(--bg-card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
 
-  .header{
-    padding:16px 18px; display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:space-between;
-    background:linear-gradient(180deg, var(--brand-weak), #fff); border-bottom:1px solid var(--border);
-  }
-  .brand{ display:flex; align-items:center; gap:10px; font-weight:800; color:var(--brand-2); }
-  .brand .dot{ width:12px; height:12px; border-radius:50%; background:var(--brand); box-shadow:0 0 0 6px rgba(0,108,53,.12); }
-  .tabs{ display:flex; gap:8px; flex-wrap:wrap; }
-  .tab{
-    border:1px solid var(--border); background:#fff; color:#1f242b; padding:8px 14px; border-radius:10px; cursor:pointer; font-weight:800;
-    transition:transform .2s ease, background .2s ease, color .2s ease, box-shadow .2s ease;
-  }
-  .tab:hover{ transform:translateY(-1px); box-shadow:0 6px 16px rgba(0,0,0,.08); }
-  .tab.active{ background:var(--brand); border-color:var(--brand); color:#fff; box-shadow:0 6px 16px rgba(0,108,53,.25); }
+.header {
+  padding: 25px;
+  background: linear-gradient(to left, var(--primary), var(--secondary));
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
 
-  .form{ padding:20px; display:grid; gap:16px; }
-  .row{ display:grid; gap:12px; grid-template-columns:1fr 1fr; }
-  @media (max-width:680px){ .row{ grid-template-columns:1fr; } }
-  label{ display:block; font-weight:700; font-size:15px; margin-bottom:6px; color:#273036; }
+.header h1 {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
 
-  input[type="text"], input[type="date"], textarea{
-    width:100%; padding:12px 14px; border:1px solid var(--border); border-radius:12px; background:#fff; color:var(--ink); font-size:15px;
-    outline:none; transition:border .2s, box-shadow .2s, transform .08s ease;
-  }
-  input:focus, textarea:focus{ border-color:var(--brand); box-shadow:0 0 0 3px var(--brand-weak); }
-  input:active, textarea:active{ transform:scale(0.998); }
-  textarea{ min-height:140px; resize:vertical; }
-  ::placeholder{ color:transparent; }
+.header p {
+  margin: 0;
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
 
-  .upload{ border:1.5px dashed var(--border); border-radius:12px; padding:16px; background:#FBFEFC; text-align:center; transition:background .2s, border-color .2s; }
-  .upload input{ display:none; }
-  .thumbs{ display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
-  .thumb{ width:84px; height:64px; border-radius:10px; overflow:hidden; border:1px solid var(--border); background:#f2f6f4; position:relative; }
-  .thumb .remove-img{
-    position:absolute; top:2px; right:2px; background:rgba(0,0,0,.5); color:#fff;
-    border:0; border-radius:50%; width:20px; height:20px;
-    font-size:14px; line-height:1; cursor:pointer;
-    display:flex; align-items:center; justify-content:center;
+.form-body {
+  padding: 25px;
+  display: grid;
+  gap: 20px;
+}
+
+.form-group {
+  margin-bottom: 0;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+  color: var(--text-dark);
+}
+
+.form-group input[type="text"],
+.form-group input[type="date"],
+.form-group textarea {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 1rem;
+  color: var(--text-dark);
+  background-color: var(--bg-light);
+  transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--secondary);
+  box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.2);
+}
+
+.form-group textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+/* ======================== الأزرار والتحكم ======================== */
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.btn {
+  padding: 12px 25px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  background-color: var(--secondary);
+  color: #fff;
+}
+
+.btn-secondary:hover {
+  background-color: #2ecc71;
+  transform: translateY(-2px);
+}
+
+.btn-clear {
+  background-color: var(--danger);
+  color: #fff;
+}
+
+.btn-clear:hover {
+  background-color: #c0392b;
+  transform: translateY(-2px);
+}
+
+/* ======================== تبويبات التقرير ======================== */
+.tabs {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 25px;
+  border-bottom: 2px solid var(--border-color);
+}
+
+.tab {
+  padding: 12px 20px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-light);
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.tab.active {
+  color: var(--primary);
+  border-bottom: 2px solid var(--primary);
+}
+
+/* ======================== تحميل الصور (الشواهد) ======================== */
+.upload-area {
+  border: 2px dashed var(--border-color);
+  border-radius: var(--radius);
+  padding: 20px;
+  text-align: center;
+  background-color: var(--bg-light);
+}
+
+.upload-area input[type="file"] {
+  display: none;
+}
+
+.upload-area .label-btn {
+  display: inline-block;
+  padding: 8px 16px;
+  background-color: var(--text-dark);
+  color: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.thumbs-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 15px;
+  justify-content: center;
+}
+
+.thumb {
+  width: 90px;
+  height: 70px;
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid var(--border-color);
+  transition: transform 0.2s;
+}
+.thumb:hover {
+    transform: scale(1.05);
+}
+
+.thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.thumb .remove-btn {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* ======================== تنسيق ورقة التقرير PDF ======================== */
+.report-paper {
+  width: 210mm;
+  min-height: 297mm;
+  padding: 20mm;
+  box-sizing: border-box;
+  background: #fff;
+  color: #000;
+  font-family: var(--font-tajawal);
+  display: none; /* مخفي في العرض العادي */
+}
+
+.report-header {
+  text-align: center;
+  margin-bottom: 15mm;
+}
+
+.report-header img {
+  max-width: 100%;
+  max-height: 35mm;
+  margin-bottom: 5mm;
+}
+
+.report-header h2 {
+  font-size: 28px;
+  margin: 0;
+  color: var(--primary-dark);
+  font-weight: 800;
+}
+
+.report-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10mm;
+  margin-bottom: 10mm;
+}
+
+.info-item {
+  border: 1px solid #ddd;
+  padding: 8mm;
+  border-radius: 8px;
+}
+
+.info-item h4 {
+  margin: 0 0 5mm;
+  font-size: 16px;
+  color: var(--text-light);
+  font-weight: 500;
+}
+
+.info-item p {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.report-section {
+  margin-bottom: 10mm;
+}
+
+.report-section h3 {
+  font-size: 20px;
+  border-right: 4px solid var(--primary);
+  padding-right: 10px;
+  margin: 0 0 8mm;
+  color: var(--primary-dark);
+}
+
+.objectives-list {
+  padding-right: 25px;
+  margin: 0;
+}
+
+.objectives-list li {
+  margin-bottom: 5px;
+}
+
+.gallery-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(45%, 1fr));
+  gap: 8mm;
+}
+
+.gallery-section figure {
+  margin: 0;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  aspect-ratio: 4/3;
+}
+
+.gallery-section img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.report-footer {
+  margin-top: 15mm;
+  border-top: 1px solid #ddd;
+  padding-top: 5mm;
+  display: flex;
+  justify-content: space-between;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+/* ======================== الطباعة والتحويل لـ PDF ======================== */
+@media print {
+  body > :not(.report-paper) {
+    display: none !important;
   }
-  .thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
-
-  .btn{
-    appearance:none; border:0; border-radius:12px; padding:12px 16px; font-weight:800; cursor:pointer; font-size:14px;
-    transition:transform .12s ease, filter .2s ease, box-shadow .2s ease;
-  }
-  .btn:hover{ filter:brightness(1.02); transform:translateY(-1px); }
-  .btn:active{ transform:translateY(0); }
-  .btn-primary{ background:linear-gradient(135deg, var(--brand) 0%, var(--brand-2) 100%); color:#fff; box-shadow:0 8px 22px rgba(0,108,53,.25); }
-  .btn-secondary{ background:var(--accent); color:#fff; box-shadow:0 8px 18px rgba(0,163,108,.22); }
-  .btn-ghost{ background:#fff; color:#1e232e; border:1px solid var(--border); }
-  .btn-danger{ background:var(--danger); color:#fff; }
-  .actions{ display:flex; gap:10px; flex-wrap:wrap; margin-top:6px; }
-  .note{ color:var(--muted); font-size:12.5px; }
-
-  /* ====== نافذة المعاينة + ورقة A4 ====== */
-  .modal{
-    position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(6,16,11,.55);
-    z-index:9999; padding:20px;
-  }
-  .modal.show{ display:flex; }
-  .sheet{
-    width:100%; max-width:920px; max-height:90vh; overflow:auto; background:#fff; border-radius:16px; border:1px solid var(--border);
-    box-shadow:0 22px 70px rgba(0,0,0,.35); transform-origin:center; opacity:0; transform:translateY(14px) scale(.98);
-    transition:opacity .25s ease, transform .25s ease;
-  }
-  .modal.show .sheet{ opacity:1; transform:translateY(0) scale(1); }
-  .sheet-head{
-    padding:10px 14px; border-bottom:1px solid var(--border); display:flex; gap:8px; justify-content:space-between; align-items:center;
-    position:sticky; top:0; background:#fff; z-index:2;
-  }
-  .sheet-actions{ display:flex; gap:8px; flex-wrap:wrap; }
-  .sheet-body{ padding:18px 20px 24px; }
-
-  /* ورقة A4 دقيقة للشاشة */
-  .paper{
-    width:var(--a4-w);
-    min-height:var(--a4-h);
-    padding:var(--paper-pad);
-    box-sizing:border-box;
-    margin:0 auto;
-    background:#fff; color:#000;
-    -webkit-print-color-adjust: exact; print-color-adjust: exact;
-  }
-
-  .report{ font-size:14.5px; }
-  .letterhead{ margin-bottom:10mm; text-align:center; }
-  .letterhead img{ max-width:100%; height:auto; display:block; margin:0 auto; max-height:28mm; }
-  .title{ text-align:center; margin:0 0 6mm; }
-  .title h1{ font-size:22px; margin:0; font-weight:800; color:#0b3f25; letter-spacing:.1px; }
-
-  .meta{ display:grid; gap:6mm; grid-template-columns:1fr 1fr; margin:0 0 6mm; }
-  .meta .field{ border:1px solid var(--border); border-radius:10px; padding:4mm; }
-  .meta .label{ color:#6c7280; font-size:12.5px; margin-bottom:1.5mm; }
-  .meta .value{ font-weight:800; word-break:break-word; }
-
-  .block{ margin:0 0 6mm; }
-  .block h3{ margin:0 0 3mm; font-size:18px; border-right:4px solid var(--brand); padding-right:3mm; color:#0b3f25; }
-
-  .objectives ul{ margin:0; padding:0 6mm; }
-  .objectives li{ margin:2mm 0; }
-
-  .gallery{ display:grid; gap:4mm; grid-template-columns:1fr 1fr; }
-  .gallery figure{
-    margin:0; border:1px solid var(--border); border-radius:10px; overflow:hidden;
-    aspect-ratio:4/3; background:#fafafa; display:flex; align-items:center; justify-content:center;
-  }
-  .gallery img{ width:100%; height:100%; object-fit:cover; display:block; }
-
-  .footer{
-    margin-top:8mm; border-top:1px solid var(--border); padding-top:4mm;
-    display:flex; justify-content:space-between; gap:8px; font-weight:800;
-  }
-
-  /* منع انكسارات سيئة داخل أقسام حساسة */
-  .meta, .block, .gallery, .footer { break-inside: avoid; page-break-inside: avoid; }
-
-  /* ====== ضبط الطباعة: نطبع الورقة فقط ====== */
-  @media print{
-    body > *:not(.print-area){ display:none !important; }
-    .modal{ display:block !important; background:transparent !important; padding:0 !important; }
-    .sheet{ box-shadow:none; border:none; max-width:unset; max-height:unset; }
-    .sheet-head{ display:none; }
-    .sheet-body{ padding:0; }
-    .print-area{ display:block; }
-
-    /* نسخة أبسط للمعرض لتجنب مشاكل grid عند التحويل */
-    .gallery{ display:flex !important; flex-wrap:wrap !important; gap:4mm !important; }
-    .gallery figure{ width:calc(50% - 2mm); break-inside: avoid; page-break-inside: avoid; }
-
-    html[dir="rtl"] *, .paper { direction: rtl; text-align: right; }
-  }
-</style>
-
-/* ====== @page على مستوى الجذر لضبط A4 للطباعة ====== */
-<style>
-  @page {
-    size: A4 portrait;  /* 210mm x 297mm */
-    margin: 0;          /* الهوامش داخل .paper */
-  }
+  .report-paper {
+    display: block !important;
+    margin: 0;
+    box-shadow: none;
+  }
+}
 </style>
 </head>
 <body>
 
-<div class="site-letterhead">
-  <div class="inner" id="siteLetterhead">
-    <div class="lh-placeholder">سيتم تحميل الديباجة تلقائيًا (ملف باسم <b>26</b> في جذر المستودع).</div>
-  </div>
-</div>
-
 <div class="container">
-  <div class="card">
-    <div class="header">
-      <div class="brand"><span class="dot"></span> نظام التقارير</div>
-      <nav class="tabs" id="tabs">
-        <button class="tab active" data-tab="daily">تقارير يومية</button>
-        <button class="tab" data-tab="weekly">تقارير أسبوعية</button>
-        <button class="tab" data-tab="monthly">تقارير شهرية</button>
-      </nav>
-    </div>
+  <div class="card">
+    <div class="header">
+      <h1>نظام التقارير</h1>
+      <p>يومية • أسبوعية • شهرية</p>
+    </div>
 
-    <form class="form" id="form" onsubmit="return false;">
-      <div>
-        <label for="programName">اسم البرنامج</label>
-        <input id="programName" type="text">
-      </div>
+    <div class="form-body">
+      <div class="tabs">
+        <button class="tab active" data-tab="daily">تقرير يومي</button>
+        <button class="tab" data-tab="weekly">تقرير أسبوعي</button>
+        <button class="tab" data-tab="monthly">تقرير شهري</button>
+      </div>
 
-      <div>
-        <label for="audience">الفئة المستهدفة</label>
-        <input id="audience" type="text">
-      </div>
+      <form id="report-form">
+        <div class="form-group">
+          <label for="programName">اسم البرنامج</label>
+          <input type="text" id="programName" placeholder="أدخل اسم البرنامج" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="audience">الفئة المستهدفة</label>
+          <input type="text" id="audience" placeholder="أدخل الفئة المستهدفة" required>
+        </div>
+        
+        <div id="date-one-group">
+          <div class="form-group">
+            <label for="dateOne">التاريخ</label>
+            <input type="date" id="dateOne" required>
+          </div>
+        </div>
+        
+        <div id="date-range-group" style="display: none;">
+          <div class="form-group">
+            <label for="dateFrom">من تاريخ</label>
+            <input type="date" id="dateFrom" required>
+          </div>
+          <div class="form-group">
+            <label for="dateTo">إلى تاريخ</label>
+            <input type="date" id="dateTo" required>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="executor">المنفذة</label>
+          <input type="text" id="executor" placeholder="أدخل اسم المنفذة" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="objectives">الأهداف (سطر لكل هدف)</label>
+          <textarea id="objectives" placeholder="اكتب أهداف التقرير..."></textarea>
+        </div>
 
-            <div class="row" id="row-date-one">
-        <div>
-          <label for="dateOne">التاريخ</label>
-          <input id="dateOne" type="date">
-        </div>
-        <div>
-          <label for="place">مقر التنفيذ</label>
-          <input id="place" type="text">
-        </div>
-      </div>
+        <div class="form-group">
+          <label>الشواهد (صور)</label>
+          <div class="upload-area" id="upload-area">
+            <input type="file" id="image-upload" accept="image/*" multiple>
+            <label for="image-upload" class="label-btn">اختر الصور</label>
+            <p style="font-size: 0.9em; color: var(--text-light); margin: 10px 0 0;">يمكن سحب الصور وإفلاتها هنا. الحد الأقصى 4 صور.</p>
+            <div class="thumbs-container" id="thumbs-container"></div>
+          </div>
+        </div>
 
-            <div class="row" id="row-date-range" style="display:none">
-        <div>
-          <label for="dateFrom">من تاريخ</label>
-          <input id="dateFrom" type="date">
-        </div>
-        <div>
-          <label for="dateTo">إلى تاريخ</label>
-          <input id="dateTo" type="date">
-        </div>
-      </div>
-
-      <div>
-        <label for="executor">المنفذة</label>
-        <input id="executor" type="text">
-      </div>
-
-      <div>
-        <label for="objectives">الأهداف (سطر لكل هدف)</label>
-        <textarea id="objectives"></textarea>
-      </div>
-
-            <div>
-        <label>الشواهد (حتى 4 صور)</label>
-        <div class="upload" id="dropZone">
-          <input id="evidenceFiles" type="file" accept="image/*" multiple>
-          <label for="evidenceFiles" class="btn btn-ghost">اختيار الصور</label>
-          <div class="note" id="uploadMsg">يمكن سحب الصور وإفلاتها هنا. الحد 4 صور.</div>
-          <div class="thumbs" id="thumbs"></div>
-        </div>
-      </div>
-
-      <div class="actions">
-        <button class="btn btn-secondary" id="previewBtn">👁️‍🗨️ معاينة / طباعة</button>
-        <button class="btn btn-primary" id="downloadBtn">⬇️ تنزيل PDF</button>
-        <button class="btn btn-ghost" id="saveBtn">💾 حفظ</button>
-        <button class="btn btn-danger" id="clearBtn" type="button">مسح البيانات</button>
-      </div>
-      <div class="note">يتم حفظ البيانات محليًا على جهازك فقط (LocalStorage).</div>
-    </form>
-  </div>
+        <div class="actions">
+          <button type="button" class="btn btn-secondary" id="preview-btn">👁️‍🗨️ معاينة</button>
+          <button type="button" class="btn btn-primary" id="download-btn">⬇️ تنزيل PDF</button>
+          <button type="button" class="btn btn-clear" id="clear-btn">🧹 مسح البيانات</button>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
 
-<div class="modal" id="modal" aria-hidden="true">
-  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="dlgTitle">
-    <div class="sheet-head">
-      <strong id="dlgTitle">معاينة التقرير</strong>
-      <div class="sheet-actions">
-        <button class="btn btn-secondary" id="printBtn">🖨️ طباعة</button>
-        <button class="btn btn-primary" id="dlFromPreviewBtn">⬇️ تنزيل PDF</button>
-        <button class="btn btn-ghost" id="closeModalBtn">✖️ إغلاق</button>
-      </div>
-    </div>
-    <div class="sheet-body">
-      <div id="printArea" class="print-area"></div>
-    </div>
-  </div>
-</div>
+<div class="report-paper" id="report-paper"></div>
 
 <script>
-/* =================== ثابت اسم ملف الديباجة =================== */
-const SCHOOL_HEADER_BASENAME = "26";
+// ==================== متغيرات الحالة والتخزين ====================
+const state = {
+  currentTab: 'daily',
+  daily: { programName: '', audience: '', dateOne: '', executor: '', objectives: '', images: [] },
+  weekly: { programName: '', audience: '', dateFrom: '', dateTo: '', executor: '', objectives: '', images: [] },
+  monthly: { programName: '', audience: '', dateFrom: '', dateTo: '', executor: '', objectives: '', images: [] },
+};
 
-/* =================== أدوات مختصرة =================== */
-const $ = (sel) => document.querySelector(sel);
-const $$ = (sel) => document.querySelectorAll(sel);
+const saveState = () => localStorage.setItem('report_data', JSON.stringify(state));
+const loadState = () => {
+  try {
+    const data = JSON.parse(localStorage.getItem('report_data'));
+    if (data) {
+      Object.keys(data).forEach(key => {
+        if (state[key]) {
+          Object.assign(state[key], data[key]);
+        }
+      });
+      state.currentTab = data.currentTab || 'daily';
+    }
+  } catch (e) {
+    console.error('Failed to load data:', e);
+  }
+};
 
-/* عناصر الواجهة */
-const tabsEl = $("#tabs"), formEl = $("#form"), thumbsEl = $("#thumbs"), dropZone = $("#dropZone");
-const filesInput = $("#evidenceFiles"), uploadMsg = $("#uploadMsg"), modal = $("#modal"), printArea = $("#printArea");
-const siteLetterhead = $("#siteLetterhead");
+// ==================== عناصر DOM ====================
+const $ = selector => document.querySelector(selector);
+const $$ = selector => document.querySelectorAll(selector);
 
-/* الحقول */
-const programName=$("#programName"), audience=$("#audience"), dateOne=$("#dateOne");
-const dateFrom=$("#dateFrom"), dateTo=$("#dateTo"), place=$("#place"), executor=$("#executor"), objectives=$("#objectives");
-const rowDateOne=$("#row-date-one"), rowDateRange=$("#row-date-range");
+const form = $('#report-form');
+const tabsContainer = $('.tabs');
+const reportPaper = $('#report-paper');
+const thumbsContainer = $('#thumbs-container');
+const imageUpload = $('#image-upload');
+const dateOneGroup = $('#date-one-group');
+const dateRangeGroup = $('#date-range-group');
 
-/* أزرار */
-const previewBtn=$("#previewBtn"), downloadBtn=$("#downloadBtn"), dlFromPrev=$("#dlFromPreviewBtn");
-const printBtn=$("#printBtn"), closeModalBtn=$("#closeModalBtn"), clearBtn=$("#clearBtn"), saveBtn=$("#saveBtn");
+// ==================== وظائف الواجهة ====================
+const updateForm = () => {
+  const currentData = state[state.currentTab];
+  for (const key in currentData) {
+    const el = $(`#${key}`);
+    if (el) el.value = currentData[key];
+  }
+  updateThumbs(currentData.images);
+  updateDateInputs();
+};
 
-/* =================== الحالة والتخزين =================== */
-const blank = () => ({ programName:"", audience:"", dateOne:"", dateFrom:"", dateTo:"", place:"", executor:"", objectives:"", images:[] });
-const state = { currentTab:"daily", daily:blank(), weekly:blank(), monthly:blank() };
-const cur = () => state[state.currentTab];
-const saveAll = () => localStorage.setItem("report-suite-pro", JSON.stringify(state));
+const updateDateInputs = () => {
+  const isDaily = state.currentTab === 'daily';
+  dateOneGroup.style.display = isDaily ? 'block' : 'none';
+  dateRangeGroup.style.display = isDaily ? 'none' : 'grid';
+  $$('input[type="date"]').forEach(el => el.required = !isDaily);
+  if (!isDaily) $('#dateFrom').required = true;
+};
 
-function loadAll(){
-  try{
-    const raw = localStorage.getItem("report-suite-pro");
-    if(!raw) return;
-    const p = JSON.parse(raw);
-    if(p && typeof p === 'object'){
-      if(p.daily) state.daily = {...blank(), ...p.daily};
-      if(p.weekly) state.weekly = {...blank(), ...p.weekly};
-      if(p.monthly) state.monthly = {...blank(), ...p.monthly};
-      if(p.currentTab) state.currentTab = p.currentTab;
-    }
-  }catch(e){
-    console.error("Failed to load state from LocalStorage", e);
-  }
-}
+const updateThumbs = (images) => {
+  thumbsContainer.innerHTML = '';
+  images.forEach((imgSrc, index) => {
+    const thumbDiv = document.createElement('div');
+    thumbDiv.className = 'thumb';
+    thumbDiv.innerHTML = `<img src="${imgSrc}" alt="صورة ${index + 1}"><button type="button" class="remove-btn" data-index="${index}">×</button>`;
+    thumbsContainer.appendChild(thumbDiv);
+  });
+};
 
-/* =================== تحميل الديباجة (واجهة + تقرير) =================== */
-let letterheadSrc = null;
-async function resolveLetterheadSrc(base){
-  const exts=[".png",".jpg",".jpeg",".webp",".svg"];
-  for(const ext of exts){
-    const url = `${base}${ext}`;
-    try {
-      const res = await fetch(url, {method: 'HEAD'});
-      if (res.ok) return url;
-    } catch (e) {
-      // Network error, continue to next extension
-    }
-  }
-  return null;
-}
-async function loadSiteLetterhead(){
-  siteLetterhead.innerHTML = "";
-  letterheadSrc = await resolveLetterheadSrc(SCHOOL_HEADER_BASENAME);
-  if(letterheadSrc){
-    const img = document.createElement("img");
-    img.alt = "ديباجة المدرسة";
-    img.crossOrigin = "anonymous"; // لمخرجات PDF بدون مشاكل CORS
-    img.src = letterheadSrc;
-    siteLetterhead.appendChild(img);
-  }else{
-    const div = document.createElement("div");
-    div.className = "lh-placeholder";
-    div.innerHTML = `تعذّر العثور على ملف الديباجة باسم <b>${SCHOOL_HEADER_BASENAME}</b> (مثال: 26.png / 26.jpg / 26.svg)`;
-    siteLetterhead.appendChild(div);
-  }
-}
+const switchTab = (tabName) => {
+  state.currentTab = tabName;
+  $$('.tab').forEach(tab => tab.classList.remove('active'));
+  $(`.tab[data-tab="${tabName}"]`).classList.add('active');
+  updateForm();
+  saveState();
+};
 
-/* =================== تبويبات =================== */
-function switchTab(tab){
-  state.currentTab = tab;
-  $$(".tab").forEach(t=>t.classList.toggle("active", t.dataset.tab===tab));
-  rowDateOne.style.display = (tab === "daily") ? "grid" : "none";
-  rowDateRange.style.display = (tab === "daily") ? "none" : "grid";
+// ==================== معالجة الصور ====================
+const handleImageUpload = (files) => {
+  const currentImages = state[state.currentTab].images;
+  const newImages = Array.from(files).slice(0, 4 - currentImages.length);
+  newImages.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      currentImages.push(e.target.result);
+      updateThumbs(currentImages);
+      saveState();
+    };
+    reader.readAsDataURL(file);
+  });
+};
 
-  const s = cur();
-  programName.value=s.programName||""; audience.value=s.audience||"";
-  dateOne.value=s.dateOne||""; dateFrom.value=s.dateFrom||""; dateTo.value=s.dateTo||"";
-  place.value=s.place||""; executor.value=s.executor||""; objectives.value=s.objectives||"";
-  renderThumbs(s.images);
-  saveAll();
-}
+const removeImage = (index) => {
+  state[state.currentTab].images.splice(index, 1);
+  updateThumbs(state[state.currentTab].images);
+  saveState();
+};
 
-/* =================== الشواهد (الصور) =================== */
-function renderThumbs(images){
-  thumbsEl.innerHTML = "";
-  images.forEach((imgSrc, index) => {
-    const thumb = document.createElement("div");
-    thumb.className = "thumb";
-    thumb.innerHTML = `<img src="${imgSrc}" alt="صورة ${index+1}"><button class="remove-img" data-index="${index}">×</button>`;
-    thumbsEl.appendChild(thumb);
-  });
-  uploadMsg.textContent = `يمكن سحب الصور وإفلاتها هنا. الحد الأقصى 4 صور. (تم إضافة ${images.length} صور)`;
-  if(images.length >= 4) {
-    filesInput.disabled = true;
-    dropZone.style.pointerEvents = 'none';
-  } else {
-    filesInput.disabled = false;
-    dropZone.style.pointerEvents = 'auto';
-  }
-}
+// ==================== توليد التقرير ====================
+const generateReportHTML = () => {
+  const data = state[state.currentTab];
+  const dateText = state.currentTab === 'daily' ? (data.dateOne || '-') : `${data.dateFrom || '-'} إلى ${data.dateTo || '-'}`;
+  const imagesHTML = data.images.map(img => `<figure><img src="${img}" alt="شاهد"></figure>`).join('');
+  const objectivesHTML = data.objectives.split('\n').filter(o => o.trim()).map(o => `<li>${o.trim()}</li>`).join('');
 
-function handleImageUpload(files){
-  const s = cur();
-  const newImages = Array.from(files).slice(0, 4 - s.images.length);
-  newImages.forEach(file => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      s.images.push(e.target.result);
-      saveAll();
-      renderThumbs(s.images);
-    };
-    reader.readAsDataURL(file);
-  });
-}
+  return `
+    <div class="report-header">
+      <img src="https://via.placeholder.com/600x120.png?text=LOGO" alt="شعار">
+      <h2>${state.currentTab === 'daily' ? 'تقرير يومي' : (state.currentTab === 'weekly' ? 'تقرير أسبوعي' : 'تقرير شهري')}</h2>
+    </div>
+    <div class="report-info">
+      <div class="info-item"><h4>اسم البرنامج</h4><p>${data.programName || '-'}</p></div>
+      <div class="info-item"><h4>الفئة المستهدفة</h4><p>${data.audience || '-'}</p></div>
+      <div class="info-item"><h4>التاريخ</h4><p>${dateText}</p></div>
+      <div class="info-item"><h4>المنفذة</h4><p>${data.executor || '-'}</p></div>
+    </div>
+    <div class="report-section">
+      <h3>الأهداف</h3>
+      <ul class="objectives-list">${objectivesHTML || '<li>لا توجد أهداف مُدخلة.</li>'}</ul>
+    </div>
+    <div class="report-section">
+      <h3>الشواهد</h3>
+      <div class="gallery-section">${imagesHTML || 'لا توجد شواهد مرفقة.'}</div>
+    </div>
+    <div class="report-footer">
+      <span>توقيع المنفذة: ........................</span>
+      <span>${new Date().toLocaleDateString('ar-SA')}</span>
+    </div>
+  `;
+};
 
-/* =================== إنشاء التقرير (HTML) =================== */
-async function generateReport(){
-  const s = cur();
-  const date = (s.dateOne) ? s.dateOne : `${s.dateFrom} - ${s.dateTo}`;
-  const titleText = (s.dateOne) ? "تقرير يومي" : (s.dateFrom && s.dateTo) ? "تقرير أسبوعي / شهري" : "تقرير";
+const handleGeneratePDF = async () => {
+  const reportHtml = generateReportHTML();
+  reportPaper.innerHTML = reportHtml;
 
-  const letterheadHtml = letterheadSrc ? `<div class="letterhead"><img src="${letterheadSrc}" alt="ديباجة"></div>` : "";
-  const objectivesHtml = s.objectives.split('\n').filter(o=>o.trim()).map(o=>`<li>${o.trim()}</li>`).join("");
-  const galleryHtml = s.images.length > 0 ?
-    `<div class="block">
-      <h3>الشواهد</h3>
-      <div class="gallery">
-        ${s.images.map(imgSrc=>`<figure><img src="${imgSrc}" alt="شاهد"></figure>`).join('')}
-      </div>
-    </div>` : "";
+  // Wait for all images to load
+  const images = reportPaper.querySelectorAll('img');
+  const imagePromises = Array.from(images).map(img => new Promise(resolve => {
+    if (img.complete) {
+      resolve();
+    } else {
+      img.onload = resolve;
+      img.onerror = resolve; // Continue even if an image fails to load
+    }
+  }));
+  await Promise.all(imagePromises);
 
-  const reportHtml = `
-    <div class="paper report">
-      ${letterheadHtml}
-      <div class="title"><h1>${titleText}</h1></div>
-      <div class="meta">
-        <div class="field"><div class="label">اسم البرنامج</div><div class="value">${s.programName||"-"}</div></div>
-        <div class="field"><div class="label">الفئة المستهدفة</div><div class="value">${s.audience||"-"}</div></div>
-        <div class="field"><div class="label">التاريخ</div><div class="value">${date||"-"}</div></div>
-        <div class="field"><div class="label">مقر التنفيذ</div><div class="value">${s.place||"-"}</div></div>
-        <div class="field"><div class="label">المنفذة</div><div class="value">${s.executor||"-"}</div></div>
-      </div>
-      <div class="block">
-        <h3>الأهداف</h3>
-        <div class="objectives"><ul>${objectivesHtml||"<li>لا توجد أهداف مُدخلة</li>"}</ul></div>
-      </div>
-      ${galleryHtml}
-      <div class="footer">
-        <div>اسم المنفذة: ${s.executor||"-"}</div>
-      </div>
-    </div>
-  `;
-  
-  // عرض التقرير في منطقة المعاينة
-  printArea.innerHTML = reportHtml;
+  // Generate PDF
+  const options = {
+    margin: 1,
+    filename: `تقرير-${state[state.currentTab].programName || 'جديد'}.pdf`,
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2, logging: false, dpi: 192, letterRendering: true, useCORS: true },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+  };
+  html2pdf().set(options).from(reportPaper).save();
+};
 
-  // انتظار تحميل جميع الصور
-  const images = printArea.querySelectorAll('img');
-  const promises = Array.from(images).map(img => new Promise((resolve) => {
-    if (img.complete) {
-      resolve();
-    } else {
-      img.onload = resolve;
-      img.onerror = resolve; // Resolve even on error to avoid stalling
-    }
-  }));
-  await Promise.all(promises);
-}
+const handlePreview = () => {
+    const reportHtml = generateReportHTML();
+    const newWindow = window.open('', '_blank');
+    newWindow.document.write(`
+        <html>
+        <head>
+            <title>معاينة التقرير</title>
+            <style>${document.querySelector('style').textContent}</style>
+            <style>
+                body { background-color: #f0f0f0; display: flex; justify-content: center; padding: 20px; }
+                .report-paper { display: block !important; box-shadow: 0 0 15px rgba(0,0,0,0.2); }
+            </style>
+        </head>
+        <body>
+            <div class="report-paper">
+                ${reportHtml}
+            </div>
+        </body>
+        </html>
+    `);
+    newWindow.document.close();
+};
 
-/* =================== دوال التصدير والطباعة =================== */
-async function handleReportAction(action){
-  await generateReport();
-  if (action === 'download') {
-    const filename = `تقرير-${cur().programName||"بدون اسم"}-${cur().dateOne||cur().dateFrom||Date.now()}.pdf`;
-    const opt = {
-      margin: [0, 0, 0, 0], // الهوامش داخل ملف PDF
-      filename: filename,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, logging: true, useCORS: true },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
-    html2pdf().from(printArea).set(opt).save();
-  } else if (action === 'preview') {
-    modal.classList.add("show");
-  } else if (action === 'print') {
-    window.print();
-  }
-}
+// ==================== تهيئة الأحداث ====================
+const init = () => {
+  loadState();
+  switchTab(state.currentTab);
 
-/* =================== تهيئة وتشغيل =================== */
-function setupEventListeners(){
-  // Tab switching
-  tabsEl.addEventListener("click",(e)=>{
-    const b=e.target.closest(".tab");
-    if(!b) return;
-    switchTab(b.dataset.tab);
-  });
+  tabsContainer.addEventListener('click', (e) => {
+    const tab = e.target.closest('.tab');
+    if (tab) switchTab(tab.dataset.tab);
+  });
 
-  // Form input saving
-  formEl.addEventListener("input", e=>{
-    const el = e.target;
-    if(el.id in cur()) cur()[el.id] = el.value;
-    saveAll();
-  });
+  form.addEventListener('input', (e) => {
+    const target = e.target;
+    const currentData = state[state.currentTab];
+    if (currentData.hasOwnProperty(target.id)) {
+      currentData[target.id] = target.value;
+      saveState();
+    }
+  });
+  
+  thumbsContainer.addEventListener('click', (e) => {
+    const removeBtn = e.target.closest('.remove-btn');
+    if (removeBtn) {
+      const index = parseInt(removeBtn.dataset.index, 10);
+      removeImage(index);
+    }
+  });
 
-  // Image upload and drag/drop
-  filesInput.addEventListener("change", (e) => handleImageUpload(e.target.files));
-  dropZone.addEventListener("dragover", (e) => { e.preventDefault(); dropZone.style.borderColor = "var(--brand)"; });
-  dropZone.addEventListener("dragleave", (e) => { e.preventDefault(); dropZone.style.borderColor = "var(--border)"; });
-  dropZone.addEventListener("drop", (e) => {
-    e.preventDefault();
-    dropZone.style.borderColor = "var(--border)";
-    handleImageUpload(e.dataTransfer.files);
-  });
-  thumbsEl.addEventListener("click", (e) => {
-    const removeBtn = e.target.closest(".remove-img");
-    if(removeBtn){
-      const indexToRemove = parseInt(removeBtn.dataset.index);
-      cur().images.splice(indexToRemove, 1);
-      saveAll();
-      renderThumbs(cur().images);
-    }
-  });
+  imageUpload.addEventListener('change', (e) => handleImageUpload(e.target.files));
 
-  // Buttons
-  previewBtn.addEventListener("click", () => handleReportAction('preview'));
-  downloadBtn.addEventListener("click", () => handleReportAction('download'));
-  dlFromPrev.addEventListener("click", () => handleReportAction('download'));
-  printBtn.addEventListener("click", () => handleReportAction('print'));
-  closeModalBtn.addEventListener("click", () => modal.classList.remove("show"));
-  clearBtn.addEventListener("click", () => {
-    if(confirm("هل أنت متأكد من مسح جميع البيانات؟")){
-      localStorage.removeItem("report-suite-pro");
-      location.reload();
-    }
-  });
-  saveBtn.addEventListener("click", saveAll);
-}
+  $('#upload-area').addEventListener('dragover', (e) => e.preventDefault());
+  $('#upload-area').addEventListener('drop', (e) => {
+    e.preventDefault();
+    handleImageUpload(e.dataTransfer.files);
+  });
 
-// Initial setup
-document.addEventListener("DOMContentLoaded", () => {
-  loadAll();
-  switchTab(state.currentTab);
-  loadSiteLetterhead();
-  setupEventListeners();
-});
+  $('#preview-btn').addEventListener('click', handlePreview);
+  $('#download-btn').addEventListener('click', handleGeneratePDF);
+  $('#clear-btn').addEventListener('click', () => {
+    if (confirm('هل أنت متأكد من مسح جميع البيانات؟ هذا الإجراء لا يمكن التراجع عنه.')) {
+      localStorage.removeItem('report_data');
+      location.reload();
+    }
+  });
+};
+
+document.addEventListener('DOMContentLoaded', init);
 </script>
 
 </body>
