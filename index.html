@@ -1,252 +1,278 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>نظام التقارير | يومية • أسبوعية • شهرية</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>نظام التقارير | يومية • أسبوعية • شهرية</title>
 
-  <!-- خط عربي -->
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700;800&display=swap" rel="stylesheet">
+<!-- خط عربي -->
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700;800&display=swap" rel="stylesheet">
 
-  <!-- html2pdf (محاولة أولى) -->
-  <script defer src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js"></script>
+<!-- html2pdf (محاولة أولى) -->
+<script defer src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js"></script>
 
-  <style>
-    :root{
-      /* هوية الوزارة */
-      --brand:#006C35; --brand-2:#0A8A4F; --accent:#00A36C; --brand-weak:#E8F4EC;
-      --ink:#101315; --muted:#69707D; --bg:#F6F8F7; --card:#FFFFFF; --border:#E3E7EA; --danger:#DA3C3C;
-      --radius:14px; --line:1.85; --page-w:920px;
-    }
-    html,body{ margin:0; background:var(--bg); color:var(--ink);
-      font-family:"Cairo",system-ui,-apple-system,"Segoe UI","Noto Kufi Arabic",Arial,sans-serif; line-height:var(--line);
-    }
+<style>
+  :root{
+    /* هوية الوزارة */
+    --brand:#006C35; --brand-2:#0A8A4F; --accent:#00A36C; --brand-weak:#E8F4EC;
+    --ink:#101315; --muted:#69707D; --bg:#F6F8F7; --card:#FFFFFF; --border:#E3E7EA; --danger:#DA3C3C;
+    --radius:14px; --line:1.85; --page-w:920px;
 
-    /* ====== بانر الديباجة (ثابت بالواجهة) ====== */
-    .site-letterhead{
-      position:sticky; top:0; z-index:1000;
-      background:#fff;
-      border-bottom:1px solid var(--border);
-      box-shadow:0 8px 24px rgba(0,0,0,.05);
-    }
-    .site-letterhead .inner{
-      max-width:var(--page-w); margin:0 auto; padding:10px 16px;
-    }
-    .site-letterhead img{
-      display:block; margin:0 auto;
-      max-width:100%; max-height:140px; height:auto;
-    }
-    .lh-placeholder{
-      text-align:center; color:var(--muted); padding:20px 0; font-weight:700;
-    }
+    /* قياسات ورقة A4 (نستخدمها للشاشة والطباعة لضمان تطابق الـPDF) */
+    --a4-w:210mm; --a4-h:297mm; --paper-pad:12mm; /* هوامش داخلية */
+  }
 
-    /* ====== محتوى الصفحة ====== */
-    .container{ max-width:var(--page-w); margin:22px auto 44px; padding:0 16px; }
-    .card{ background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
-      box-shadow:0 14px 40px rgba(0,0,0,.05); overflow:hidden; }
+  html,body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:"Cairo",system-ui,-apple-system,"Segoe UI","Noto Kufi Arabic",Arial,sans-serif;
+    line-height:var(--line);
+  }
 
-    .header{ padding:16px 18px; display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:space-between;
-      background:linear-gradient(180deg, var(--brand-weak), #fff); border-bottom:1px solid var(--border); }
-    .brand{ display:flex; align-items:center; gap:10px; font-weight:800; color:var(--brand-2); }
-    .brand .dot{ width:12px; height:12px; border-radius:50%; background:var(--brand); box-shadow:0 0 0 6px rgba(0,108,53,.12); }
-    .tabs{ display:flex; gap:8px; flex-wrap:wrap; }
-    .tab{ border:1px solid var(--border); background:#fff; color:#1f242b; padding:8px 14px; border-radius:10px; cursor:pointer; font-weight:800;
-      transition:transform .2s ease, background .2s ease, color .2s ease, box-shadow .2s ease; }
-    .tab:hover{ transform:translateY(-1px); box-shadow:0 6px 16px rgba(0,0,0,.08); }
-    .tab.active{ background:var(--brand); border-color:var(--brand); color:#fff; box-shadow:0 6px 16px rgba(0,108,53,.25); }
+  /* ====== بانر الديباجة (ثابت) ====== */
+  .site-letterhead{
+    position:sticky; top:0; z-index:1000; background:#fff;
+    border-bottom:1px solid var(--border); box-shadow:0 8px 24px rgba(0,0,0,.05);
+  }
+  .site-letterhead .inner{ max-width:var(--page-w); margin:0 auto; padding:8px 16px; }
+  .site-letterhead img{ display:block; margin:0 auto; max-width:100%; height:auto; max-height:140px; }
+  .lh-placeholder{ text-align:center; color:var(--muted); padding:16px 0; font-weight:700; }
 
-    .form{ padding:20px; display:grid; gap:16px; }
-    .row{ display:grid; gap:12px; grid-template-columns:1fr 1fr; }
-    @media (max-width:680px){ .row{ grid-template-columns:1fr; } }
-    label{ display:block; font-weight:700; font-size:15px; margin-bottom:6px; color:#273036; }
+  /* ====== الصفحة ====== */
+  .container{ max-width:var(--page-w); margin:22px auto 44px; padding:0 16px; }
+  .card{ background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
+    box-shadow:0 14px 40px rgba(0,0,0,.05); overflow:hidden; }
 
-    input[type="text"], input[type="date"], textarea{
-      width:100%; padding:12px 14px; border:1px solid var(--border); border-radius:12px; background:#fff; color:var(--ink); font-size:15px;
-      outline:none; transition:border .2s, box-shadow .2s, transform .08s ease;
-    }
-    input:focus, textarea:focus{ border-color:var(--brand); box-shadow:0 0 0 3px var(--brand-weak); }
-    input:active, textarea:active{ transform:scale(0.998); }
-    textarea{ min-height:140px; resize:vertical; }
-    ::placeholder{ color:transparent; } /* لا نص داخل المربعات */
+  .header{ padding:16px 18px; display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:space-between;
+    background:linear-gradient(180deg, var(--brand-weak), #fff); border-bottom:1px solid var(--border); }
+  .brand{ display:flex; align-items:center; gap:10px; font-weight:800; color:var(--brand-2); }
+  .brand .dot{ width:12px; height:12px; border-radius:50%; background:var(--brand); box-shadow:0 0 0 6px rgba(0,108,53,.12); }
+  .tabs{ display:flex; gap:8px; flex-wrap:wrap; }
+  .tab{ border:1px solid var(--border); background:#fff; color:#1f242b; padding:8px 14px; border-radius:10px; cursor:pointer; font-weight:800;
+    transition:transform .2s ease, background .2s ease, color .2s ease, box-shadow .2s ease; }
+  .tab:hover{ transform:translateY(-1px); box-shadow:0 6px 16px rgba(0,0,0,.08); }
+  .tab.active{ background:var(--brand); border-color:var(--brand); color:#fff; box-shadow:0 6px 16px rgba(0,108,53,.25); }
 
-    .upload{ border:1.5px dashed var(--border); border-radius:12px; padding:16px; background:#FBFEFC; text-align:center; transition:background .2s, border-color .2s; }
-    .upload input{ display:none; }
-    .thumbs{ display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; justify-content:flex-start; }
-    .thumb{ width:84px; height:64px; border-radius:10px; overflow:hidden; border:1px solid var(--border); background:#f2f6f4; }
-    .thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .form{ padding:20px; display:grid; gap:16px; }
+  .row{ display:grid; gap:12px; grid-template-columns:1fr 1fr; }
+  @media (max-width:680px){ .row{ grid-template-columns:1fr; } }
+  label{ display:block; font-weight:700; font-size:15px; margin-bottom:6px; color:#273036; }
 
-    .btn{ appearance:none; border:0; border-radius:12px; padding:12px 16px; font-weight:800; cursor:pointer; font-size:14px;
-      transition:transform .12s ease, filter .2s ease, box-shadow .2s ease; }
-    .btn:hover{ filter:brightness(1.02); transform:translateY(-1px); }
-    .btn:active{ transform:translateY(0); }
-    .btn-primary{ background:linear-gradient(135deg, var(--brand) 0%, var(--brand-2) 100%); color:#fff; box-shadow:0 8px 22px rgba(0,108,53,.25); }
-    .btn-secondary{ background:var(--accent); color:#fff; box-shadow:0 8px 18px rgba(0,163,108,.22); }
-    .btn-ghost{ background:#fff; color:#1e232e; border:1px solid var(--border); }
-    .btn-danger{ background:var(--danger); color:#fff; }
-    .actions{ display:flex; gap:10px; flex-wrap:wrap; margin-top:6px; }
-    .note{ color:var(--muted); font-size:12.5px; }
+  input[type="text"], input[type="date"], textarea{
+    width:100%; padding:12px 14px; border:1px solid var(--border); border-radius:12px; background:#fff; color:var(--ink); font-size:15px;
+    outline:none; transition:border .2s, box-shadow .2s, transform .08s ease;
+  }
+  input:focus, textarea:focus{ border-color:var(--brand); box-shadow:0 0 0 3px var(--brand-weak); }
+  input:active, textarea:active{ transform:scale(0.998); }
+  textarea{ min-height:140px; resize:vertical; }
+  ::placeholder{ color:transparent; } /* بدون نص داخل المربعات */
 
-    /* نافذة المعاينة */
-    .modal{ position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(6,16,11,.55); z-index:9999; padding:20px; }
-    .modal.show{ display:flex; }
-    .sheet{ width:100%; max-width:900px; max-height:90vh; overflow:auto; background:#fff; border-radius:16px; border:1px solid var(--border);
-      box-shadow:0 22px 70px rgba(0,0,0,.35); transform-origin:center; opacity:0; transform:translateY(14px) scale(.98);
-      transition:opacity .25s ease, transform .25s ease; }
-    .modal.show .sheet{ opacity:1; transform:translateY(0) scale(1); }
-    .sheet-head{ padding:10px 14px; border-bottom:1px solid var(--border); display:flex; gap:8px; justify-content:space-between; align-items:center;
-      position:sticky; top:0; background:#fff; z-index:2; }
-    .sheet-actions{ display:flex; gap:8px; flex-wrap:wrap; }
-    .sheet-body{ padding:18px 20px 24px; }
+  .upload{ border:1.5px dashed var(--border); border-radius:12px; padding:16px; background:#FBFEFC; text-align:center; transition:background .2s, border-color .2s; }
+  .upload input{ display:none; }
+  .thumbs{ display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; justify-content:flex-start; }
+  .thumb{ width:84px; height:64px; border-radius:10px; overflow:hidden; border:1px solid var(--border); background:#f2f6f4; }
+  .thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
 
-    /* التقرير */
-    .report{ color:#000; font-size:14.5px; }
-    .letterhead{ margin-bottom:12px; text-align:center; }
-    .letterhead img{ max-width:100%; height:auto; display:block; margin:0 auto; max-height:140px; }
-    .title{ text-align:center; margin:10px 0 12px; }
-    .title h1{ font-size:22px; margin:0; font-weight:800; color:#0b3f25; letter-spacing:.1px; }
-    .meta{ display:grid; gap:12px; grid-template-columns:repeat(2,1fr); margin:8px 0 14px; }
-    .meta .field{ border:1px solid var(--border); border-radius:10px; padding:10px 12px; }
-    .meta .label{ color:#6c7280; font-size:12.5px; margin-bottom:2px; }
-    .meta .value{ font-weight:800; word-break:break-word; }
-    .block{ margin:16px 0; }
-    .block h3{ margin:0 0 8px; font-size:18px; border-right:4px solid var(--brand); padding-right:8px; color:#0b3f25; }
-    .objectives ul{ margin:0; padding:0 18px; }
-    .objectives li{ margin:6px 0; }
-    .gallery{ display:grid; gap:10px; grid-template-columns:repeat(2,1fr); }
-    .gallery figure{ margin:0; border:1px solid var(--border); border-radius:10px; overflow:hidden; aspect-ratio:4/3; background:#fafafa; display:flex; align-items:center; justify-content:center; }
-    .gallery img{ width:100%; height:100%; object-fit:cover; display:block; }
-    .footer{ margin-top:20px; border-top:1px solid var(--border); padding-top:12px; display:flex; justify-content:space-between; gap:8px; font-weight:800; }
+  .btn{ appearance:none; border:0; border-radius:12px; padding:12px 16px; font-weight:800; cursor:pointer; font-size:14px;
+    transition:transform .12s ease, filter .2s ease, box-shadow .2s ease; }
+  .btn:hover{ filter:brightness(1.02); transform:translateY(-1px); }
+  .btn:active{ transform:translateY(0); }
+  .btn-primary{ background:linear-gradient(135deg, var(--brand) 0%, var(--brand-2) 100%); color:#fff; box-shadow:0 8px 22px rgba(0,108,53,.25); }
+  .btn-secondary{ background:var(--accent); color:#fff; box-shadow:0 8px 18px rgba(0,163,108,.22); }
+  .btn-ghost{ background:#fff; color:#1e232e; border:1px solid var(--border); }
+  .btn-danger{ background:var(--danger); color:#fff; }
+  .actions{ display:flex; gap:10px; flex-wrap:wrap; margin-top:6px; }
+  .note{ color:var(--muted); font-size:12.5px; }
 
-    /* حركة تغيير التبويب */
-    .tab-panel{ animation:fadeSlide .28s ease; }
-    @keyframes fadeSlide{ from{opacity:0;transform:translateY(8px);} to{opacity:1;transform:translateY(0);} }
+  /* ====== النافذة المنبثقة + الورقة A4 ====== */
+  .modal{ position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(6,16,11,.55); z-index:9999; padding:20px; }
+  .modal.show{ display:flex; }
+  .sheet{ width:100%; max-width:920px; max-height:90vh; overflow:auto; background:#fff; border-radius:16px; border:1px solid var(--border);
+    box-shadow:0 22px 70px rgba(0,0,0,.35); transform-origin:center; opacity:0; transform:translateY(14px) scale(.98);
+    transition:opacity .25s ease, transform .25s ease; }
+  .modal.show .sheet{ opacity:1; transform:translateY(0) scale(1); }
+  .sheet-head{ padding:10px 14px; border-bottom:1px solid var(--border); display:flex; gap:8px; justify-content:space-between; align-items:center;
+    position:sticky; top:0; background:#fff; z-index:2; }
+  .sheet-actions{ display:flex; gap:8px; flex-wrap:wrap; }
+  .sheet-body{ padding:18px 20px 24px; }
 
-    /* الطباعة: نظهر التقرير فقط */
-    @media print{
-      body > *:not(.print-area){ display:none !important; }
-      .modal{ display:block !important; background:transparent !important; padding:0 !important; }
-      .sheet{ box-shadow:none; border:none; max-width:unset; max-height:unset; }
-      .sheet-head{ display:none; }
-      .sheet-body{ padding:0; }
-      .print-area{ display:block; }
-      @page{ size:A4; margin:12mm; }
-      .block, .meta, .gallery{ break-inside:avoid; }
-    }
+  /* ورقة التقرير المولدة (A4 دقيقة) */
+  .paper{
+    width:var(--a4-w);
+    min-height:var(--a4-h);
+    padding:var(--paper-pad);
+    box-sizing:border-box;
+    margin:0 auto;
+    background:#fff;
+    color:#000;
+  }
 
-    /* تقليل الحركة */
-    @media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
-  </style>
+  /* محتوى الورقة */
+  .report{ font-size:14.5px; }
+  .letterhead{ margin-bottom:10mm; text-align:center; }
+  .letterhead img{ max-width:100%; height:auto; display:block; margin:0 auto; max-height:28mm; } /* ديباجة داخل التقرير ~ 28mm */
+  .title{ text-align:center; margin:0 0 6mm; }
+  .title h1{ font-size:22px; margin:0; font-weight:800; color:#0b3f25; letter-spacing:.1px; }
+
+  .meta{
+    display:grid; gap:6mm; grid-template-columns:1fr 1fr;
+    margin:0 0 6mm;
+  }
+  .meta .field{ border:1px solid var(--border); border-radius:10px; padding:4mm; }
+  .meta .label{ color:#6c7280; font-size:12.5px; margin-bottom:1.5mm; }
+  .meta .value{ font-weight:800; word-break:break-word; }
+
+  .block{ margin:0 0 6mm; }
+  .block h3{ margin:0 0 3mm; font-size:18px; border-right:4px solid var(--brand); padding-right:3mm; color:#0b3f25; }
+
+  .objectives ul{ margin:0; padding:0 6mm; }
+  .objectives li{ margin:2mm 0; }
+
+  .gallery{
+    display:grid; gap:4mm; grid-template-columns:1fr 1fr;
+  }
+  .gallery figure{
+    margin:0; border:1px solid var(--border); border-radius:10px; overflow:hidden;
+    aspect-ratio:4/3; background:#fafafa; display:flex; align-items:center; justify-content:center;
+  }
+  .gallery img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+  .footer{
+    margin-top:8mm; border-top:1px solid var(--border); padding-top:4mm;
+    display:flex; justify-content:space-between; gap:8px; font-weight:800;
+  }
+
+  /* تفادي انكسارات غير لطيفة */
+  .meta, .block, .gallery { break-inside: avoid; }
+
+  /* حركة تغيير التبويب */
+  .tab-panel{ animation:fadeSlide .28s ease; }
+  @keyframes fadeSlide{ from{opacity:0;transform:translateY(8px);} to{opacity:1;transform:translateY(0);} }
+
+  /* الطباعة: نطبع الورقة فقط */
+  @media print{
+    body > *:not(.print-area){ display:none !important; }
+    .modal{ display:block !important; background:transparent !important; padding:0 !important; }
+    .sheet{ box-shadow:none; border:none; max-width:unset; max-height:unset; }
+    .sheet-head{ display:none; }
+    .sheet-body{ padding:0; }
+    .print-area{ display:block; }
+    @page{ size:A4; margin:0; } /* صفر لأننا وضعنا الهوامش داخل .paper */
+  }
+
+  @media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
+</style>
 </head>
 <body>
 
-  <!-- === بانر الديباجة الثابت في الواجهة === -->
-  <div class="site-letterhead">
-    <div class="inner" id="siteLetterhead">
-      <div class="lh-placeholder">سيتم تحميل الديباجة تلقائيًا (ملف باسم <b>26</b> في جذر المستودع).</div>
-    </div>
+<!-- === ديباجة ثابتة في الواجهة === -->
+<div class="site-letterhead">
+  <div class="inner" id="siteLetterhead">
+    <div class="lh-placeholder">سيتم تحميل الديباجة تلقائيًا (ملف باسم <b>26</b> في جذر المستودع).</div>
   </div>
+</div>
 
-  <div class="container">
-    <div class="card">
-      <div class="header">
-        <div class="brand"><span class="dot"></span> نظام التقارير</div>
-        <nav class="tabs" id="tabs">
-          <button class="tab active" data-tab="daily">تقارير يومية</button>
-          <button class="tab" data-tab="weekly">تقارير أسبوعية</button>
-          <button class="tab" data-tab="monthly">تقارير شهرية</button>
-        </nav>
+<div class="container">
+  <div class="card">
+    <div class="header">
+      <div class="brand"><span class="dot"></span> نظام التقارير</div>
+      <nav class="tabs" id="tabs">
+        <button class="tab active" data-tab="daily">تقارير يومية</button>
+        <button class="tab" data-tab="weekly">تقارير أسبوعية</button>
+        <button class="tab" data-tab="monthly">تقارير شهرية</button>
+      </nav>
+    </div>
+
+    <form class="form tab-panel" id="form" onsubmit="return false;">
+      <div>
+        <label for="programName">اسم البرنامج</label>
+        <input id="programName" type="text">
       </div>
 
-      <form class="form tab-panel" id="form" onsubmit="return false;">
+      <!-- الفئة المستهدفة (ستظهر كقسم مستقل قبل الأهداف في التقرير) -->
+      <div>
+        <label for="audience">الفئة المستهدفة</label>
+        <input id="audience" type="text">
+      </div>
+
+      <!-- التاريخ اليومي -->
+      <div class="row" id="row-date-one">
         <div>
-          <label for="programName">اسم البرنامج</label>
-          <input id="programName" type="text">
+          <label for="dateOne">التاريخ</label>
+          <input id="dateOne" type="date">
         </div>
-
-        <!-- الفئة المستهدفة -->
         <div>
-          <label for="audience">الفئة المستهدفة</label>
-          <input id="audience" type="text">
-        </div>
-
-        <!-- التاريخ اليومي -->
-        <div class="row" id="row-date-one">
-          <div>
-            <label for="dateOne">التاريخ</label>
-            <input id="dateOne" type="date">
-          </div>
-          <div>
-            <label for="place">مقر التنفيذ</label>
-            <input id="place" type="text">
-          </div>
-        </div>
-
-        <!-- فترة التاريخ (للأسبوعي / الشهري) -->
-        <div class="row" id="row-date-range" style="display:none">
-          <div>
-            <label for="dateFrom">من تاريخ</label>
-            <input id="dateFrom" type="date">
-          </div>
-          <div>
-            <label for="dateTo">إلى تاريخ</label>
-            <input id="dateTo" type="date">
-          </div>
-        </div>
-
-        <div>
-          <label for="executor">المنفذة</label>
-          <input id="executor" type="text">
-        </div>
-
-        <div>
-          <label for="objectives">الأهداف (سطر لكل هدف)</label>
-          <textarea id="objectives"></textarea>
-        </div>
-
-        <!-- الشواهد -->
-        <div>
-          <label>الشواهد (حتى 4 صور)</label>
-          <div class="upload" id="dropZone">
-            <input id="evidenceFiles" type="file" accept="image/*" multiple>
-            <label for="evidenceFiles" class="btn btn-ghost">اختيار الصور</label>
-            <div class="note" id="uploadMsg">يمكن سحب الصور وإفلاتها هنا. الحد 4 صور.</div>
-            <div class="thumbs" id="thumbs"></div>
-          </div>
-        </div>
-
-        <div class="actions">
-          <button class="btn btn-secondary" id="previewBtn">👁️‍🗨️ معاينة / طباعة</button>
-          <button class="btn btn-primary" id="downloadBtn">⬇️ تنزيل PDF</button>
-          <button class="btn btn-ghost" id="saveBtn">💾 حفظ</button>
-          <button class="btn btn-danger" id="clearBtn" type="button">مسح البيانات</button>
-        </div>
-        <div class="note">يتم حفظ البيانات محليًا على جهازك فقط (LocalStorage).</div>
-      </form>
-    </div>
-  </div>
-
-  <!-- نافذة المعاينة (التقرير الذي يُطبَع ويُحفظ) -->
-  <div class="modal" id="modal" aria-hidden="true">
-    <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="dlgTitle">
-      <div class="sheet-head">
-        <strong id="dlgTitle">معاينة التقرير</strong>
-        <div class="sheet-actions">
-          <button class="btn btn-secondary" id="printBtn">🖨️ طباعة</button>
-          <button class="btn btn-primary" id="dlFromPreviewBtn">⬇️ تنزيل PDF</button>
-          <button class="btn btn-ghost" id="closeModalBtn">✖️ إغلاق</button>
+          <label for="place">مقر التنفيذ</label>
+          <input id="place" type="text">
         </div>
       </div>
-      <div class="sheet-body">
-        <div id="printArea" class="report print-area" aria-live="polite"></div>
+
+      <!-- فترة التاريخ (للأسبوعي / الشهري) -->
+      <div class="row" id="row-date-range" style="display:none">
+        <div>
+          <label for="dateFrom">من تاريخ</label>
+          <input id="dateFrom" type="date">
+        </div>
+        <div>
+          <label for="dateTo">إلى تاريخ</label>
+          <input id="dateTo" type="date">
+        </div>
+      </div>
+
+      <div>
+        <label for="executor">المنفذة</label>
+        <input id="executor" type="text">
+      </div>
+
+      <div>
+        <label for="objectives">الأهداف (سطر لكل هدف)</label>
+        <textarea id="objectives"></textarea>
+      </div>
+
+      <!-- الشواهد -->
+      <div>
+        <label>الشواهد (حتى 4 صور)</label>
+        <div class="upload" id="dropZone">
+          <input id="evidenceFiles" type="file" accept="image/*" multiple>
+          <label for="evidenceFiles" class="btn btn-ghost">اختيار الصور</label>
+          <div class="note" id="uploadMsg">يمكن سحب الصور وإفلاتها هنا. الحد 4 صور.</div>
+          <div class="thumbs" id="thumbs"></div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-secondary" id="previewBtn">👁️‍🗨️ معاينة / طباعة</button>
+        <button class="btn btn-primary" id="downloadBtn">⬇️ تنزيل PDF</button>
+        <button class="btn btn-ghost" id="saveBtn">💾 حفظ</button>
+        <button class="btn btn-danger" id="clearBtn" type="button">مسح البيانات</button>
+      </div>
+      <div class="note">يتم حفظ البيانات محليًا على جهازك فقط (LocalStorage).</div>
+    </form>
+  </div>
+</div>
+
+<!-- نافذة المعاينة -->
+<div class="modal" id="modal" aria-hidden="true">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="dlgTitle">
+    <div class="sheet-head">
+      <strong id="dlgTitle">معاينة التقرير</strong>
+      <div class="sheet-actions">
+        <button class="btn btn-secondary" id="printBtn">🖨️ طباعة</button>
+        <button class="btn btn-primary" id="dlFromPreviewBtn">⬇️ تنزيل PDF</button>
+        <button class="btn btn-ghost" id="closeModalBtn">✖️ إغلاق</button>
       </div>
     </div>
+    <div class="sheet-body">
+      <!-- سنبني داخلها .paper (A4) -->
+      <div id="printArea" class="print-area"></div>
+    </div>
   </div>
+</div>
 
 <script>
-/* ============== ثوابت ============== */
+/* ========= ثوابت ========= */
 const SCHOOL_HEADER_BASENAME = "26"; // اسم ملف الديباجة في جذر المستودع (بدون امتداد)
 
-/* ============== أدوات مختصرة ============== */
+/* ========= اختصارات ========= */
 const $ = (sel) => document.querySelector(sel);
 
 /* عناصر واجهة */
@@ -263,17 +289,17 @@ const rowDateOne=$("#row-date-one"), rowDateRange=$("#row-date-range");
 const previewBtn=$("#previewBtn"), downloadBtn=$("#downloadBtn"), dlFromPrev=$("#dlFromPreviewBtn");
 const printBtn=$("#printBtn"), closeModalBtn=$("#closeModalBtn"), clearBtn=$("#clearBtn"), saveBtn=$("#saveBtn");
 
-/* حالة عامة + تخزين */
+/* ========= الحالة والتخزين ========= */
 const blank = () => ({
   programName:"", audience:"", dateOne:"", dateFrom:"", dateTo:"",
   place:"", executor:"", objectives:"", images:[]
 });
 const state = { currentTab:"daily", daily:blank(), weekly:blank(), monthly:blank() };
 const cur = () => state[state.currentTab];
-const saveAll = () => localStorage.setItem("report-suite-v5", JSON.stringify(state));
+const saveAll = () => localStorage.setItem("report-suite-v6", JSON.stringify(state));
 function loadAll(){
   try{
-    const raw = localStorage.getItem("report-suite-v5"); if(!raw) return;
+    const raw = localStorage.getItem("report-suite-v6"); if(!raw) return;
     const p = JSON.parse(raw);
     if(p && typeof p === 'object'){
       if(p.daily) state.daily = {...blank(), ...p.daily};
@@ -284,7 +310,7 @@ function loadAll(){
   }catch{}
 }
 
-/* ====== تحميل الديباجة واستعمالها في الواجهة والتقرير ====== */
+/* ========= تحميل الديباجة للواجهة والتقرير ========= */
 let letterheadSrc = null;
 
 async function resolveLetterheadSrc(base){
@@ -303,14 +329,13 @@ function imgExists(url){
     i.src=`${url}?v=${Date.now()}`; // كسر الكاش
   });
 }
-
 async function loadSiteLetterhead(){
   letterheadSrc = await resolveLetterheadSrc(SCHOOL_HEADER_BASENAME);
   siteLetterhead.innerHTML = "";
   if(letterheadSrc){
     const img = document.createElement("img");
     img.alt = "ديباجة المدرسة";
-    img.src = `${letterheadSrc}?v=${Date.now()}`; // اضمن التحديث
+    img.src = `${letterheadSrc}?v=${Date.now()}`;
     siteLetterhead.appendChild(img);
   }else{
     const div = document.createElement("div");
@@ -320,7 +345,7 @@ async function loadSiteLetterhead(){
   }
 }
 
-/* ====== تبويبات ====== */
+/* ========= تبويبات ========= */
 function switchTab(tab){
   state.currentTab = tab;
   document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("active", t.dataset.tab===tab));
@@ -333,13 +358,12 @@ function switchTab(tab){
   place.value=s.place||""; executor.value=s.executor||""; objectives.value=s.objectives||"";
   renderThumbs(s.images);
 
-  // إعادة حركة
   formEl.classList.remove("tab-panel"); void formEl.offsetWidth; formEl.classList.add("tab-panel");
   saveAll();
 }
 tabsEl.addEventListener("click",(e)=>{ const b=e.target.closest(".tab"); if(!b) return; switchTab(b.dataset.tab); });
 
-/* ====== ربط المدخلات ====== */
+/* ========= ربط المدخلات ========= */
 programName.addEventListener("input", e=>{ cur().programName=e.target.value; saveAll(); });
 audience.addEventListener("input", e=>{ cur().audience=e.target.value; saveAll(); });
 dateOne.addEventListener("input", e=>{ cur().dateOne=e.target.value; saveAll(); });
@@ -357,7 +381,7 @@ clearBtn.addEventListener("click", ()=>{
   toast("تم المسح");
 });
 
-/* ====== رفع الصور (حتى 4) ====== */
+/* ========= رفع الصور ========= */
 filesInput.addEventListener("change", ()=> handleFiles(filesInput.files));
 dropZone.addEventListener("dragover", e=>{ e.preventDefault(); dropZone.style.background="#E8F4EC"; dropZone.style.borderColor="var(--brand)"; });
 dropZone.addEventListener("dragleave", ()=>{ dropZone.style.background="#FBFEFC"; dropZone.style.borderColor="var(--border)"; });
@@ -384,7 +408,7 @@ function setUploadMsg(msg, danger=false){
   if(!danger){ setTimeout(()=>{ uploadMsg.textContent="يمكن سحب الصور وإفلاتها هنا. الحد 4 صور."; uploadMsg.style.color="var(--muted)"; }, 2000); }
 }
 
-/* ====== أدوات صور ====== */
+/* ========= أدوات صور ========= */
 function fileToDataURL(file){ return new Promise((res,rej)=>{ const fr=new FileReader(); fr.onload=()=>res(fr.result); fr.onerror=rej; fr.readAsDataURL(file); }); }
 function loadImage(src){ return new Promise((res,rej)=>{ const img=new Image(); img.onload=()=>res(img); img.onerror=rej; img.src=src; }); }
 async function compressImage(file, maxW=1200, quality=0.9){
@@ -398,7 +422,7 @@ async function waitForImages(container){
   await Promise.all(imgs.map(img => img.complete ? Promise.resolve() : new Promise(res=>{ img.onload=res; img.onerror=()=>res(); })));
 }
 
-/* ====== بناء التقرير ====== */
+/* ========= بناء التقرير (A4) ========= */
 function fmtDate(iso){ if(!iso) return "—"; try{ return new Intl.DateTimeFormat('ar',{dateStyle:'long'}).format(new Date(iso)); }catch{ return iso; } }
 function fmtRange(a,b){ if(!a||!b) return "—"; return `${fmtDate(a)} — ${fmtDate(b)}`; }
 function objectivesHTML(text){ const lines=(text||"").split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
@@ -408,53 +432,70 @@ function escapeHtml(s){ return s.replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;'
 function buildReportDOM(){
   const s = cur();
   const wrap = document.createElement("div");
+  wrap.className = "paper"; // A4
   wrap.innerHTML = `
-    <div class="letterhead" id="rep-letterhead">
-      ${letterheadSrc ? `<img alt="ديباجة المدرسة" src="${letterheadSrc}?v=${Date.now()}">` : `<div class="note" style="color:#b00020">لم يتم العثور على الديباجة</div>`}
-    </div>
-    <div class="title"><h1>${escapeHtml(s.programName || "—")}</h1></div>
-    <div class="meta">
-      <div class="field">
-        <div class="label">${state.currentTab === "daily" ? "التاريخ" : "الفترة"}</div>
-        <div class="value">${state.currentTab === "daily" ? fmtDate(s.dateOne) : fmtRange(s.dateFrom, s.dateTo)}</div>
+    <div class="report">
+      <div class="letterhead">
+        ${letterheadSrc ? `<img alt="ديباجة المدرسة" src="${letterheadSrc}?v=${Date.now()}">` : `<div class="note" style="color:#b00020">لم يتم العثور على الديباجة</div>`}
       </div>
-      <div class="field">
-        <div class="label">مقر التنفيذ</div>
-        <div class="value">${escapeHtml(s.place || "—")}</div>
+
+      <div class="title"><h1>${escapeHtml(s.programName || "—")}</h1></div>
+
+      <div class="meta">
+        <div class="field">
+          <div class="label">${state.currentTab === "daily" ? "التاريخ" : "الفترة"}</div>
+          <div class="value">${state.currentTab === "daily" ? fmtDate(s.dateOne) : fmtRange(s.dateFrom, s.dateTo)}</div>
+        </div>
+        <div class="field">
+          <div class="label">مقر التنفيذ</div>
+          <div class="value">${escapeHtml(s.place || "—")}</div>
+        </div>
+        <div class="field">
+          <div class="label">المنفذة</div>
+          <div class="value">${escapeHtml(s.executor || "—")}</div>
+        </div>
+        <div class="field">
+          <div class="label">عدد الشواهد</div>
+          <div class="value">${(s.images||[]).length} / 4</div>
+        </div>
       </div>
-      <div class="field">
-        <div class="label">المنفذة</div>
-        <div class="value">${escapeHtml(s.executor || "—")}</div>
-      </div>
-      <div class="field">
-        <div class="label">الفئة المستهدفة</div>
+
+      <!-- الفئة المستهدفة تأتي قبل الأهداف -->
+      <div class="block">
+        <h3>الفئة المستهدفة</h3>
         <div class="value">${escapeHtml(s.audience || "—")}</div>
       </div>
-      <div class="field">
-        <div class="label">عدد الشواهد</div>
-        <div class="value">${(s.images||[]).length} / 4</div>
+
+      <div class="block objectives">
+        <h3>الأهداف</h3>
+        <div>${objectivesHTML(s.objectives)}</div>
+      </div>
+
+      <div class="block">
+        <h3>الشواهد (صور)</h3>
+        <div class="gallery" id="rep-gallery"></div>
+      </div>
+
+      <div class="footer">
+        <div>مديرة المدرسة: أماني آل عبشان</div>
+        <div>تصميم : أ ريم نافل</div>
       </div>
     </div>
-
-    <div class="block objectives">
-      <h3>الأهداف</h3>
-      <div>${objectivesHTML(s.objectives)}</div>
-    </div>
-
-    <div class="block">
-      <h3>الشواهد (صور)</h3>
-      <div class="gallery" id="rep-gallery"></div>
-    </div>
-
-    <div class="footer">
-      <div>مديرة المدرسة: أماني آل عبشان</div>
-      <div>تصميم : أ ريم نافل</div>
-    </div>
   `;
+  // أضف الصور
+  const gal = document.createElement("div");
+  gal.className = "gallery";
+  wrap.querySelector("#rep-gallery").replaceWith(gal);
+  (s.images||[]).slice(0,4).forEach(src=>{
+    const fig=document.createElement("figure");
+    const img=document.createElement("img");
+    img.src=src; img.alt="شاهِد";
+    fig.appendChild(img); gal.appendChild(fig);
+  });
   return wrap;
 }
 
-/* ====== معاينة / طباعة / PDF ====== */
+/* ========= معاينة / طباعة / PDF ========= */
 function ensureValid(){
   const s=cur();
   if(!s.programName.trim()){ alert("أدخلي اسم البرنامج."); return false; }
@@ -466,25 +507,18 @@ function ensureValid(){
   }
   return true;
 }
-
 async function openPreview(autoDownload=false){
-  // تأكد من وجود الديباجة في الواجهة، وإن لم تكن فحاول تحميلها الآن
   if(!letterheadSrc) await loadSiteLetterhead();
 
   printArea.innerHTML="";
-  const dom=buildReportDOM(); printArea.appendChild(dom);
-
-  // صور الشواهد
-  const gal=printArea.querySelector("#rep-gallery");
-  (cur().images||[]).slice(0,4).forEach(src=>{ const fig=document.createElement("figure"); const img=document.createElement("img"); img.src=src; img.alt="شاهِد"; fig.appendChild(img); gal.appendChild(fig); });
+  const paper = buildReportDOM();
+  printArea.appendChild(paper);
 
   modal.classList.add("show"); modal.setAttribute("aria-hidden","false");
 
-  await waitForImages(printArea); // انتظر الصور كاملة
-
+  await waitForImages(printArea); // مهم قبل التصدير/الطباعة
   if(autoDownload){ await generatePdf(); }
 }
-
 function closePreview(){ modal.classList.remove("show"); modal.setAttribute("aria-hidden","true"); }
 
 function pdfFileName(){
@@ -496,7 +530,7 @@ function pdfFileName(){
   return `${base}-${suffix || new Date().toISOString().slice(0,10)}.pdf`;
 }
 
-/* تحميل مكتبة html2pdf احتياطيًا إن لم تتوفر */
+/* تحميل مكتبة html2pdf احتياطًا إن لزم */
 function loadScript(src){ return new Promise((res,rej)=>{ const s=document.createElement("script"); s.src=src; s.onload=()=>res(true); s.onerror=()=>rej(new Error("load fail")); document.head.appendChild(s); }); }
 async function ensureHtml2Pdf(){
   if(window.html2pdf) return true;
@@ -505,28 +539,30 @@ async function ensureHtml2Pdf(){
     "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
   ];
   for(const url of cdns){ try{ await loadScript(url); if(window.html2pdf) return true; }catch{} }
-  alert("تعذّر تحميل مكتبة إنشاء PDF. تحقّقي من الاتصال بالإنترنت، ثم أعيدي المحاولة."); return false;
+  alert("تعذّر تحميل مكتبة إنشاء PDF. تحقّقي من الاتصال بالإنترنت ثم أعيدي المحاولة.");
+  return false;
 }
 
 async function generatePdf(){
   const ok = await ensureHtml2Pdf(); if(!ok) return;
-  const opt={
-    margin:[10,10,12,10], filename:pdfFileName(),
-    image:{type:'jpeg',quality:0.96},
-    html2canvas:{scale:2,useCORS:true,backgroundColor:"#ffffff"},
-    jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},
-    pagebreak:{mode:['css','legacy']}
-  };
   await waitForImages(printArea);
+  const opt={
+    margin:0, /* صفر لأننا ضبطنا الحواف داخل .paper */
+    filename: pdfFileName(),
+    image:{ type:'jpeg', quality:0.96 },
+    html2canvas:{ scale:2, useCORS:true, backgroundColor:"#ffffff" },
+    jsPDF:{ unit:'mm', format:'a4', orientation:'portrait' },
+    pagebreak:{ mode:['css'] }
+  };
   try{
-    await window.html2pdf().set(opt).from(printArea).save(); // تنزيل مباشر
+    await window.html2pdf().set(opt).from(printArea.querySelector(".paper")).save();
   }catch(e){
     console.error(e);
-    alert("حدث خطأ أثناء إنشاء ملف الـPDF. لو سمحتِ جرّبي من متصفح مختلف أو أعيدي تحميل الصفحة.");
+    alert("حدث خطأ أثناء إنشاء ملف الـPDF.");
   }
 }
 
-/* ====== أزرار ====== */
+/* ========= أزرار ========= */
 document.addEventListener("keydown",(e)=>{ if(e.key==="Escape") closePreview(); });
 previewBtn.addEventListener("click", async ()=>{ if(!ensureValid()) return; await openPreview(false); });
 downloadBtn.addEventListener("click", async ()=>{ if(!ensureValid()) return; await openPreview(true); });
@@ -534,14 +570,14 @@ dlFromPrev.addEventListener("click", async ()=>{ await generatePdf(); });
 printBtn.addEventListener("click", ()=>{ window.print(); });
 closeModalBtn.addEventListener("click", closePreview);
 
-/* ====== إشعار صغير ====== */
+/* ========= إشعار صغير ========= */
 function toast(msg){ uploadMsg.textContent=msg; uploadMsg.style.color="var(--muted)"; setTimeout(()=>{ uploadMsg.textContent="يمكن سحب الصور وإفلاتها هنا. الحد 4 صور."; uploadMsg.style.color="var(--muted)"; },2000); }
 
-/* ====== تشغيل أولي ====== */
+/* ========= تشغيل ========= */
 (async function init(){
   loadAll();
   switchTab(state.currentTab || "daily");
-  await loadSiteLetterhead(); // حمّل الديباجة واعرضها في الواجهة فورًا
+  await loadSiteLetterhead(); // عرض الديباجة في الواجهة فورًا
 })();
 </script>
 </body>
